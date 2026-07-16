@@ -593,7 +593,7 @@ const restartBtn = document.getElementById('restartBtn');
 
 qTotalEl.textContent = questions.length;
 
-// ---------- Suara (Web Audio API, tanpa file eksternal) ----------
+// ---------- Suara ----------
 let audioCtx = null;
 function getCtx(){
   if(!audioCtx){
@@ -618,14 +618,28 @@ function playTone(freqStart, freqEnd, duration, type, volume){
 }
 
 function playTing(){
-  // suara ceria naik - benar
+  // suara ceria naik - benar (tetap pakai nada sintetis)
   playTone(880, 1760, 0.18, 'sine', 0.25);
   setTimeout(()=>playTone(1318, 1318, 0.22, 'sine', 0.2), 90);
 }
 
+// suara salah sekarang memakai file audio dari folder /sound/faah.mp3
+const wrongSound = new Audio('/sound/faah.mp3');
+wrongSound.preload = 'auto';
+
 function playTung(){
-  // suara turun rendah - salah
-  playTone(220, 110, 0.35, 'sawtooth', 0.2);
+  try{
+    wrongSound.currentTime = 0;
+    const playPromise = wrongSound.play();
+    if(playPromise !== undefined){
+      playPromise.catch(()=>{
+        // fallback ke nada sintetis jika file tidak bisa diputar (mis. belum di-upload / diblokir autoplay)
+        playTone(220, 110, 0.35, 'sawtooth', 0.2);
+      });
+    }
+  }catch(e){
+    playTone(220, 110, 0.35, 'sawtooth', 0.2);
+  }
 }
 
 // ---------- Render soal ----------
