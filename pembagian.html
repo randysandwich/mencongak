@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mencongak Pembagian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --papan: #1f4c3f;
+    --papan-dark: #16382e;
+    --kapur: #f5f2e8;
+    --kapur-dim: #cfd6c9;
+    --kuning: #e8b93f;
+    --merah: #d9614f;
+    --hijau: #6fbf8b;
+    --kayu: #8a5a3b;
+    --kayu-dark: #6b431f;
+    --font-utama: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    background:
+      radial-gradient(ellipse at top, #2a5c4c 0%, var(--papan-dark) 70%);
+    font-family: var(--font-utama);
+    padding:24px;
+  }
+  .frame{
+    width:100%;
+    max-width:640px;
+    margin-top:32px;
+    background:var(--kayu);
+    border-radius:22px;
+    padding:14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45), inset 0 0 0 6px var(--kayu-dark);
+  }
+  .board{
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 4px),
+      var(--papan);
+    border-radius:14px;
+    padding:28px 26px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .board::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.05), transparent 40%);
+    pointer-events:none;
+  }
+  h1{
+    font-family: var(--font-utama);
+    font-weight:700;
+    color:var(--kapur);
+    text-align:center;
+    margin:0 0 4px;
+    font-size:1.6rem;
+    letter-spacing:0.5px;
+    text-shadow: 0 0 6px rgba(255,255,255,0.15);
+  }
+  .subtitle{
+    text-align:center;
+    color:var(--kapur-dim);
+    font-size:0.85rem;
+    margin-bottom:18px;
+    font-style:italic;
+  }
+  .score-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    color:var(--kapur);
+    font-size:0.9rem;
+  }
+  .score-row span.count{
+    color:var(--kuning);
+    font-weight:700;
+    font-size:1.05rem;
+  }
+  .progress-track{
+    height:8px;
+    background:rgba(255,255,255,0.12);
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:26px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--kuning);
+    width:0%;
+    transition:width 0.4s ease;
+    border-radius:6px;
+  }
+  .problem-card{
+    background:rgba(255,255,255,0.04);
+    border:2px dashed rgba(255,255,255,0.25);
+    border-radius:16px;
+    padding:34px 20px;
+    text-align:center;
+    margin-bottom:20px;
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .equation{
+    font-family: var(--font-utama);
+    font-weight:700;
+    color:var(--kapur);
+    font-size:2.6rem;
+    letter-spacing:4px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .answer-input{
+    width:88px;
+    font-size:2.2rem;
+    text-align:center;
+    font-family: var(--font-utama);
+    font-weight:700;
+    background:transparent;
+    border:none;
+    border-bottom:4px solid var(--kuning);
+    color:var(--kuning);
+    outline:none;
+    padding:2px 4px;
+  }
+  .answer-input::-webkit-outer-spin-button,
+  .answer-input::-webkit-inner-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  .answer-input[type=number]{-moz-appearance:textfield;}
+  .feedback{
+    text-align:center;
+    min-height:30px;
+    font-family: var(--font-utama);
+    font-weight:500;
+    font-size:1.15rem;
+    margin-bottom:14px;
+    transition:opacity 0.2s;
+  }
+  .feedback.benar{color:var(--hijau);}
+  .feedback.salah{color:var(--merah);}
+  .buttons{
+    display:flex;
+    gap:12px;
+  }
+  button{
+    flex:1;
+    padding:14px 10px;
+    border-radius:12px;
+    border:none;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    font-family: var(--font-utama);
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  button:active{transform:scale(0.96);}
+  #checkBtn{
+    background:var(--kuning);
+    color:#3a2a06;
+    box-shadow:0 4px 0 #b4881f;
+  }
+  #skipBtn{
+    background:transparent;
+    color:var(--kapur-dim);
+    border:2px solid rgba(255,255,255,0.25);
+  }
+  .result-screen{
+    text-align:center;
+    color:var(--kapur);
+    padding:20px 0;
+    font-family: var(--font-utama);
+  }
+  .result-screen .big-score{
+    font-family: var(--font-utama);
+    font-weight:900;
+    font-size:3rem;
+    color:var(--kuning);
+    margin:6px 0 2px;
+  }
+  .result-screen p{color:var(--kapur-dim); margin:4px 0 22px;}
+  .hidden{display:none;}
+  .shake{animation:shake 0.35s;}
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(4px);}
+    30%,50%,70%{transform:translateX(-8px);}
+    40%,60%{transform:translateX(8px);}
+  }
+  .pop{animation:pop 0.35s;}
+  @keyframes pop{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+  }
+  .chalk-dust{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:10px;
+    background:linear-gradient(0deg, rgba(255,255,255,0.06), transparent);
+  }
+  @media (max-width:420px){
+    .equation{font-size:2rem; gap:8px;}
+    .answer-input{width:64px; font-size:1.7rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="board">
+    <h1>➗ Mencongak Pembagian</h1>
+
+    <div id="quizScreen">
+      <div class="score-row">
+        <span>Soal <span id="qNum">1</span> / <span id="qTotal">300</span></span>
+        <span>Skor: <span class="count" id="scoreCount">0</span></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="problem-card" id="problemCard">
+        <div class="equation" id="equationText"></div>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="buttons">
+        <button id="checkBtn">✔️ Cek Jawaban</button>
+        <button id="skipBtn">⏭️ Lewati</button>
+      </div>
+    </div>
+
+    <div id="resultScreen" class="result-screen hidden">
+      <div>🎉 Selesai! 🎉</div>
+      <div class="big-score" id="finalScore">0 / 300</div>
+      <p id="finalMsg">Kerja bagus!</p>
+      <button id="restartBtn" style="background:var(--kuning); color:#3a2a06; box-shadow:0 4px 0 #b4881f;">🔄 Main Lagi</button>
+    </div>
+
+    <div class="chalk-dust"></div>
+  </div>
+</div>
+
+<script>
+// ---------- Soal (Pembagian, hasil bagi 1-10, pembagi 1-10, 300 soal) ----------
+const rawQuestions = [
+"10 : 5",
+"54 : 6",
+"24 : 3",
+"5 : 1",
+"70 : 10",
+"90 : 9",
+"28 : 4",
+"5 : 5",
+"21 : 7",
+"8 : 1",
+"20 : 2",
+"60 : 10",
+"100 : 10",
+"60 : 6",
+"9 : 9",
+"4 : 1",
+"12 : 6",
+"63 : 9",
+"25 : 5",
+"20 : 4",
+"5 : 5",
+"36 : 9",
+"3 : 3",
+"40 : 8",
+"54 : 9",
+"81 : 9",
+"16 : 2",
+"27 : 9",
+"6 : 2",
+"48 : 6",
+"10 : 10",
+"35 : 7",
+"4 : 2",
+"8 : 8",
+"24 : 6",
+"42 : 6",
+"20 : 5",
+"20 : 2",
+"54 : 6",
+"54 : 9",
+"8 : 1",
+"24 : 6",
+"42 : 7",
+"30 : 6",
+"48 : 8",
+"30 : 3",
+"48 : 6",
+"30 : 5",
+"30 : 10",
+"6 : 1",
+"6 : 6",
+"35 : 7",
+"30 : 5",
+"14 : 7",
+"9 : 3",
+"64 : 8",
+"56 : 8",
+"50 : 10",
+"54 : 6",
+"12 : 6",
+"40 : 5",
+"48 : 8",
+"42 : 7",
+"8 : 4",
+"70 : 10",
+"63 : 7",
+"70 : 7",
+"35 : 7",
+"27 : 3",
+"30 : 6",
+"16 : 4",
+"8 : 8",
+"45 : 9",
+"8 : 2",
+"4 : 2",
+"24 : 6",
+"5 : 1",
+"28 : 7",
+"45 : 5",
+"90 : 9",
+"12 : 4",
+"24 : 3",
+"9 : 1",
+"3 : 1",
+"49 : 7",
+"4 : 4",
+"40 : 10",
+"48 : 8",
+"14 : 2",
+"45 : 9",
+"12 : 4",
+"63 : 9",
+"40 : 4",
+"10 : 5",
+"14 : 7",
+"12 : 6",
+"25 : 5",
+"9 : 3",
+"27 : 3",
+"63 : 7",
+"6 : 2",
+"90 : 10",
+"72 : 9",
+"40 : 4",
+"21 : 7",
+"12 : 2",
+"80 : 10",
+"4 : 2",
+"36 : 6",
+"10 : 1",
+"6 : 6",
+"72 : 8",
+"9 : 1",
+"6 : 2",
+"24 : 8",
+"3 : 3",
+"18 : 9",
+"1 : 1",
+"32 : 4",
+"7 : 1",
+"10 : 5",
+"27 : 9",
+"10 : 2",
+"1 : 1",
+"42 : 6",
+"36 : 4",
+"9 : 1",
+"40 : 10",
+"2 : 1",
+"16 : 4",
+"36 : 9",
+"21 : 3",
+"24 : 4",
+"56 : 7",
+"32 : 8",
+"24 : 8",
+"7 : 1",
+"8 : 2",
+"4 : 4",
+"14 : 7",
+"18 : 9",
+"50 : 10",
+"28 : 4",
+"12 : 3",
+"60 : 10",
+"2 : 1",
+"28 : 7",
+"56 : 7",
+"40 : 5",
+"15 : 3",
+"4 : 1",
+"2 : 2",
+"56 : 7",
+"18 : 9",
+"30 : 5",
+"6 : 3",
+"18 : 3",
+"60 : 6",
+"80 : 10",
+"20 : 10",
+"7 : 1",
+"50 : 10",
+"49 : 7",
+"2 : 2",
+"45 : 9",
+"16 : 8",
+"5 : 5",
+"3 : 1",
+"20 : 10",
+"27 : 3",
+"20 : 5",
+"12 : 2",
+"1 : 1",
+"2 : 1",
+"50 : 5",
+"16 : 4",
+"20 : 4",
+"36 : 6",
+"90 : 10",
+"40 : 4",
+"20 : 10",
+"42 : 6",
+"20 : 5",
+"10 : 10",
+"18 : 2",
+"6 : 1",
+"81 : 9",
+"6 : 3",
+"90 : 10",
+"36 : 9",
+"24 : 8",
+"24 : 4",
+"40 : 8",
+"15 : 5",
+"100 : 10",
+"80 : 8",
+"80 : 8",
+"30 : 10",
+"12 : 2",
+"14 : 2",
+"8 : 8",
+"35 : 5",
+"6 : 3",
+"70 : 7",
+"32 : 8",
+"16 : 2",
+"18 : 6",
+"5 : 1",
+"16 : 8",
+"24 : 3",
+"18 : 6",
+"90 : 9",
+"64 : 8",
+"21 : 3",
+"9 : 9",
+"10 : 1",
+"80 : 10",
+"35 : 5",
+"15 : 5",
+"60 : 10",
+"81 : 9",
+"16 : 8",
+"2 : 2",
+"30 : 3",
+"18 : 3",
+"36 : 4",
+"32 : 4",
+"40 : 10",
+"15 : 5",
+"8 : 1",
+"8 : 4",
+"7 : 7",
+"18 : 2",
+"36 : 6",
+"70 : 7",
+"72 : 8",
+"63 : 9",
+"72 : 9",
+"15 : 3",
+"21 : 3",
+"20 : 4",
+"6 : 6",
+"40 : 5",
+"3 : 3",
+"21 : 7",
+"100 : 10",
+"72 : 8",
+"27 : 9",
+"56 : 8",
+"80 : 8",
+"56 : 8",
+"49 : 7",
+"14 : 2",
+"28 : 4",
+"50 : 5",
+"36 : 4",
+"7 : 7",
+"18 : 2",
+"30 : 6",
+"6 : 1",
+"9 : 9",
+"12 : 4",
+"50 : 5",
+"10 : 10",
+"70 : 10",
+"18 : 6",
+"30 : 10",
+"48 : 6",
+"7 : 7",
+"32 : 8",
+"54 : 9",
+"45 : 5",
+"63 : 7",
+"12 : 3",
+"8 : 2",
+"18 : 3",
+"4 : 1",
+"8 : 4",
+"10 : 2",
+"28 : 7",
+"4 : 4",
+"16 : 2",
+"35 : 5",
+"12 : 3",
+"24 : 4",
+"10 : 2",
+"9 : 3",
+"25 : 5",
+"20 : 2",
+"10 : 1",
+"60 : 6",
+"30 : 3",
+"72 : 9",
+"45 : 5",
+"40 : 8",
+"32 : 4",
+"15 : 3",
+"3 : 1",
+"64 : 8",
+"42 : 7"
+];
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function parseExpr(expr){
+  const m = expr.match(/(\d+)\s*:\s*(\d+)/);
+  const a = parseInt(m[1],10);
+  const b = parseInt(m[2],10);
+  const result = a / b;
+  return {a, op: ':', b, result};
+}
+
+let questions = shuffle(rawQuestions).map(parseExpr);
+let current = 0;
+let score = 0;
+
+const qNumEl = document.getElementById('qNum');
+const qTotalEl = document.getElementById('qTotal');
+const scoreCountEl = document.getElementById('scoreCount');
+const progressFill = document.getElementById('progressFill');
+const equationText = document.getElementById('equationText');
+const feedback = document.getElementById('feedback');
+const problemCard = document.getElementById('problemCard');
+const checkBtn = document.getElementById('checkBtn');
+const skipBtn = document.getElementById('skipBtn');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const restartBtn = document.getElementById('restartBtn');
+
+qTotalEl.textContent = questions.length;
+
+// ---------- Suara ----------
+let audioCtx = null;
+function getCtx(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playTone(freqStart, freqEnd, duration, type, volume){
+  const ctx = getCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(freqEnd, ctx.currentTime + duration);
+  gain.gain.setValueAtTime(volume, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + duration);
+}
+
+function playTing(){
+  // suara ceria naik - benar (tetap pakai nada sintetis)
+  playTone(880, 1760, 0.18, 'sine', 0.25);
+  setTimeout(()=>playTone(1318, 1318, 0.22, 'sine', 0.2), 90);
+}
+
+// suara salah memakai file audio dari folder sound/faaah.mp3 (path relatif)
+const wrongSound = new Audio('sound/faaah.mp3');
+wrongSound.preload = 'auto';
+
+function playTung(){
+  try{
+    wrongSound.currentTime = 0;
+    const playPromise = wrongSound.play();
+    if(playPromise !== undefined){
+      playPromise.catch(()=>{
+        // fallback ke nada sintetis jika file tidak bisa diputar
+        playTone(220, 110, 0.35, 'sawtooth', 0.2);
+      });
+    }
+  }catch(e){
+    playTone(220, 110, 0.35, 'sawtooth', 0.2);
+  }
+}
+
+// ---------- Render soal ----------
+function renderQuestion(){
+  const q = questions[current];
+  qNumEl.textContent = current + 1;
+  progressFill.style.width = ((current) / questions.length * 100) + '%';
+  equationText.innerHTML = `
+    <span>${q.a}</span>
+    <span>÷</span>
+    <span>${q.b}</span>
+    <span>=</span>
+    <input type="number" id="answerInput" class="answer-input" inputmode="numeric" autofocus />
+  `;
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  document.getElementById('answerInput').focus();
+  document.getElementById('answerInput').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') checkAnswer();
+  });
+}
+
+function checkAnswer(){
+  const input = document.getElementById('answerInput');
+  const val = input.value.trim();
+  if(val === ''){
+    feedback.textContent = 'Isi dulu jawabannya ya!';
+    feedback.className = 'feedback';
+    return;
+  }
+  const q = questions[current];
+  const userAnswer = parseInt(val, 10);
+
+  if(userAnswer === q.result){
+    score++;
+    scoreCountEl.textContent = score;
+    feedback.textContent = '✅ Benar! Ting~';
+    feedback.className = 'feedback benar';
+    problemCard.classList.add('pop');
+    playTing();
+  } else {
+    feedback.textContent = `❌ Salah. Jawabannya ${q.result}. Tung...`;
+    feedback.className = 'feedback salah';
+    problemCard.classList.add('shake');
+    playTung();
+  }
+
+  checkBtn.disabled = true;
+  skipBtn.disabled = true;
+
+  setTimeout(()=>{
+    problemCard.classList.remove('pop','shake');
+    nextQuestion();
+  }, 1100);
+}
+
+function nextQuestion(){
+  current++;
+  checkBtn.disabled = false;
+  skipBtn.disabled = false;
+  if(current >= questions.length){
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width = '100%';
+  finalScore.textContent = `${score} / ${questions.length}`;
+  const pct = score / questions.length;
+  if(pct === 1) finalMsg.textContent = 'Sempurna! Kamu jagoan pembagian! 🌟';
+  else if(pct >= 0.8) finalMsg.textContent = 'Hebat sekali! Hampir sempurna! 🎈';
+  else if(pct >= 0.5) finalMsg.textContent = 'Bagus, terus berlatih ya! 💪';
+  else finalMsg.textContent = 'Ayo coba lagi, pasti bisa lebih baik! 📚';
+}
+
+checkBtn.addEventListener('click', checkAnswer);
+skipBtn.addEventListener('click', ()=>{
+  feedback.textContent = `Jawabannya ${questions[current].result}`;
+  feedback.className = 'feedback';
+  setTimeout(nextQuestion, 700);
+});
+restartBtn.addEventListener('click', ()=>{
+  questions = shuffle(rawQuestions).map(parseExpr);
+  current = 0;
+  score = 0;
+  scoreCountEl.textContent = 0;
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mencongak Perkalian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --papan: #1f4c3f;
+    --papan-dark: #16382e;
+    --kapur: #f5f2e8;
+    --kapur-dim: #cfd6c9;
+    --kuning: #e8b93f;
+    --merah: #d9614f;
+    --hijau: #6fbf8b;
+    --kayu: #8a5a3b;
+    --kayu-dark: #6b431f;
+    --font-utama: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    background:
+      radial-gradient(ellipse at top, #2a5c4c 0%, var(--papan-dark) 70%);
+    font-family: var(--font-utama);
+    padding:24px;
+  }
+  .frame{
+    width:100%;
+    max-width:640px;
+    margin-top:32px;
+    background:var(--kayu);
+    border-radius:22px;
+    padding:14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45), inset 0 0 0 6px var(--kayu-dark);
+  }
+  .board{
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 4px),
+      var(--papan);
+    border-radius:14px;
+    padding:28px 26px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .board::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.05), transparent 40%);
+    pointer-events:none;
+  }
+  h1{
+    font-family: var(--font-utama);
+    font-weight:700;
+    color:var(--kapur);
+    text-align:center;
+    margin:0 0 4px;
+    font-size:1.6rem;
+    letter-spacing:0.5px;
+    text-shadow: 0 0 6px rgba(255,255,255,0.15);
+  }
+  .subtitle{
+    text-align:center;
+    color:var(--kapur-dim);
+    font-size:0.85rem;
+    margin-bottom:18px;
+    font-style:italic;
+  }
+  .score-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    color:var(--kapur);
+    font-size:0.9rem;
+  }
+  .score-row span.count{
+    color:var(--kuning);
+    font-weight:700;
+    font-size:1.05rem;
+  }
+  .progress-track{
+    height:8px;
+    background:rgba(255,255,255,0.12);
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:26px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--kuning);
+    width:0%;
+    transition:width 0.4s ease;
+    border-radius:6px;
+  }
+  .problem-card{
+    background:rgba(255,255,255,0.04);
+    border:2px dashed rgba(255,255,255,0.25);
+    border-radius:16px;
+    padding:34px 20px;
+    text-align:center;
+    margin-bottom:20px;
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .equation{
+    font-family: var(--font-utama);
+    font-weight:700;
+    color:var(--kapur);
+    font-size:2.6rem;
+    letter-spacing:4px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .answer-input{
+    width:88px;
+    font-size:2.2rem;
+    text-align:center;
+    font-family: var(--font-utama);
+    font-weight:700;
+    background:transparent;
+    border:none;
+    border-bottom:4px solid var(--kuning);
+    color:var(--kuning);
+    outline:none;
+    padding:2px 4px;
+  }
+  .answer-input::-webkit-outer-spin-button,
+  .answer-input::-webkit-inner-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  .answer-input[type=number]{-moz-appearance:textfield;}
+  .feedback{
+    text-align:center;
+    min-height:30px;
+    font-family: var(--font-utama);
+    font-weight:500;
+    font-size:1.15rem;
+    margin-bottom:14px;
+    transition:opacity 0.2s;
+  }
+  .feedback.benar{color:var(--hijau);}
+  .feedback.salah{color:var(--merah);}
+  .buttons{
+    display:flex;
+    gap:12px;
+  }
+  button{
+    flex:1;
+    padding:14px 10px;
+    border-radius:12px;
+    border:none;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    font-family: var(--font-utama);
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  button:active{transform:scale(0.96);}
+  #checkBtn{
+    background:var(--kuning);
+    color:#3a2a06;
+    box-shadow:0 4px 0 #b4881f;
+  }
+  #skipBtn{
+    background:transparent;
+    color:var(--kapur-dim);
+    border:2px solid rgba(255,255,255,0.25);
+  }
+  .result-screen{
+    text-align:center;
+    color:var(--kapur);
+    padding:20px 0;
+    font-family: var(--font-utama);
+  }
+  .result-screen .big-score{
+    font-family: var(--font-utama);
+    font-weight:900;
+    font-size:3rem;
+    color:var(--kuning);
+    margin:6px 0 2px;
+  }
+  .result-screen p{color:var(--kapur-dim); margin:4px 0 22px;}
+  .hidden{display:none;}
+  .shake{animation:shake 0.35s;}
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(4px);}
+    30%,50%,70%{transform:translateX(-8px);}
+    40%,60%{transform:translateX(8px);}
+  }
+  .pop{animation:pop 0.35s;}
+  @keyframes pop{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+  }
+  .chalk-dust{
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:10px;
+    background:linear-gradient(0deg, rgba(255,255,255,0.06), transparent);
+  }
+  @media (max-width:420px){
+    .equation{font-size:2rem; gap:8px;}
+    .answer-input{width:64px; font-size:1.7rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="board">
+    <h1>✖️ Mencongak Perkalian</h1>
+
+    <div id="quizScreen">
+      <div class="score-row">
+        <span>Soal <span id="qNum">1</span> / <span id="qTotal">300</span></span>
+        <span>Skor: <span class="count" id="scoreCount">0</span></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="problem-card" id="problemCard">
+        <div class="equation" id="equationText"></div>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="buttons">
+        <button id="checkBtn">✔️ Cek Jawaban</button>
+        <button id="skipBtn">⏭️ Lewati</button>
+      </div>
+    </div>
+
+    <div id="resultScreen" class="result-screen hidden">
+      <div>🎉 Selesai! 🎉</div>
+      <div class="big-score" id="finalScore">0 / 300</div>
+      <p id="finalMsg">Kerja bagus!</p>
+      <button id="restartBtn" style="background:var(--kuning); color:#3a2a06; box-shadow:0 4px 0 #b4881f;">🔄 Main Lagi</button>
+    </div>
+
+    <div class="chalk-dust"></div>
+  </div>
+</div>
+
+<script>
+// ---------- Soal (Perkalian 1-10, 300 soal) ----------
+const rawQuestions = [
+"1 x 7",
+"4 x 10",
+"4 x 8",
+"9 x 10",
+"4 x 3",
+"6 x 1",
+"10 x 3",
+"3 x 1",
+"2 x 10",
+"3 x 6",
+"3 x 5",
+"10 x 6",
+"1 x 4",
+"3 x 1",
+"1 x 6",
+"10 x 8",
+"10 x 2",
+"4 x 9",
+"6 x 9",
+"8 x 4",
+"5 x 6",
+"1 x 2",
+"3 x 5",
+"6 x 2",
+"5 x 5",
+"4 x 4",
+"5 x 7",
+"1 x 7",
+"9 x 7",
+"1 x 6",
+"9 x 4",
+"3 x 4",
+"10 x 1",
+"4 x 5",
+"4 x 2",
+"9 x 2",
+"6 x 3",
+"1 x 8",
+"2 x 6",
+"5 x 9",
+"6 x 4",
+"5 x 3",
+"8 x 7",
+"8 x 4",
+"7 x 9",
+"1 x 1",
+"7 x 2",
+"6 x 10",
+"1 x 9",
+"6 x 6",
+"1 x 7",
+"7 x 10",
+"3 x 7",
+"4 x 4",
+"2 x 4",
+"4 x 10",
+"6 x 4",
+"1 x 6",
+"9 x 5",
+"9 x 10",
+"4 x 3",
+"5 x 4",
+"5 x 7",
+"6 x 7",
+"3 x 9",
+"2 x 8",
+"4 x 7",
+"4 x 3",
+"7 x 6",
+"1 x 8",
+"5 x 3",
+"4 x 2",
+"8 x 1",
+"8 x 2",
+"3 x 8",
+"1 x 10",
+"4 x 5",
+"10 x 10",
+"8 x 6",
+"6 x 7",
+"7 x 7",
+"6 x 2",
+"6 x 8",
+"3 x 3",
+"5 x 9",
+"2 x 1",
+"4 x 2",
+"9 x 9",
+"10 x 10",
+"7 x 7",
+"8 x 8",
+"7 x 8",
+"1 x 10",
+"9 x 6",
+"6 x 2",
+"4 x 9",
+"10 x 2",
+"5 x 2",
+"9 x 9",
+"7 x 2",
+"10 x 7",
+"2 x 6",
+"2 x 3",
+"10 x 6",
+"8 x 8",
+"5 x 7",
+"4 x 4",
+"3 x 2",
+"8 x 1",
+"7 x 1",
+"9 x 5",
+"3 x 5",
+"3 x 7",
+"10 x 2",
+"6 x 5",
+"9 x 1",
+"1 x 5",
+"1 x 5",
+"2 x 10",
+"7 x 1",
+"3 x 3",
+"2 x 1",
+"3 x 2",
+"8 x 3",
+"9 x 2",
+"4 x 1",
+"1 x 8",
+"7 x 2",
+"8 x 9",
+"8 x 9",
+"3 x 4",
+"1 x 5",
+"10 x 7",
+"9 x 3",
+"6 x 5",
+"5 x 10",
+"5 x 5",
+"10 x 6",
+"8 x 1",
+"6 x 1",
+"6 x 6",
+"8 x 7",
+"3 x 8",
+"3 x 10",
+"5 x 6",
+"3 x 9",
+"5 x 8",
+"1 x 1",
+"4 x 9",
+"7 x 9",
+"9 x 7",
+"8 x 6",
+"4 x 1",
+"9 x 8",
+"1 x 2",
+"9 x 5",
+"3 x 10",
+"1 x 3",
+"5 x 2",
+"7 x 5",
+"7 x 3",
+"9 x 6",
+"7 x 7",
+"8 x 5",
+"10 x 9",
+"1 x 1",
+"6 x 3",
+"1 x 9",
+"6 x 8",
+"7 x 1",
+"4 x 10",
+"3 x 9",
+"10 x 9",
+"3 x 4",
+"3 x 7",
+"4 x 1",
+"9 x 8",
+"2 x 2",
+"10 x 3",
+"1 x 3",
+"9 x 3",
+"1 x 10",
+"5 x 10",
+"9 x 9",
+"4 x 8",
+"5 x 4",
+"6 x 10",
+"4 x 6",
+"7 x 8",
+"4 x 7",
+"2 x 8",
+"7 x 5",
+"9 x 3",
+"3 x 8",
+"7 x 8",
+"10 x 10",
+"1 x 4",
+"7 x 5",
+"5 x 6",
+"6 x 5",
+"9 x 10",
+"8 x 9",
+"1 x 3",
+"9 x 1",
+"1 x 9",
+"5 x 9",
+"2 x 5",
+"10 x 9",
+"10 x 7",
+"9 x 4",
+"8 x 6",
+"6 x 7",
+"8 x 3",
+"7 x 4",
+"7 x 4",
+"7 x 10",
+"5 x 1",
+"2 x 9",
+"4 x 5",
+"7 x 3",
+"9 x 7",
+"4 x 7",
+"5 x 4",
+"4 x 8",
+"6 x 6",
+"2 x 9",
+"7 x 6",
+"8 x 4",
+"8 x 10",
+"7 x 9",
+"8 x 2",
+"6 x 4",
+"10 x 1",
+"10 x 5",
+"5 x 2",
+"10 x 4",
+"2 x 4",
+"7 x 3",
+"2 x 7",
+"10 x 5",
+"10 x 8",
+"3 x 6",
+"3 x 2",
+"6 x 10",
+"2 x 9",
+"3 x 1",
+"8 x 5",
+"10 x 8",
+"6 x 9",
+"7 x 10",
+"2 x 2",
+"2 x 8",
+"9 x 1",
+"7 x 6",
+"5 x 8",
+"9 x 6",
+"6 x 1",
+"5 x 1",
+"10 x 4",
+"7 x 4",
+"4 x 6",
+"3 x 3",
+"4 x 6",
+"8 x 7",
+"9 x 4",
+"5 x 10",
+"10 x 5",
+"9 x 8",
+"10 x 4",
+"8 x 3",
+"2 x 1",
+"8 x 10",
+"8 x 8",
+"8 x 5",
+"10 x 1",
+"9 x 2",
+"1 x 4",
+"5 x 3",
+"3 x 10",
+"2 x 3",
+"2 x 5",
+"10 x 3",
+"1 x 2",
+"2 x 4",
+"6 x 9",
+"2 x 10",
+"2 x 2",
+"5 x 8",
+"2 x 6",
+"2 x 7",
+"2 x 7",
+"5 x 5",
+"8 x 10",
+"6 x 3",
+"8 x 2",
+"2 x 5",
+"3 x 6",
+"5 x 1",
+"2 x 3",
+"6 x 8"
+];
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function parseExpr(expr){
+  const m = expr.match(/(\d+)\s*x\s*(\d+)/i);
+  const a = parseInt(m[1],10);
+  const b = parseInt(m[2],10);
+  const result = a * b;
+  return {a, op: 'x', b, result};
+}
+
+let questions = shuffle(rawQuestions).map(parseExpr);
+let current = 0;
+let score = 0;
+
+const qNumEl = document.getElementById('qNum');
+const qTotalEl = document.getElementById('qTotal');
+const scoreCountEl = document.getElementById('scoreCount');
+const progressFill = document.getElementById('progressFill');
+const equationText = document.getElementById('equationText');
+const feedback = document.getElementById('feedback');
+const problemCard = document.getElementById('problemCard');
+const checkBtn = document.getElementById('checkBtn');
+const skipBtn = document.getElementById('skipBtn');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const restartBtn = document.getElementById('restartBtn');
+
+qTotalEl.textContent = questions.length;
+
+// ---------- Suara ----------
+let audioCtx = null;
+function getCtx(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playTone(freqStart, freqEnd, duration, type, volume){
+  const ctx = getCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(freqEnd, ctx.currentTime + duration);
+  gain.gain.setValueAtTime(volume, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + duration);
+}
+
+function playTing(){
+  // suara ceria naik - benar (tetap pakai nada sintetis)
+  playTone(880, 1760, 0.18, 'sine', 0.25);
+  setTimeout(()=>playTone(1318, 1318, 0.22, 'sine', 0.2), 90);
+}
+
+// suara salah memakai file audio dari folder sound/faaah.mp3 (path relatif)
+const wrongSound = new Audio('sound/faaah.mp3');
+wrongSound.preload = 'auto';
+
+function playTung(){
+  try{
+    wrongSound.currentTime = 0;
+    const playPromise = wrongSound.play();
+    if(playPromise !== undefined){
+      playPromise.catch(()=>{
+        // fallback ke nada sintetis jika file tidak bisa diputar
+        playTone(220, 110, 0.35, 'sawtooth', 0.2);
+      });
+    }
+  }catch(e){
+    playTone(220, 110, 0.35, 'sawtooth', 0.2);
+  }
+}
+
+// ---------- Render soal ----------
+function renderQuestion(){
+  const q = questions[current];
+  qNumEl.textContent = current + 1;
+  progressFill.style.width = ((current) / questions.length * 100) + '%';
+  equationText.innerHTML = `
+    <span>${q.a}</span>
+    <span>×</span>
+    <span>${q.b}</span>
+    <span>=</span>
+    <input type="number" id="answerInput" class="answer-input" inputmode="numeric" autofocus />
+  `;
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  document.getElementById('answerInput').focus();
+  document.getElementById('answerInput').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') checkAnswer();
+  });
+}
+
+function checkAnswer(){
+  const input = document.getElementById('answerInput');
+  const val = input.value.trim();
+  if(val === ''){
+    feedback.textContent = 'Isi dulu jawabannya ya!';
+    feedback.className = 'feedback';
+    return;
+  }
+  const q = questions[current];
+  const userAnswer = parseInt(val, 10);
+
+  if(userAnswer === q.result){
+    score++;
+    scoreCountEl.textContent = score;
+    feedback.textContent = '✅ Benar! Ting~';
+    feedback.className = 'feedback benar';
+    problemCard.classList.add('pop');
+    playTing();
+  } else {
+    feedback.textContent = `❌ Salah. Jawabannya ${q.result}. Tung...`;
+    feedback.className = 'feedback salah';
+    problemCard.classList.add('shake');
+    playTung();
+  }
+
+  checkBtn.disabled = true;
+  skipBtn.disabled = true;
+
+  setTimeout(()=>{
+    problemCard.classList.remove('pop','shake');
+    nextQuestion();
+  }, 1100);
+}
+
+function nextQuestion(){
+  current++;
+  checkBtn.disabled = false;
+  skipBtn.disabled = false;
+  if(current >= questions.length){
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width = '100%';
+  finalScore.textContent = `${score} / ${questions.length}`;
+  const pct = score / questions.length;
+  if(pct === 1) finalMsg.textContent = 'Sempurna! Kamu jagoan perkalian! 🌟';
+  else if(pct >= 0.8) finalMsg.textContent = 'Hebat sekali! Hampir sempurna! 🎈';
+  else if(pct >= 0.5) finalMsg.textContent = 'Bagus, terus berlatih ya! 💪';
+  else finalMsg.textContent = 'Ayo coba lagi, pasti bisa lebih baik! 📚';
+}
+
+checkBtn.addEventListener('click', checkAnswer);
+skipBtn.addEventListener('click', ()=>{
+  feedback.textContent = `Jawabannya ${questions[current].result}`;
+  feedback.className = 'feedback';
+  setTimeout(nextQuestion, 700);
+});
+restartBtn.addEventListener('click', ()=>{
+  questions = shuffle(rawQuestions).map(parseExpr);
+  current = 0;
+  score = 0;
+  scoreCountEl.textContent = 0;
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+
+</body>
+</html>
