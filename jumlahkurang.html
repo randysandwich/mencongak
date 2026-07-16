@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuis Berhitung — Ting Tung!</title>
+<title>Mencongak Jumlah Kurang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --papan: #1f4c3f;
@@ -15,6 +18,7 @@
     --hijau: #6fbf8b;
     --kayu: #8a5a3b;
     --kayu-dark: #6b431f;
+    --font-utama: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   }
   *{box-sizing:border-box;}
   body{
@@ -25,7 +29,7 @@
     justify-content:center;
     background:
       radial-gradient(ellipse at top, #2a5c4c 0%, var(--papan-dark) 70%);
-    font-family: 'Segoe UI', Verdana, sans-serif;
+    font-family: var(--font-utama);
     padding:24px;
   }
   .frame{
@@ -53,7 +57,8 @@
     pointer-events:none;
   }
   h1{
-    font-family: 'Roboto', 'Segoe Print', cursive;
+    font-family: var(--font-utama);
+    font-weight:700;
     color:var(--kapur);
     text-align:center;
     margin:0 0 4px;
@@ -78,7 +83,7 @@
   }
   .score-row span.count{
     color:var(--kuning);
-    font-weight:bold;
+    font-weight:700;
     font-size:1.05rem;
   }
   .progress-track{
@@ -108,7 +113,8 @@
     justify-content:center;
   }
   .equation{
-    font-family:'Comic Sans MS','Segoe Print',cursive;
+    font-family: var(--font-utama);
+    font-weight:700;
     color:var(--kapur);
     font-size:2.6rem;
     letter-spacing:4px;
@@ -122,7 +128,8 @@
     width:88px;
     font-size:2.2rem;
     text-align:center;
-    font-family:'Comic Sans MS','Segoe Print',cursive;
+    font-family: var(--font-utama);
+    font-weight:700;
     background:transparent;
     border:none;
     border-bottom:4px solid var(--kuning);
@@ -139,7 +146,8 @@
   .feedback{
     text-align:center;
     min-height:30px;
-    font-family:'Comic Sans MS','Segoe Print',cursive;
+    font-family: var(--font-utama);
+    font-weight:500;
     font-size:1.15rem;
     margin-bottom:14px;
     transition:opacity 0.2s;
@@ -156,9 +164,9 @@
     border-radius:12px;
     border:none;
     font-size:1rem;
-    font-weight:bold;
+    font-weight:700;
     cursor:pointer;
-    font-family:'Segoe UI', sans-serif;
+    font-family: var(--font-utama);
     transition:transform 0.12s ease, box-shadow 0.12s ease;
   }
   button:active{transform:scale(0.96);}
@@ -176,9 +184,11 @@
     text-align:center;
     color:var(--kapur);
     padding:20px 0;
+    font-family: var(--font-utama);
   }
   .result-screen .big-score{
-    font-family:'Comic Sans MS','Segoe Print',cursive;
+    font-family: var(--font-utama);
+    font-weight:900;
     font-size:3rem;
     color:var(--kuning);
     margin:6px 0 2px;
@@ -214,7 +224,7 @@
 
 <div class="frame">
   <div class="board">
-    <h1>🍎 Kuis Berhitung Ting Tung</h1>
+    <h1>🍎 Mencongak Jumlah Kurang</h1>
 
     <div id="quizScreen">
       <div class="score-row">
@@ -622,7 +632,7 @@ function playTing(){
   setTimeout(()=>playTone(1318, 1318, 0.22, 'sine', 0.2), 90);
 }
 
-// suara salah sekarang memakai file audio dari folder /sound/faah.mp3
+// suara salah memakai file audio dari folder sound/faaah.mp3 (path relatif)
 const wrongSound = new Audio('sound/faaah.mp3');
 wrongSound.preload = 'auto';
 
@@ -632,7 +642,7 @@ function playTung(){
     const playPromise = wrongSound.play();
     if(playPromise !== undefined){
       playPromise.catch(()=>{
-        // fallback ke nada sintetis jika file tidak bisa diputar (mis. belum di-upload / diblokir autoplay)
+        // fallback ke nada sintetis jika file tidak bisa diputar
         playTone(220, 110, 0.35, 'sawtooth', 0.2);
       });
     }
