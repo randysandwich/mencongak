@@ -49,7 +49,7 @@
     line-height:1;
     letter-spacing:-3px;
   }
-  .brand span{
+  .brand sup{
     color:var(--pink);
     font-size:.48em;
     vertical-align:top;
@@ -135,7 +135,7 @@
     letter-spacing:-1px;
     margin-bottom:2px;
   }
-  .mini-brand span{color:var(--pink);font-size:9px;vertical-align:top}
+  .mini-brand sup{color:var(--pink);font-size:9px;vertical-align:super}
 
   .title{
     text-align:center;
@@ -347,6 +347,101 @@
     .main-btn{min-width:82px;padding:10px 9px}
     .more-list{grid-template-columns:1fr}
   }
+
+  /* New thumbnail menus */
+  .benda .object-paper{
+    position:absolute;
+    left:50%;
+    top:8px;
+    transform:translateX(-50%);
+    width:178px;
+    height:116px;
+    padding:14px;
+    background:#fffaf0;
+    border:2px solid #68675f;
+    border-radius:12px;
+    box-shadow:4px 5px 0 rgba(40,42,38,.18);
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    align-items:center;
+    justify-items:center;
+  }
+  .benda .object-paper span{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:#ef8fa8;
+    border:2px solid var(--line);
+    display:block;
+    font-size:0;
+  }
+
+  .kubus .cube-stack{
+    position:absolute;
+    left:50%;
+    top:12px;
+    transform:translateX(-50%);
+    width:170px;
+    height:112px;
+    display:grid;
+    grid-template-columns:repeat(3,42px);
+    grid-auto-rows:42px;
+    gap:4px;
+    justify-content:center;
+    align-content:center;
+  }
+  .kubus .cube-stack i{
+    width:42px;
+    height:42px;
+    display:block;
+    background:#f7d66d;
+    border:3px solid var(--line);
+    border-radius:5px;
+    box-shadow:7px -7px 0 #d9b957, 7px -7px 0 2px var(--line);
+    transform:skewY(-8deg);
+  }
+
+  .compare-art{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+  }
+  .compare-box{
+    width:82px;
+    min-height:92px;
+    padding:8px;
+    background:#fffaf0;
+    border:2px solid #68675f;
+    border-radius:10px;
+    box-shadow:3px 4px 0 rgba(40,42,38,.18);
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:5px;
+    align-content:center;
+    justify-items:center;
+  }
+  .compare-box span{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#cbd9c8;
+    border:2px solid var(--line);
+    font-size:0;
+  }
+  .more-game .compare-box:first-child span{background:#ef8fa8}
+  .less-game .compare-box:last-child span{background:#f5d36c}
+
+  @media(max-width:520px){
+    .benda .object-paper{width:145px;height:100px}
+    .benda .object-paper span{width:19px;height:19px}
+    .kubus .cube-stack{width:145px;height:96px}
+    .kubus .cube-stack i{width:34px;height:34px}
+    .compare-box{width:65px;min-height:78px}
+    .compare-box span{width:14px;height:14px}
+  }
+
 </style>
 </head>
 
@@ -355,17 +450,72 @@
 
   <header class="header">
     <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back(); return false;">←</a>
-    <div class="brand">nyon<span>3</span></div>
+    <div class="brand">taci<sup>2</sup></div>
     <div class="login">Log In</div>
   </header>
 
   <div class="tagline">PLAY • LEARN • SMILE</div>
+    <section class="grid" aria-label="Pilihan permainan">
 
-  <section class="grid" aria-label="Pilihan permainan">
+    <a class="game-card card-green benda" href="hitungbenda.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">HITUNG<br>BENDA</h2>
+        <div class="subtitle">HITUNG JUMLAH BENDA</div>
+        <div class="art">
+          <div class="object-paper">
+            <span>●</span><span>●</span><span>●</span>
+            <span>●</span><span>●</span><span>●</span>
+            <span>●</span><span>●</span><span>●</span>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-yellow kubus" href="hitungkubus.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">HITUNG<br>KUBUS</h2>
+        <div class="subtitle">HITUNG JUMLAH KUBUS</div>
+        <div class="art">
+          <div class="cube-stack">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-pink more-game" href="lebihbanyak.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">LEBIH<br>BANYAK</h2>
+        <div class="subtitle">PILIH YANG LEBIH BANYAK</div>
+        <div class="art compare-art">
+          <div class="compare-box"><span>●</span><span>●</span><span>●</span></div>
+          <div class="compare-box"><span>●</span><span>●</span><span>●</span><span>●</span><span>●</span></div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-cream less-game" href="lebihsedikit.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">LEBIH<br>SEDIKIT</h2>
+        <div class="subtitle">PILIH YANG LEBIH SEDIKIT</div>
+        <div class="art compare-art">
+          <div class="compare-box"><span>●</span><span>●</span><span>●</span><span>●</span><span>●</span></div>
+          <div class="compare-box"><span>●</span><span>●</span></div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
 
     <a class="game-card card-green division" href="pembagian.html">
       <div class="card-inner">
-        <div class="mini-brand">nyon<span>3</span></div>
+        <div class="mini-brand">taci<sup>2</sup></div>
         <h2 class="title">PEMBAGIAN</h2>
         <div class="subtitle">LATIHAN BERHITUNG</div>
         <div class="art">
@@ -382,7 +532,7 @@
 
     <a class="game-card card-cream multiplication" href="perkalian.html">
       <div class="card-inner">
-        <div class="mini-brand">nyon<span>3</span></div>
+        <div class="mini-brand">taci<sup>2</sup></div>
         <h2 class="title">PERKALIAN</h2>
         <div class="subtitle">HITUNG CEPAT & SERU</div>
         <div class="art">
@@ -399,7 +549,7 @@
 
     <a class="game-card card-yellow plusminus2" href="tambahkurangdua.html">
       <div class="card-inner">
-        <div class="mini-brand">nyon<span>3</span></div>
+        <div class="mini-brand">taci<sup>2</sup></div>
         <h2 class="title">TAMBAH<br>&amp; KURANG 2</h2>
         <div class="subtitle">ANGKA 1–20</div>
         <div class="art">
@@ -417,7 +567,7 @@
 
     <a class="game-card card-green plusminus1" href="tambahkurangsatu.html">
       <div class="card-inner">
-        <div class="mini-brand">nyon<span>3</span></div>
+        <div class="mini-brand">taci<sup>2</sup></div>
         <h2 class="title">TAMBAH<br>&amp; KURANG 1</h2>
         <div class="subtitle">LATIHAN DASAR</div>
         <div class="art">
@@ -433,12 +583,16 @@
       </div>
     </a>
 
-  </section>
+    </section>
 
-  <section class="more">
+    <section class="more">
     <div class="more-label">MASIH BANYAK LAGI</div>
-    <h2>4 permainan untuk belajar sambil bermain.</h2>
+    <h2>8 permainan untuk belajar sambil bermain.</h2>
     <div class="more-list">
+      <div class="more-item">Hitung Benda</div>
+      <div class="more-item">Hitung Kubus</div>
+      <div class="more-item">Lebih Banyak</div>
+      <div class="more-item">Lebih Sedikit</div>
       <div class="more-item">Pembagian</div>
       <div class="more-item">Perkalian</div>
       <div class="more-item">Tambah Kurang 2</div>
