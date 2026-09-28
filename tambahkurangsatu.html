@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Mencongak Jumlah Kurang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f1e8;
+    --surface:#fffdf7;
+    --ink:#3f4743;
+    --muted:#8b918c;
+    --teal:#438f8b;
+    --teal-dark:#2f706d;
+    --yellow:#f2c94c;
+    --yellow-dark:#d6aa2c;
+    --coral:#e98a73;
+    --green:#63ad82;
+    --line:#dfe1d8;
+    --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    background:var(--bg);
+  }
+  body{
+    font-family:var(--font);
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:0;
+    overflow:hidden;
+  }
+  button,input{font:inherit}
+
+  /* Satu layar HP portrait; ukuran mengikuti tinggi viewport.
+     Saat keyboard muncul, 100dvh ikut mengecil sehingga konten tetap terlihat. */
+  .frame{
+    width:100%;
+    max-width:520px;
+    height:100dvh;
+    min-height:0;
+    margin:0 auto;
+  }
+
+  .board{
+    width:100%;
+    height:100%;
+    min-height:0;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 10% 5%, rgba(67,143,139,.07), transparent 24%),
+      radial-gradient(circle at 95% 12%, rgba(242,201,76,.09), transparent 25%),
+      var(--bg);
+    padding:
+      max(5px, env(safe-area-inset-top))
+      max(7px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(7px, env(safe-area-inset-left));
+    display:flex;
+    flex-direction:column;
+  }
+
+  .topbar{
+    flex:0 0 auto;
+    display:grid;
+    grid-template-columns:40px 1fr 40px;
+    align-items:center;
+    gap:6px;
+    margin:0 1px 2px;
+  }
+  .icon-btn{
+    width:40px;height:40px;
+    border:2px solid #d7d8d1;
+    background:var(--surface);
+    border-radius:14px;
+    color:var(--ink);
+    display:grid;
+    place-items:center;
+    font-size:1.15rem;
+    font-weight:900;
+    box-shadow:0 2px 0 rgba(58,65,61,.08);
+    cursor:pointer;
+  }
+  .brand{text-align:center;line-height:1.02}
+  .brand h1{
+    margin:0;
+    font-size:1.22rem;
+    font-weight:900;
+    letter-spacing:-.4px;
+  }
+  .brand .mini{
+    margin-top:3px;
+    color:var(--coral);
+    font-size:.52rem;
+    font-weight:900;
+    letter-spacing:1.6px;
+  }
+
+  .mode-pill{
+    flex:0 0 auto;
+    width:max-content;
+    margin:2px auto 5px;
+    padding:5px 12px;
+    background:var(--surface);
+    border-radius:999px;
+    color:var(--muted);
+    font-size:.68rem;
+    font-weight:800;
+    box-shadow:0 2px 0 rgba(58,65,61,.05);
+  }
+  .mode-pill strong{color:var(--teal)}
+
+  .theme{
+    flex:0 0 auto;
+    text-align:center;
+    margin:1px 0 3px;
+    font-size:.61rem;
+    font-weight:900;
+    letter-spacing:1px;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .theme strong{color:var(--teal);font-size:.68rem}
+
+  #quizScreen{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .score-row{
+    flex:0 0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:0 7px 3px;
+    color:var(--muted);
+    font-size:.67rem;
+    font-weight:800;
+  }
+  .score-row .count{
+    color:var(--teal);
+    font-size:.85rem;
+    font-weight:900;
+  }
+
+  .progress-track{
+    flex:0 0 auto;
+    height:5px;
+    margin:0 7px 7px;
+    background:#e3e4dc;
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0;
+    background:var(--teal);
+    border-radius:999px;
+    transition:width .35s ease;
+  }
+
+  .problem-card{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--surface);
+    border:2px solid #e2e1d8;
+    border-radius:22px;
+    padding:12px 10px;
+    margin:0 1px 7px;
+    box-shadow:0 4px 0 rgba(58,65,61,.07), 0 8px 20px rgba(58,65,61,.05);
+    position:relative;
+    overflow:hidden;
+  }
+  .problem-card::before{
+    content:"";
+    position:absolute;
+    width:65px;height:65px;
+    border-radius:50%;
+    background:rgba(67,143,139,.06);
+    top:-27px;right:-20px;
+  }
+
+  .equation{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:6px;
+    color:var(--ink);
+    font-size:clamp(2.1rem, 11vw, 3.1rem);
+    line-height:1;
+    font-weight:900;
+    letter-spacing:-2px;
+  }
+
+  .answer-input{
+    width:clamp(58px, 18vw, 75px);
+    height:clamp(52px, 16vw, 66px);
+    border:0;
+    border-bottom:4px solid var(--yellow);
+    border-radius:11px 11px 3px 3px;
+    background:#fff9df;
+    color:var(--teal);
+    text-align:center;
+    font-size:clamp(1.8rem, 8vw, 2.5rem);
+    font-weight:900;
+    outline:none;
+    padding:0 3px;
+  }
+  .answer-input:focus{
+    border-bottom-color:var(--teal);
+    box-shadow:0 0 0 3px rgba(67,143,139,.10);
+  }
+  .answer-input::-webkit-outer-spin-button,
+  .answer-input::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0;
+  }
+  .answer-input[type=number]{-moz-appearance:textfield}
+
+  .feedback{
+    flex:0 0 auto;
+    min-height:25px;
+    text-align:center;
+    margin:0 5px 3px;
+    font-size:.78rem;
+    font-weight:900;
+  }
+  .feedback.benar{color:var(--green)}
+  .feedback.salah{color:var(--coral)}
+
+  .buttons{
+    flex:0 0 auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin:0 1px;
+  }
+  button.action{
+    min-height:45px;
+    border:0;
+    border-radius:15px;
+    font-weight:900;
+    font-size:.85rem;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+  }
+  button.action:active{transform:translateY(3px);box-shadow:none}
+  button.action:disabled{opacity:.55;cursor:default}
+
+  #checkBtn{
+    background:var(--yellow);
+    color:#5c4b18;
+    box-shadow:0 4px 0 var(--yellow-dark);
+  }
+  #skipBtn{
+    background:var(--surface);
+    color:var(--muted);
+    border:2px solid #dedfd7;
+    box-shadow:0 2px 0 rgba(58,65,61,.08);
+  }
+
+  .footer-note{
+    flex:0 0 auto;
+    text-align:center;
+    color:#a1a59f;
+    font-size:.55rem;
+    font-weight:700;
+    margin-top:4px;
+  }
+
+  .result-screen{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:var(--surface);
+    border:2px solid #e2e1d8;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 0 rgba(58,65,61,.07);
+  }
+  .result-screen .big-score{
+    color:var(--teal);
+    font-size:3rem;
+    font-weight:900;
+    letter-spacing:-2px;
+    margin:6px 0 2px;
+  }
+  .result-screen p{
+    color:var(--muted);
+    margin:4px 0 18px;
+    font-weight:700;
+    font-size:.85rem;
+  }
+  #restartBtn{
+    width:100%;
+    min-height:46px;
+    border:0;
+    border-radius:15px;
+    font-weight:900;
+    background:var(--yellow)!important;
+    color:#5c4b18!important;
+    box-shadow:0 4px 0 var(--yellow-dark)!important;
+    cursor:pointer;
+  }
+
+  .hidden{display:none!important}
+  .shake{animation:shake .35s}
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px)}
+    20%,80%{transform:translateX(4px)}
+    30%,50%,70%{transform:translateX(-8px)}
+    40%,60%{transform:translateX(8px)}
+  }
+  .pop{animation:pop .35s}
+  @keyframes pop{
+    0%{transform:scale(1)}
+    40%{transform:scale(1.025)}
+    100%{transform:scale(1)}
+  }
+
+  /* Layar sangat pendek / keyboard terbuka */
+  @media (max-height:620px){
+    .topbar{grid-template-columns:34px 1fr 34px}
+    .icon-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+    .brand h1{font-size:1rem}
+    .brand .mini{font-size:.43rem;margin-top:2px}
+    .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+    .theme{font-size:.51rem;margin-bottom:2px}
+    .theme strong{font-size:.56rem}
+    .progress-track{margin-bottom:4px}
+    .problem-card{margin-bottom:4px;border-radius:18px}
+    .feedback{min-height:19px;font-size:.66rem}
+    button.action{min-height:38px;font-size:.72rem;border-radius:12px}
+    .footer-note{display:none}
+  }
+
+  @media (max-height:520px){
+    .mode-pill,.theme{display:none}
+    .problem-card{margin-top:2px}
+    .equation{font-size:2rem}
+    .answer-input{height:48px;width:55px;font-size:1.7rem}
+  }
+
+  /* Desktop tetap compact seperti layar mobile */
+  @media (min-width:521px){
+    body{padding:0}
+    .frame{max-width:520px}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="board">
+
+    <div class="topbar">
+      <button class="icon-btn" type="button" aria-label="Kembali">←</button>
+      <div class="brand">
+        <h1>Belajar Hitung</h1>
+        <div class="mini">PLAY • LEARN • SMILE</div>
+      </div>
+      <button class="icon-btn" type="button" aria-label="Bantuan">?</button>
+    </div>
+
+    <div class="mode-pill">🍎 Latihan <strong>Tambah & Kurang</strong></div>
+
+    <div class="theme">UNTUK TK • <strong>ANGKA 1–98</strong> • TAMBAH / KURANG 1</div>
+
+    <div id="quizScreen">
+      <div class="score-row">
+        <span>Soal <span id="qNum">1</span> / <span id="qTotal">100</span></span>
+        <span>Skor <span class="count" id="scoreCount">0</span></span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="problem-card" id="problemCard">
+        <div class="equation" id="equationText"></div>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="buttons">
+        <button class="action" id="checkBtn">✓ Cek Jawaban</button>
+        <button class="action" id="skipBtn">→ Lewati</button>
+      </div>
+
+      <div class="footer-note">Tekan Enter untuk memeriksa jawaban</div>
+    </div>
+
+    <div id="resultScreen" class="result-screen hidden">
+      <div>🎉 Selesai!</div>
+      <div class="big-score" id="finalScore">0 / 100</div>
+      <p id="finalMsg">Kerja bagus!</p>
+      <button id="restartBtn">↻ Main Lagi</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ---------- Soal ----------
+function generateQuestions(total = 100){
+  // Angka awal selalu 1–98.
+  // Operasi tetap +1 atau -1.
+  // Dibuat unik agar 100 soal tidak berulang pada satu sesi.
+  const pool = [];
+
+  for(let n = 1; n <= 98; n++){
+    pool.push(`${n} + 1`);
+    pool.push(`${n} - 1`);
+  }
+
+  const shuffled = shuffle(pool);
+  return shuffled.slice(0, total);
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function parseExpr(expr){
+  const m = expr.match(/(\d+)\s*([+-])\s*(\d+)/);
+  const a = parseInt(m[1],10);
+  const op = m[2];
+  const b = parseInt(m[3],10);
+  const result = op === '+' ? a+b : a-b;
+  return {a, op, b, result};
+}
+
+let questions = generateQuestions(100).map(parseExpr);
+let current = 0;
+let score = 0;
+
+const qNumEl = document.getElementById('qNum');
+const qTotalEl = document.getElementById('qTotal');
+const scoreCountEl = document.getElementById('scoreCount');
+const progressFill = document.getElementById('progressFill');
+const equationText = document.getElementById('equationText');
+const feedback = document.getElementById('feedback');
+const problemCard = document.getElementById('problemCard');
+const checkBtn = document.getElementById('checkBtn');
+const skipBtn = document.getElementById('skipBtn');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const restartBtn = document.getElementById('restartBtn');
+
+qTotalEl.textContent = questions.length;
+
+// ---------- Suara ----------
+let audioCtx = null;
+function getCtx(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playTone(freqStart, freqEnd, duration, type, volume){
+  const ctx = getCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(freqEnd, ctx.currentTime + duration);
+  gain.gain.setValueAtTime(volume, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + duration);
+}
+
+function playTing(){
+  // suara ceria naik - benar (tetap pakai nada sintetis)
+  playTone(880, 1760, 0.18, 'sine', 0.25);
+  setTimeout(()=>playTone(1318, 1318, 0.22, 'sine', 0.2), 90);
+}
+
+// suara salah memakai file audio dari folder sound/faaah.mp3 (path relatif)
+const wrongSound = new Audio('sound/faaah.mp3');
+wrongSound.preload = 'auto';
+
+function playTung(){
+  try{
+    wrongSound.currentTime = 0;
+    const playPromise = wrongSound.play();
+    if(playPromise !== undefined){
+      playPromise.catch(()=>{
+        // fallback ke nada sintetis jika file tidak bisa diputar
+        playTone(220, 110, 0.35, 'sawtooth', 0.2);
+      });
+    }
+  }catch(e){
+    playTone(220, 110, 0.35, 'sawtooth', 0.2);
+  }
+}
+
+// ---------- Render soal ----------
+function renderQuestion(){
+  const q = questions[current];
+  qNumEl.textContent = current + 1;
+  progressFill.style.width = ((current) / questions.length * 100) + '%';
+  equationText.innerHTML = `
+    <span>${q.a}</span>
+    <span>${q.op === '+' ? '+' : '−'}</span>
+    <span>${q.b}</span>
+    <span>=</span>
+    <input type="number" id="answerInput" class="answer-input" inputmode="numeric" autofocus />
+  `;
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  document.getElementById('answerInput').focus();
+  document.getElementById('answerInput').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') checkAnswer();
+  });
+}
+
+function checkAnswer(){
+  const input = document.getElementById('answerInput');
+  const val = input.value.trim();
+  if(val === ''){
+    feedback.textContent = 'Isi dulu jawabannya ya!';
+    feedback.className = 'feedback';
+    return;
+  }
+  const q = questions[current];
+  const userAnswer = parseInt(val, 10);
+
+  if(userAnswer === q.result){
+    score++;
+    scoreCountEl.textContent = score;
+    feedback.textContent = '✅ Benar! Ting~';
+    feedback.className = 'feedback benar';
+    problemCard.classList.add('pop');
+    playTing();
+  } else {
+    feedback.textContent = `❌ Salah. Jawabannya ${q.result}. Tung...`;
+    feedback.className = 'feedback salah';
+    problemCard.classList.add('shake');
+    playTung();
+  }
+
+  checkBtn.disabled = true;
+  skipBtn.disabled = true;
+
+  setTimeout(()=>{
+    problemCard.classList.remove('pop','shake');
+    nextQuestion();
+  }, 1100);
+}
+
+function nextQuestion(){
+  current++;
+  checkBtn.disabled = false;
+  skipBtn.disabled = false;
+  if(current >= questions.length){
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width = '100%';
+  finalScore.textContent = `${score} / ${questions.length}`;
+  const pct = score / questions.length;
+  if(pct === 1) finalMsg.textContent = 'Sempurna! Kamu jagoan berhitung! 🌟';
+  else if(pct >= 0.8) finalMsg.textContent = 'Hebat sekali! Hampir sempurna! 🎈';
+  else if(pct >= 0.5) finalMsg.textContent = 'Bagus, terus berlatih ya! 💪';
+  else finalMsg.textContent = 'Ayo coba lagi, pasti bisa lebih baik! 📚';
+}
+
+checkBtn.addEventListener('click', checkAnswer);
+skipBtn.addEventListener('click', ()=>{
+  feedback.textContent = `Jawabannya ${questions[current].result}`;
+  feedback.className = 'feedback';
+  setTimeout(nextQuestion, 700);
+});
+restartBtn.addEventListener('click', ()=>{
+  questions = generateQuestions(100).map(parseExpr);
+  current = 0;
+  score = 0;
+  scoreCountEl.textContent = 0;
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+
+</body>
+</html>
