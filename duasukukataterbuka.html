@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Belajar Membaca • 2 Suku Kata</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f1e8;
+    --surface:#fffdf7;
+    --ink:#3f4743;
+    --muted:#8b918c;
+    --teal:#438f8b;
+    --teal-dark:#2f706d;
+    --yellow:#f2c94c;
+    --yellow-dark:#d6aa2c;
+    --coral:#e98a73;
+    --line:#dfe1d8;
+    --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    background:var(--bg);
+  }
+  body{
+    font-family:var(--font);
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    overflow:hidden;
+  }
+  button{font:inherit}
+
+  .frame{
+    width:100%;
+    max-width:520px;
+    height:100dvh;
+    margin:0 auto;
+  }
+
+  .board{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 10% 5%, rgba(67,143,139,.07), transparent 24%),
+      radial-gradient(circle at 95% 12%, rgba(242,201,76,.09), transparent 25%),
+      var(--bg);
+    padding:
+      max(5px, env(safe-area-inset-top))
+      max(7px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(7px, env(safe-area-inset-left));
+    display:flex;
+    flex-direction:column;
+  }
+
+  .topbar{
+    flex:0 0 auto;
+    display:grid;
+    grid-template-columns:40px 1fr 40px;
+    align-items:center;
+    gap:6px;
+    margin:0 1px 2px;
+  }
+
+  .icon-btn{
+    width:40px;height:40px;
+    border:2px solid #d7d8d1;
+    background:var(--surface);
+    border-radius:14px;
+    color:var(--ink);
+    display:grid;
+    place-items:center;
+    font-size:1.15rem;
+    font-weight:900;
+    box-shadow:0 2px 0 rgba(58,65,61,.08);
+    cursor:pointer;
+  }
+
+  .brand{text-align:center;line-height:1.02}
+  .brand h1{
+    margin:0;
+    font-size:1.22rem;
+    font-weight:900;
+    letter-spacing:-.4px;
+  }
+  .brand .mini{
+    margin-top:3px;
+    color:var(--coral);
+    font-size:.52rem;
+    font-weight:900;
+    letter-spacing:1.6px;
+  }
+
+  .mode-pill{
+    flex:0 0 auto;
+    width:max-content;
+    margin:2px auto 5px;
+    padding:5px 12px;
+    background:var(--surface);
+    border-radius:999px;
+    color:var(--muted);
+    font-size:.68rem;
+    font-weight:800;
+    box-shadow:0 2px 0 rgba(58,65,61,.05);
+  }
+  .mode-pill strong{color:var(--teal)}
+
+  .theme{
+    flex:0 0 auto;
+    text-align:center;
+    margin:1px 0 3px;
+    font-size:.61rem;
+    font-weight:900;
+    letter-spacing:1px;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .theme strong{color:var(--teal);font-size:.68rem}
+
+  #quizScreen{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .score-row{
+    flex:0 0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:0 7px 3px;
+    color:var(--muted);
+    font-size:.67rem;
+    font-weight:800;
+  }
+  .score-row .count{
+    color:var(--teal);
+    font-size:.85rem;
+    font-weight:900;
+  }
+
+  .progress-track{
+    flex:0 0 auto;
+    height:5px;
+    margin:0 7px 7px;
+    background:#e3e4dc;
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0;
+    background:var(--teal);
+    border-radius:999px;
+    transition:width .3s ease;
+  }
+
+  .problem-card{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--surface);
+    border:2px solid #e2e1d8;
+    border-radius:22px;
+    padding:20px 10px;
+    margin:0 1px 10px;
+    box-shadow:0 4px 0 rgba(58,65,61,.07), 0 8px 20px rgba(58,65,61,.05);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .problem-card::before{
+    content:"";
+    position:absolute;
+    width:80px;height:80px;
+    border-radius:50%;
+    background:rgba(67,143,139,.06);
+    top:-30px;right:-20px;
+  }
+
+  .syllables{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0;
+  }
+
+  .syllable-box strong{
+    font-weight:900;
+  }
+
+.syllable-box{
+    width:clamp(105px, 30vw, 145px);
+    height:clamp(88px, 24vw, 115px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff;
+    border:2px solid #3f4743;
+    color:#27302d;
+    font-size:clamp(2.6rem, 11vw, 4rem);
+    line-height:1;
+    font-weight:500;
+    letter-spacing:-2px;
+  }
+
+  .syllable-box:first-child{
+    border-radius:12px 0 0 12px;
+  }
+  .syllable-box:last-child{
+    border-radius:0 12px 12px 0;
+  }
+
+  .syllable-box.active{
+    background:#fff9df;
+  }
+
+  .dash{
+    font-size:clamp(1.6rem, 7vw, 2.4rem);
+    font-weight:900;
+    color:var(--muted);
+    margin:0 8px;
+  }
+
+  .word-hint{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:15px;
+    text-align:center;
+    color:#b0b4af;
+    font-size:.7rem;
+    font-weight:800;
+    letter-spacing:.8px;
+  }
+
+  .instruction{
+    flex:0 0 auto;
+    text-align:center;
+    color:var(--muted);
+    min-height:24px;
+    margin:0 5px 5px;
+    font-size:.75rem;
+    font-weight:800;
+  }
+
+  .buttons{
+    flex:0 0 auto;
+    margin:0 1px;
+  }
+
+  button.next-btn{
+    width:100%;
+    min-height:52px;
+    border:0;
+    border-radius:16px;
+    background:var(--yellow);
+    color:#5c4b18;
+    font-weight:900;
+    font-size:.95rem;
+    cursor:pointer;
+    box-shadow:0 4px 0 var(--yellow-dark);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button.next-btn:active{
+    transform:translateY(3px);
+    box-shadow:none;
+  }
+
+  .footer-note{
+    flex:0 0 auto;
+    text-align:center;
+    color:#a1a59f;
+    font-size:.55rem;
+    font-weight:700;
+    margin-top:5px;
+  }
+
+  .result-screen{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:var(--surface);
+    border:2px solid #e2e1d8;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 4px 0 rgba(58,65,61,.07);
+  }
+
+  .result-screen .big{
+    color:var(--teal);
+    font-size:3rem;
+    font-weight:900;
+    letter-spacing:-2px;
+    margin:8px 0 2px;
+  }
+  .result-screen p{
+    color:var(--muted);
+    margin:4px 0 18px;
+    font-weight:700;
+    font-size:.85rem;
+  }
+  #restartBtn{
+    width:100%;
+    min-height:46px;
+    border:0;
+    border-radius:15px;
+    font-weight:900;
+    background:var(--yellow);
+    color:#5c4b18;
+    box-shadow:0 4px 0 var(--yellow-dark);
+    cursor:pointer;
+  }
+
+  .hidden{display:none!important}
+  .pop{animation:pop .28s ease}
+  @keyframes pop{
+    0%{transform:scale(1)}
+    45%{transform:scale(1.025)}
+    100%{transform:scale(1)}
+  }
+
+  @media (max-height:620px){
+    .topbar{grid-template-columns:34px 1fr 34px}
+    .icon-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+    .brand h1{font-size:1rem}
+    .brand .mini{font-size:.43rem;margin-top:2px}
+    .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+    .theme{font-size:.51rem;margin-bottom:2px}
+    .theme strong{font-size:.56rem}
+    .progress-track{margin-bottom:4px}
+    .problem-card{margin-bottom:5px;border-radius:18px;padding:12px 8px}
+    .syllable-box{height:70px;width:95px;font-size:2.35rem}
+    .word-hint{bottom:8px;font-size:.6rem}
+    .instruction{font-size:.65rem;min-height:18px}
+    button.next-btn{min-height:43px;font-size:.78rem;border-radius:13px}
+    .footer-note{display:none}
+  }
+
+  @media (max-height:520px){
+    .mode-pill,.theme{display:none}
+    .problem-card{margin-top:2px}
+    .syllable-box{height:62px;width:85px;font-size:2rem}
+    .dash{font-size:1.5rem;margin:0 5px}
+  }
+
+  @media (min-width:521px){
+    body{padding:0}
+    .frame{max-width:520px}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="board">
+
+    <div class="topbar">
+      <button class="icon-btn" type="button" aria-label="Kembali" id="backBtn">←</button>
+      <div class="brand">
+        <h1>Belajar Membaca</h1>
+        <div class="mini">PLAY • READ • SMILE</div>
+      </div>
+      <button class="icon-btn" type="button" aria-label="Bantuan" id="helpBtn">?</button>
+    </div>
+
+    <div class="mode-pill">📖 Latihan <strong>2 Suku Kata Terbuka</strong></div>
+    <div class="theme">UNTUK ANAK • <strong>KONSONAN + VOKAL</strong></div>
+
+    <div id="quizScreen">
+      <div class="score-row">
+        <span>Soal <span id="qNum">1</span> / <span id="qTotal">191</span></span>
+        <span>Progress <span class="count" id="progressText">1%</span></span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="problem-card" id="problemCard">
+        <div class="syllables" id="syllables"></div>
+        <div class="word-hint">BACA PERLAHAN • RA – GI</div>
+      </div>
+
+      <div class="instruction" id="instruction">Baca dua suku kata dengan suara keras 😊</div>
+
+      <div class="buttons">
+        <button class="next-btn" id="nextBtn">→ Soal Berikutnya</button>
+      </div>
+
+      <div class="footer-note">Tekan Enter untuk lanjut</div>
+    </div>
+
+    <div id="resultScreen" class="result-screen hidden">
+      <div>🎉 Selesai!</div>
+      <div class="big" id="finalCount">191 / 191</div>
+      <p>Semua kata sudah selesai dibaca. Hebat! 🌟</p>
+      <button id="restartBtn">↻ Mulai Lagi</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const questions = [{"no": 1, "word": "Baju", "parts": ["Ba", "ju"], "split": "Ba-ju"}, {"no": 2, "word": "Batu", "parts": ["Ba", "tu"], "split": "Ba-tu"}, {"no": 3, "word": "Baca", "parts": ["Ba", "ca"], "split": "Ba-ca"}, {"no": 4, "word": "Bagi", "parts": ["Ba", "gi"], "split": "Ba-gi"}, {"no": 5, "word": "Baya", "parts": ["Ba", "ya"], "split": "Ba-ya"}, {"no": 6, "word": "Beli", "parts": ["Be", "li"], "split": "Be-li"}, {"no": 7, "word": "Beda", "parts": ["Be", "da"], "split": "Be-da"}, {"no": 8, "word": "Beca", "parts": ["Be", "ca"], "split": "Be-ca"}, {"no": 9, "word": "Biru", "parts": ["Bi", "ru"], "split": "Bi-ru"}, {"no": 10, "word": "Bisa", "parts": ["Bi", "sa"], "split": "Bi-sa"}, {"no": 11, "word": "Bisi", "parts": ["Bi", "si"], "split": "Bi-si"}, {"no": 12, "word": "Bola", "parts": ["Bo", "la"], "split": "Bo-la"}, {"no": 13, "word": "Boso", "parts": ["Bo", "so"], "split": "Bo-so"}, {"no": 14, "word": "Buku", "parts": ["Bu", "ku"], "split": "Bu-ku"}, {"no": 15, "word": "Buka", "parts": ["Bu", "ka"], "split": "Bu-ka"}, {"no": 16, "word": "Busa", "parts": ["Bu", "sa"], "split": "Bu-sa"}, {"no": 17, "word": "Budi", "parts": ["Bu", "di"], "split": "Bu-di"}, {"no": 18, "word": "Bumi", "parts": ["Bu", "mi"], "split": "Bu-mi"}, {"no": 19, "word": "Cari", "parts": ["Ca", "ri"], "split": "Ca-ri"}, {"no": 20, "word": "Cuci", "parts": ["Cu", "ci"], "split": "Cu-ci"}, {"no": 21, "word": "Cucu", "parts": ["Cu", "cu"], "split": "Cu-cu"}, {"no": 22, "word": "Cabe", "parts": ["Ca", "be"], "split": "Ca-be"}, {"no": 23, "word": "Dasi", "parts": ["Da", "si"], "split": "Da-si"}, {"no": 24, "word": "Dadu", "parts": ["Da", "du"], "split": "Da-du"}, {"no": 25, "word": "Dagu", "parts": ["Da", "gu"], "split": "Da-gu"}, {"no": 26, "word": "Dada", "parts": ["Da", "da"], "split": "Da-da"}, {"no": 27, "word": "Desa", "parts": ["De", "sa"], "split": "De-sa"}, {"no": 28, "word": "Doa", "parts": ["Do", "a"], "split": "Do-a"}, {"no": 29, "word": "Duka", "parts": ["Du", "ka"], "split": "Du-ka"}, {"no": 30, "word": "Dua", "parts": ["Du", "a"], "split": "Du-a"}, {"no": 31, "word": "Dari", "parts": ["Da", "ri"], "split": "Da-ri"}, {"no": 32, "word": "Foto", "parts": ["Fo", "to"], "split": "Fo-to"}, {"no": 33, "word": "Gigi", "parts": ["Gi", "gi"], "split": "Gi-gi"}, {"no": 34, "word": "Gula", "parts": ["Gu", "la"], "split": "Gu-la"}, {"no": 35, "word": "Guna", "parts": ["Gu", "na"], "split": "Gu-na"}, {"no": 36, "word": "Guci", "parts": ["Gu", "ci"], "split": "Gu-ci"}, {"no": 37, "word": "Gaya", "parts": ["Ga", "ya"], "split": "Ga-ya"}, {"no": 38, "word": "Geli", "parts": ["Ge", "li"], "split": "Ge-li"}, {"no": 39, "word": "Hari", "parts": ["Ha", "ri"], "split": "Ha-ri"}, {"no": 40, "word": "Hati", "parts": ["Ha", "ti"], "split": "Ha-ti"}, {"no": 41, "word": "Hisa", "parts": ["Hi", "sa"], "split": "Hi-sa"}, {"no": 42, "word": "Huja", "parts": ["Hu", "ja"], "split": "Hu-ja"}, {"no": 43, "word": "Jari", "parts": ["Ja", "ri"], "split": "Ja-ri"}, {"no": 44, "word": "Jamu", "parts": ["Ja", "mu"], "split": "Ja-mu"}, {"no": 45, "word": "Jaga", "parts": ["Ja", "ga"], "split": "Ja-ga"}, {"no": 46, "word": "Jaji", "parts": ["Ja", "ji"], "split": "Ja-ji"}, {"no": 47, "word": "Jiwa", "parts": ["Ji", "wa"], "split": "Ji-wa"}, {"no": 48, "word": "Juga", "parts": ["Ju", "ga"], "split": "Ju-ga"}, {"no": 49, "word": "Juta", "parts": ["Ju", "ta"], "split": "Ju-ta"}, {"no": 50, "word": "Jua", "parts": ["Ju", "a"], "split": "Ju-a"}, {"no": 51, "word": "Kaki", "parts": ["Ka", "ki"], "split": "Ka-ki"}, {"no": 52, "word": "Kada", "parts": ["Ka", "da"], "split": "Ka-da"}, {"no": 53, "word": "Kayu", "parts": ["Ka", "yu"], "split": "Ka-yu"}, {"no": 54, "word": "Kaca", "parts": ["Ka", "ca"], "split": "Ka-ca"}, {"no": 55, "word": "Kata", "parts": ["Ka", "ta"], "split": "Ka-ta"}, {"no": 56, "word": "Kera", "parts": ["Ke", "ra"], "split": "Ke-ra"}, {"no": 57, "word": "Kena", "parts": ["Ke", "na"], "split": "Ke-na"}, {"no": 58, "word": "Kita", "parts": ["Ki", "ta"], "split": "Ki-ta"}, {"no": 59, "word": "Kiri", "parts": ["Ki", "ri"], "split": "Ki-ri"}, {"no": 60, "word": "Kopi", "parts": ["Ko", "pi"], "split": "Ko-pi"}, {"no": 61, "word": "Kota", "parts": ["Ko", "ta"], "split": "Ko-ta"}, {"no": 62, "word": "Kuda", "parts": ["Ku", "da"], "split": "Ku-da"}, {"no": 63, "word": "Kuku", "parts": ["Ku", "ku"], "split": "Ku-ku"}, {"no": 64, "word": "Kubu", "parts": ["Ku", "bu"], "split": "Ku-bu"}, {"no": 65, "word": "Lari", "parts": ["La", "ri"], "split": "La-ri"}, {"no": 66, "word": "Lalu", "parts": ["La", "lu"], "split": "La-lu"}, {"no": 67, "word": "Labu", "parts": ["La", "bu"], "split": "La-bu"}, {"no": 68, "word": "Lapa", "parts": ["La", "pa"], "split": "La-pa"}, {"no": 69, "word": "Lima", "parts": ["Li", "ma"], "split": "Li-ma"}, {"no": 70, "word": "Lisa", "parts": ["Li", "sa"], "split": "Li-sa"}, {"no": 71, "word": "Lita", "parts": ["Li", "ta"], "split": "Li-ta"}, {"no": 72, "word": "Lupa", "parts": ["Lu", "pa"], "split": "Lu-pa"}, {"no": 73, "word": "Luca", "parts": ["Lu", "ca"], "split": "Lu-ca"}, {"no": 74, "word": "Leci", "parts": ["Le", "ci"], "split": "Le-ci"}, {"no": 75, "word": "Mata", "parts": ["Ma", "ta"], "split": "Ma-ta"}, {"no": 76, "word": "Meja", "parts": ["Me", "ja"], "split": "Me-ja"}, {"no": 77, "word": "Madu", "parts": ["Ma", "du"], "split": "Ma-du"}, {"no": 78, "word": "Masa", "parts": ["Ma", "sa"], "split": "Ma-sa"}, {"no": 79, "word": "Muka", "parts": ["Mu", "ka"], "split": "Mu-ka"}, {"no": 80, "word": "Muda", "parts": ["Mu", "da"], "split": "Mu-da"}, {"no": 81, "word": "Mini", "parts": ["Mi", "ni"], "split": "Mi-ni"}, {"no": 82, "word": "Mina", "parts": ["Mi", "na"], "split": "Mi-na"}, {"no": 83, "word": "Mona", "parts": ["Mo", "na"], "split": "Mo-na"}, {"no": 84, "word": "Nasi", "parts": ["Na", "si"], "split": "Na-si"}, {"no": 85, "word": "Naga", "parts": ["Na", "ga"], "split": "Na-ga"}, {"no": 86, "word": "Nusa", "parts": ["Nu", "sa"], "split": "Nu-sa"}, {"no": 87, "word": "Nota", "parts": ["No", "ta"], "split": "No-ta"}, {"no": 88, "word": "Pipi", "parts": ["Pi", "pi"], "split": "Pi-pi"}, {"no": 89, "word": "Peta", "parts": ["Pe", "ta"], "split": "Pe-ta"}, {"no": 90, "word": "Pagi", "parts": ["Pa", "gi"], "split": "Pa-gi"}, {"no": 91, "word": "Palu", "parts": ["Pa", "lu"], "split": "Pa-lu"}, {"no": 92, "word": "Pita", "parts": ["Pi", "ta"], "split": "Pi-ta"}, {"no": 93, "word": "Puji", "parts": ["Pu", "ji"], "split": "Pu-ji"}, {"no": 94, "word": "Pupu", "parts": ["Pu", "pu"], "split": "Pu-pu"}, {"no": 95, "word": "Papa", "parts": ["Pa", "pa"], "split": "Pa-pa"}, {"no": 96, "word": "Roda", "parts": ["Ro", "da"], "split": "Ro-da"}, {"no": 97, "word": "Roti", "parts": ["Ro", "ti"], "split": "Ro-ti"}, {"no": 98, "word": "Rasa", "parts": ["Ra", "sa"], "split": "Ra-sa"}, {"no": 99, "word": "Rasi", "parts": ["Ra", "si"], "split": "Ra-si"}, {"no": 100, "word": "Rapi", "parts": ["Ra", "pi"], "split": "Ra-pi"}, {"no": 101, "word": "Raga", "parts": ["Ra", "ga"], "split": "Ra-ga"}, {"no": 102, "word": "Rabu", "parts": ["Ra", "bu"], "split": "Ra-bu"}, {"no": 103, "word": "Rusa", "parts": ["Ru", "sa"], "split": "Ru-sa"}, {"no": 104, "word": "Rupa", "parts": ["Ru", "pa"], "split": "Ru-pa"}, {"no": 105, "word": "Rugi", "parts": ["Ru", "gi"], "split": "Ru-gi"}, {"no": 106, "word": "Sapu", "parts": ["Sa", "pu"], "split": "Sa-pu"}, {"no": 107, "word": "Sapi", "parts": ["Sa", "pi"], "split": "Sa-pi"}, {"no": 108, "word": "Suka", "parts": ["Su", "ka"], "split": "Su-ka"}, {"no": 109, "word": "Satu", "parts": ["Sa", "tu"], "split": "Sa-tu"}, {"no": 110, "word": "Siku", "parts": ["Si", "ku"], "split": "Si-ku"}, {"no": 111, "word": "Susu", "parts": ["Su", "su"], "split": "Su-su"}, {"no": 112, "word": "Saya", "parts": ["Sa", "ya"], "split": "Sa-ya"}, {"no": 113, "word": "Sega", "parts": ["Se", "ga"], "split": "Se-ga"}, {"no": 114, "word": "Sere", "parts": ["Se", "re"], "split": "Se-re"}, {"no": 115, "word": "Suci", "parts": ["Su", "ci"], "split": "Su-ci"}, {"no": 116, "word": "Suhu", "parts": ["Su", "hu"], "split": "Su-hu"}, {"no": 117, "word": "Soro", "parts": ["So", "ro"], "split": "So-ro"}, {"no": 118, "word": "Tali", "parts": ["Ta", "li"], "split": "Ta-li"}, {"no": 119, "word": "Topi", "parts": ["To", "pi"], "split": "To-pi"}, {"no": 120, "word": "Toko", "parts": ["To", "ko"], "split": "To-ko"}, {"no": 121, "word": "Tahu", "parts": ["Ta", "hu"], "split": "Ta-hu"}, {"no": 122, "word": "Tua", "parts": ["Tu", "a"], "split": "Tu-a"}, {"no": 123, "word": "Tiga", "parts": ["Ti", "ga"], "split": "Ti-ga"}, {"no": 124, "word": "Tepi", "parts": ["Te", "pi"], "split": "Te-pi"}, {"no": 125, "word": "Titi", "parts": ["Ti", "ti"], "split": "Ti-ti"}, {"no": 126, "word": "Tiba", "parts": ["Ti", "ba"], "split": "Ti-ba"}, {"no": 127, "word": "Tani", "parts": ["Ta", "ni"], "split": "Ta-ni"}, {"no": 128, "word": "Tuju", "parts": ["Tu", "ju"], "split": "Tu-ju"}, {"no": 129, "word": "Tema", "parts": ["Te", "ma"], "split": "Te-ma"}, {"no": 130, "word": "Tawa", "parts": ["Ta", "wa"], "split": "Ta-wa"}, {"no": 131, "word": "Visi", "parts": ["Vi", "si"], "split": "Vi-si"}, {"no": 132, "word": "Via", "parts": ["Vi", "a"], "split": "Vi-a"}, {"no": 133, "word": "Waya", "parts": ["Wa", "ya"], "split": "Wa-ya"}, {"no": 134, "word": "Yuyu", "parts": ["Yu", "yu"], "split": "Yu-yu"}, {"no": 135, "word": "Zira", "parts": ["Zi", "ra"], "split": "Zi-ra"}, {"no": 136, "word": "Zero", "parts": ["Ze", "ro"], "split": "Ze-ro"}, {"no": 137, "word": "Bayo", "parts": ["Ba", "yo"], "split": "Ba-yo"}, {"no": 138, "word": "Bibi", "parts": ["Bi", "bi"], "split": "Bi-bi"}, {"no": 139, "word": "Boni", "parts": ["Bo", "ni"], "split": "Bo-ni"}, {"no": 140, "word": "Buli", "parts": ["Bu", "li"], "split": "Bu-li"}, {"no": 141, "word": "Cazi", "parts": ["Ca", "zi"], "split": "Ca-zi"}, {"no": 142, "word": "Dani", "parts": ["Da", "ni"], "split": "Da-ni"}, {"no": 143, "word": "Doni", "parts": ["Do", "ni"], "split": "Do-ni"}, {"no": 144, "word": "Gani", "parts": ["Ga", "ni"], "split": "Ga-ni"}, {"no": 145, "word": "Gege", "parts": ["Ge", "ge"], "split": "Ge-ge"}, {"no": 146, "word": "Guru", "parts": ["Gu", "ru"], "split": "Gu-ru"}, {"no": 147, "word": "Hawa", "parts": ["Ha", "wa"], "split": "Ha-wa"}, {"no": 148, "word": "Jawa", "parts": ["Ja", "wa"], "split": "Ja-wa"}, {"no": 149, "word": "Jojo", "parts": ["Jo", "jo"], "split": "Jo-jo"}, {"no": 150, "word": "Kasi", "parts": ["Ka", "si"], "split": "Ka-si"}, {"no": 151, "word": "Kaya", "parts": ["Ka", "ya"], "split": "Ka-ya"}, {"no": 152, "word": "Kiko", "parts": ["Ki", "ko"], "split": "Ki-ko"}, {"no": 153, "word": "Kori", "parts": ["Ko", "ri"], "split": "Ko-ri"}, {"no": 154, "word": "Kura", "parts": ["Ku", "ra"], "split": "Ku-ra"}, {"no": 155, "word": "Laku", "parts": ["La", "ku"], "split": "La-ku"}, {"no": 156, "word": "Lidi", "parts": ["Li", "di"], "split": "Li-di"}, {"no": 157, "word": "Liza", "parts": ["Li", "za"], "split": "Li-za"}, {"no": 158, "word": "Lulu", "parts": ["Lu", "lu"], "split": "Lu-lu"}, {"no": 159, "word": "Mafe", "parts": ["Ma", "fe"], "split": "Ma-fe"}, {"no": 160, "word": "Mani", "parts": ["Ma", "ni"], "split": "Ma-ni"}, {"no": 161, "word": "Misi", "parts": ["Mi", "si"], "split": "Mi-si"}, {"no": 162, "word": "Musi", "parts": ["Mu", "si"], "split": "Mu-si"}, {"no": 163, "word": "Nana", "parts": ["Na", "na"], "split": "Na-na"}, {"no": 164, "word": "Nina", "parts": ["Ni", "na"], "split": "Ni-na"}, {"no": 165, "word": "Noni", "parts": ["No", "ni"], "split": "No-ni"}, {"no": 166, "word": "Pala", "parts": ["Pa", "la"], "split": "Pa-la"}, {"no": 167, "word": "Pera", "parts": ["Pe", "ra"], "split": "Pe-ra"}, {"no": 168, "word": "Pino", "parts": ["Pi", "no"], "split": "Pi-no"}, {"no": 169, "word": "Popo", "parts": ["Po", "po"], "split": "Po-po"}, {"no": 170, "word": "Puri", "parts": ["Pu", "ri"], "split": "Pu-ri"}, {"no": 171, "word": "Raja", "parts": ["Ra", "ja"], "split": "Ra-ja"}, {"no": 172, "word": "Rani", "parts": ["Ra", "ni"], "split": "Ra-ni"}, {"no": 173, "word": "Resi", "parts": ["Re", "si"], "split": "Re-si"}, {"no": 174, "word": "Riri", "parts": ["Ri", "ri"], "split": "Ri-ri"}, {"no": 175, "word": "Rudi", "parts": ["Ru", "di"], "split": "Ru-di"}, {"no": 176, "word": "Sara", "parts": ["Sa", "ra"], "split": "Sa-ra"}, {"no": 177, "word": "Sesa", "parts": ["Se", "sa"], "split": "Se-sa"}, {"no": 178, "word": "Siti", "parts": ["Si", "ti"], "split": "Si-ti"}, {"no": 179, "word": "Sofa", "parts": ["So", "fa"], "split": "So-fa"}, {"no": 180, "word": "Suri", "parts": ["Su", "ri"], "split": "Su-ri"}, {"no": 181, "word": "Tada", "parts": ["Ta", "da"], "split": "Ta-da"}, {"no": 182, "word": "Tara", "parts": ["Ta", "ra"], "split": "Ta-ra"}, {"no": 183, "word": "Teti", "parts": ["Te", "ti"], "split": "Te-ti"}, {"no": 184, "word": "Toni", "parts": ["To", "ni"], "split": "To-ni"}, {"no": 185, "word": "Tuba", "parts": ["Tu", "ba"], "split": "Tu-ba"}, {"no": 186, "word": "Vina", "parts": ["Vi", "na"], "split": "Vi-na"}, {"no": 187, "word": "Wali", "parts": ["Wa", "li"], "split": "Wa-li"}, {"no": 188, "word": "Yeni", "parts": ["Ye", "ni"], "split": "Ye-ni"}, {"no": 189, "word": "Yoyo", "parts": ["Yo", "yo"], "split": "Yo-yo"}, {"no": 190, "word": "Yuni", "parts": ["Yu", "ni"], "split": "Yu-ni"}, {"no": 191, "word": "Zulu", "parts": ["Zu", "lu"], "split": "Zu-lu"}];
+let current = 0;
+
+const qNumEl = document.getElementById('qNum');
+const qTotalEl = document.getElementById('qTotal');
+const progressTextEl = document.getElementById('progressText');
+const progressFill = document.getElementById('progressFill');
+const syllablesEl = document.getElementById('syllables');
+const problemCard = document.getElementById('problemCard');
+const instruction = document.getElementById('instruction');
+const nextBtn = document.getElementById('nextBtn');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const finalCount = document.getElementById('finalCount');
+const restartBtn = document.getElementById('restartBtn');
+
+qTotalEl.textContent = questions.length;
+
+function renderQuestion(){
+  const q = questions[current];
+  const pct = Math.round(((current + 1) / questions.length) * 100);
+
+  qNumEl.textContent = current + 1;
+  progressTextEl.textContent = pct + '%';
+  progressFill.style.width = (((current + 1) / questions.length) * 100) + '%';
+
+  syllablesEl.innerHTML = `
+    <div class="syllable-box active">${capitalizeSyllable(q.parts[0])}</div>
+    <div class="dash">-</div>
+    <div class="syllable-box active">${capitalizeSyllable(q.parts[1])}</div>
+  `;
+
+  instruction.textContent = 'Baca dua suku kata dengan suara keras 😊';
+  problemCard.classList.remove('pop');
+  void problemCard.offsetWidth;
+  problemCard.classList.add('pop');
+}
+
+function nextQuestion(){
+  if(current >= questions.length - 1){
+    showResult();
+    return;
+  }
+  current++;
+  renderQuestion();
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width = '100%';
+  progressTextEl.textContent = '100%';
+  finalCount.textContent = `${questions.length} / ${questions.length}`;
+}
+
+function restart(){
+  current = 0;
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+}
+
+function capitalizeSyllable(value){
+  const text = String(value).trim().toLowerCase();
+  if(!text) return '';
+  const first = text.charAt(0).toUpperCase();
+  const rest = text.slice(1);
+  return `<strong>${first}</strong>${rest}`;
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+  }[ch]));
+}
+
+nextBtn.addEventListener('click', nextQuestion);
+restartBtn.addEventListener('click', restart);
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !resultScreen.classList.contains('hidden')){
+    restart();
+  } else if(e.key === 'Enter' && !nextBtn.disabled){
+    nextQuestion();
+  }
+});
+
+document.getElementById('backBtn').addEventListener('click', () => {
+  if(current > 0){
+    current--;
+    renderQuestion();
+  }
+});
+
+document.getElementById('helpBtn').addEventListener('click', () => {
+  instruction.textContent = 'Contoh: Ba – ju dibaca “Ba-ju” 📖';
+});
+
+renderQuestion();
+</script>
+</body>
+</html>
