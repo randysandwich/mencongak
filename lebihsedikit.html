@@ -129,7 +129,7 @@ color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
 
   <div id="quizScreen">
     <div class="score-row">
-      <span>Soal <span id="qNum">1</span> / <span id="qTotal">20</span></span>
+      <span>Soal <span id="qNum">1</span> / <span id="qTotal">100</span></span>
       <span>Skor <span class="count" id="scoreCount">0</span></span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -158,14 +158,14 @@ color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
 
   <div id="resultScreen" class="result-screen hidden">
     <div>🎉 Selesai!</div>
-    <div class="big-score" id="finalScore">0 / 20</div>
+    <div class="big-score" id="finalScore">0 / 100</div>
     <p id="finalMsg">Kerja bagus!</p>
     <button id="restartBtn">↻ Main Lagi</button>
   </div>
 </div></div>
 
 <script>
-const TOTAL = 20;
+const TOTAL = 100;
 let questions = [];
 let current = 0;
 let score = 0;
