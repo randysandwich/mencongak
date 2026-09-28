@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Count the Cubes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f4f1e8;
+  --surface:#fffdf7;
+  --ink:#3f4743;
+  --muted:#8b918c;
+  --teal:#438f8b;
+  --teal-dark:#2f706d;
+  --yellow:#f2c94c;
+  --yellow-dark:#d6aa2c;
+  --coral:#e98a73;
+  --green:#63ad82;
+  --line:#dfe1d8;
+  --cube-top:#a8d2c4;
+  --cube-left:#72aa98;
+  --cube-right:#5f9685;
+  --cube-line:#4b8174;
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  display:flex;
+  justify-content:center;
+  overflow:hidden;
+}
+button,input{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0;margin:auto}
+.board{
+  width:100%;height:100%;min-height:0;overflow:hidden;
+  background:
+    radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+    radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),
+    var(--bg);
+  padding:max(5px,env(safe-area-inset-top))
+          max(7px,env(safe-area-inset-right))
+          max(6px,env(safe-area-inset-bottom))
+          max(7px,env(safe-area-inset-left));
+  display:flex;flex-direction:column;
+}
+
+/* HEADER — mengikuti struktur UI referensi */
+.topbar{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:40px 1fr 40px;
+  align-items:center;
+  gap:6px;
+  margin:0 1px 2px;
+}
+.icon-btn{
+  width:40px;height:40px;border:2px solid #d7d8d1;
+  background:var(--surface);border-radius:14px;color:var(--ink);
+  display:grid;place-items:center;font-size:1.15rem;font-weight:900;
+  box-shadow:0 2px 0 rgba(58,65,61,.08);cursor:pointer;
+}
+.brand{text-align:center;line-height:1.02}
+.brand h1{margin:0;font-size:1.22rem;font-weight:900;letter-spacing:-.4px}
+.brand .mini{
+  margin-top:3px;color:var(--coral);font-size:.52rem;
+  font-weight:900;letter-spacing:1.6px;
+}
+.mode-pill{
+  flex:0 0 auto;width:max-content;margin:2px auto 5px;
+  padding:5px 12px;background:var(--surface);border-radius:999px;
+  color:var(--muted);font-size:.68rem;font-weight:800;
+  box-shadow:0 2px 0 rgba(58,65,61,.05);
+}
+.mode-pill strong{color:var(--teal)}
+.theme{
+  flex:0 0 auto;text-align:center;margin:1px 0 3px;
+  font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);
+  text-transform:uppercase;
+}
+.theme strong{color:var(--teal);font-size:.68rem}
+
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{
+  flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;
+  margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800;
+}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{
+  flex:0 0 auto;height:5px;margin:0 7px 7px;
+  background:#e3e4dc;border-radius:999px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;width:0;background:var(--teal);
+  border-radius:999px;transition:width .35s ease;
+}
+
+/* AREA SOAL */
+.problem-card{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
+  padding:10px;margin:0 1px 7px;
+  box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
+  position:relative;overflow:hidden;
+}
+.problem-card::before{
+  content:"";position:absolute;width:65px;height:65px;border-radius:50%;
+  background:rgba(67,143,139,.06);top:-27px;right:-20px;
+}
+.question-line{
+  position:relative;z-index:2;text-align:center;
+  font-size:clamp(1rem,4.5vw,1.3rem);font-weight:900;
+  color:var(--ink);margin-bottom:4px;
+}
+.cube-area{
+  position:relative;z-index:2;width:min(100%,390px);
+  height:min(54vh,330px);min-height:245px;
+  display:grid;place-items:center;
+}
+.scene{width:360px;height:300px;position:relative;transform:scale(.86)}
+.cube{
+  position:absolute;width:78px;height:78px;transform-style:preserve-3d;
+}
+.face{position:absolute;border:1.6px solid var(--cube-line)}
+.top{
+  width:78px;height:78px;
+  transform:rotate(30deg) skewY(-30deg) scaleY(.866);
+  background:var(--cube-top);transform-origin:top left;left:0;top:0;
+}
+.left{
+  width:78px;height:78px;
+  transform:skewY(30deg) scaleY(.866);
+  background:var(--cube-left);transform-origin:top left;left:0;top:67px;
+}
+.right{
+  width:78px;height:78px;
+  transform:skewY(-30deg) scaleY(.866);
+  background:var(--cube-right);transform-origin:top left;left:78px;top:67px;
+}
+.scene-shadow{
+  position:absolute;width:235px;height:90px;left:62px;top:205px;
+  background:rgba(69,103,92,.12);transform:rotate(-30deg) skewX(30deg);
+  border-radius:50%;filter:blur(2px);
+}
+.feedback{
+  flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;
+  font-size:.78rem;font-weight:900;
+}
+.feedback.benar{color:var(--green)}
+.feedback.salah{color:var(--coral)}
+
+.answer-display{
+  min-width:72px;height:48px;padding:0 14px;
+  display:grid;place-items:center;
+  background:#fff9df;border-bottom:4px solid var(--yellow);
+  border-radius:11px 11px 3px 3px;
+  color:var(--teal);font-size:1.8rem;font-weight:900;
+  margin-bottom:6px;
+}
+
+/* INPUT JAWABAN — tanpa numeric pad */
+.answer-wrap{
+  flex:0 0 auto;
+  display:flex;
+  justify-content:center;
+  margin:0 1px 5px;
+}
+.answer-input{
+  width:clamp(100px,30vw,135px);
+  height:50px;
+  border:0;
+  border-bottom:4px solid var(--yellow);
+  border-radius:11px 11px 3px 3px;
+  background:#fff9df;
+  color:var(--teal);
+  text-align:center;
+  font-size:1.75rem;
+  font-weight:900;
+  outline:none;
+  padding:0 8px;
+}
+.answer-input:focus{
+  border-bottom-color:var(--teal);
+  box-shadow:0 0 0 3px rgba(67,143,139,.10);
+}
+.answer-input::placeholder{color:#c7c6bb}
+.answer-input::-webkit-outer-spin-button,
+.answer-input::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+.answer-input[type=number]{-moz-appearance:textfield}
+
+.check-answer{
+  flex:0 0 auto;
+  width:calc(100% - 2px);
+  min-height:45px;
+  border:0;
+  border-radius:15px;
+  background:var(--yellow);
+  color:#5c4b18;
+  font-weight:900;
+  font-size:.85rem;
+  cursor:pointer;
+  box-shadow:0 4px 0 var(--yellow-dark);
+}
+.check-answer:active{
+  transform:translateY(3px);
+  box-shadow:none;
+}
+.check-answer:disabled{
+  opacity:.55;
+  cursor:default;
+}
+
+/* modal / hasil */
+.overlay{
+  position:fixed;inset:0;background:rgba(42,43,39,.32);
+  display:none;place-items:center;padding:20px;z-index:10;
+}
+.modal{
+  width:min(400px,100%);background:var(--surface);border-radius:22px;
+  padding:22px;text-align:center;
+  box-shadow:0 5px 0 rgba(58,65,61,.25);
+}
+.modal h2{margin:0 0 8px;font-size:1.45rem}
+.modal p{margin:0 0 16px;color:var(--muted);font-size:.9rem;font-weight:700;line-height:1.45}
+.modal button{
+  width:100%;min-height:45px;border:0;border-radius:15px;
+  background:var(--yellow);color:#5c4b18;font-weight:900;
+  box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer;
+}
+.hidden{display:none!important}
+.shake{animation:shake .35s}
+.pop{animation:pop .35s}
+@keyframes shake{
+  10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}
+  30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}
+}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+
+@media(max-width:420px){
+  .scene{transform:scale(.78)}
+  .cube-area{height:min(51vh,310px);min-height:225px}
+}
+@media(max-height:620px){
+  .topbar{grid-template-columns:34px 1fr 34px}
+  .icon-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+  .brand h1{font-size:1rem}
+  .brand .mini{font-size:.43rem;margin-top:2px}
+  .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+  .theme{font-size:.51rem;margin-bottom:2px}
+  .theme strong{font-size:.56rem}
+  .progress-track{margin-bottom:4px}
+  .problem-card{margin-bottom:4px;border-radius:18px}
+  .cube-area{min-height:175px;height:40vh}
+  .feedback{min-height:19px;font-size:.66rem}
+  .key{min-height:36px;font-size:.9rem;border-radius:12px}
+  .footer-note{display:none}
+}
+</style>
+</head>
+
+<body>
+<div class="frame">
+<div class="board">
+
+  <div class="topbar">
+    <button class="icon-btn" type="button" onclick="history.back()" aria-label="Kembali">←</button>
+    <div class="brand">
+      <h1>Count the Cubes</h1>
+      <div class="mini">PLAY • COUNT • SMILE</div>
+    </div>
+    <button class="icon-btn" type="button" onclick="showHelp()" aria-label="Bantuan">?</button>
+  </div>
+
+  <div class="mode-pill">🧊 Latihan <strong>Hitung Kubus</strong></div>
+  <div class="theme">PUZZLE ISOMETRIK • <strong>HITUNG SEMUA KUBUS</strong></div>
+
+  <div id="quizScreen">
+    <div class="score-row">
+      <span>Soal <span id="qNum">1</span> / <span id="qTotal">10</span></span>
+      <span>Benar <span class="count" id="scoreCount">0</span></span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="problem-card" id="problemCard">
+      <div class="question-line">Ada berapa kubus semuanya?</div>
+      <div class="cube-area">
+        <div class="scene" id="scene"></div>
+      </div>
+      <div class="answer-wrap">
+        <input
+          type="number"
+          id="answerInput"
+          class="answer-input"
+          inputmode="numeric"
+          min="0"
+          max="99"
+          placeholder="?"
+          aria-label="Jawaban jumlah kubus"
+        >
+      </div>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="check-answer" id="checkAnswerBtn" onclick="check()">✓ Cek Jawaban</button>
+
+    <div class="footer-note">Hitung kubus yang terlihat maupun yang tertutup di bawah tumpukan</div>
+  </div>
+</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Bantuan</h2>
+    <p id="modalText"></p>
+    <button id="modalButton" onclick="closeModal()">Mengerti</button>
+  </div>
+</div>
+
+<script>
+const puzzles = [
+  {cells:[[0,0,2],[1,0,2],[0,1,1],[1,1,1]], answer:6,
+   clue:"Jumlahkan tinggi setiap tumpukan: 2 + 2 + 1 + 1 = 6."},
+  {cells:[[0,0,3],[1,0,2],[2,0,1],[0,1,1],[1,1,1]], answer:8,
+   clue:"Ada tumpukan 3, tumpukan 2, dan tiga kubus tunggal: 3 + 2 + 1 + 1 + 1."},
+  {cells:[[0,0,2],[1,0,2],[2,0,1],[0,1,2],[1,1,1],[0,2,1]], answer:9,
+   clue:"Jumlahkan keenam posisi: 2 + 2 + 1 + 2 + 1 + 1 = 9."},
+  {cells:[[0,0,3],[1,0,2],[0,1,2],[1,1,1],[2,1,1]], answer:9,
+   clue:"Tinggi tumpukannya adalah 3 + 2 + 2 + 1 + 1."},
+  {cells:[[0,0,2],[1,0,1],[2,0,1],[0,1,2],[1,1,2]], answer:8,
+   clue:"Ada lima posisi dengan tinggi 2, 1, 1, 2, dan 2."},
+  {cells:[[0,0,3],[1,0,3],[0,1,1],[1,1,1]], answer:8,
+   clue:"Dua tumpukan setinggi 3 ditambah dua kubus tunggal."},
+  {cells:[[0,0,2],[1,0,2],[2,0,2],[0,1,1]], answer:7,
+   clue:"Tiga tumpukan setinggi 2 dan satu kubus tunggal."},
+  {cells:[[0,0,4],[1,0,2],[0,1,1]], answer:7,
+   clue:"Tumpukan utama memiliki 4 kubus, lalu 2 dan 1."},
+  {cells:[[0,0,3],[1,0,1],[0,1,2],[1,1,1]], answer:7,
+   clue:"Jumlah tinggi empat posisi: 3 + 1 + 2 + 1."},
+  {cells:[[0,0,2],[1,0,3],[0,1,2],[1,1,2]], answer:9,
+   clue:"Jumlahkan: 2 + 3 + 2 + 2 = 9."}
+];
+
+let order=[], current=0, score=0, locked=false;
+
+function shuffle(a){
+  const x=[...a];
+  for(let i=x.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [x[i],x[j]]=[x[j],x[i]];
+  }
+  return x;
+}
+
+function start(){
+  order=shuffle(puzzles);
+  current=0; score=0;
+  document.getElementById("scoreCount").textContent=0;
+  document.getElementById("qTotal").textContent=order.length;
+  loadPuzzle();
+}
+
+function loadPuzzle(){
+  locked=false;
+  document.getElementById("answerInput").value="";
+  document.getElementById("qNum").textContent=current+1;
+  document.getElementById("feedback").textContent="";
+  document.getElementById("feedback").className="feedback";
+  document.getElementById("answerInput").disabled=false;
+  document.getElementById("checkAnswerBtn").disabled=false;
+  document.getElementById("progressFill").style.width=((current)/order.length*100)+"%";
+  draw(order[current].cells);
+}
+
+function draw(cells){
+  const scene=document.getElementById("scene");
+  scene.innerHTML='<div class="scene-shadow"></div>';
+
+  const all=[];
+  cells.forEach(([x,y,h])=>{
+    for(let z=0;z<h;z++) all.push({x,y,z});
+  });
+
+  all.sort((a,b)=>
+    (a.x+a.y+a.z)-(b.x+b.y+b.z) || a.y-b.y || a.x-b.x
+  );
+
+  all.forEach(c=>{
+    const el=document.createElement("div");
+    el.className="cube";
+    const px=105+(c.x-c.y)*58;
+    const py=105+(c.x+c.y)*34-c.z*58;
+    el.style.left=px+"px";
+    el.style.top=py+"px";
+    el.innerHTML=
+      '<div class="face top"></div>'+
+      '<div class="face left"></div>'+
+      '<div class="face right"></div>';
+    scene.appendChild(el);
+  });
+}
+
+function check(){
+  if(locked)return;
+
+  const answerInput=document.getElementById("answerInput");
+  const value=answerInput.value.trim();
+
+  if(!value){
+    document.getElementById("feedback").textContent="Isi dulu jawabannya ya!";
+    document.getElementById("feedback").className="feedback";
+    answerInput.focus();
+    return;
+  }
+
+  locked=true;
+  const correct=Number(value)===order[current].answer;
+  const feedback=document.getElementById("feedback");
+
+  if(correct){
+    score++;
+    document.getElementById("scoreCount").textContent=score;
+    feedback.textContent="✅ Benar! Hebat!";
+    feedback.className="feedback benar";
+    document.getElementById("problemCard").classList.add("pop");
+  }else{
+    feedback.textContent="❌ Belum tepat.";
+    feedback.className="feedback salah";
+    document.getElementById("problemCard").classList.add("shake");
+  }
+
+  document.getElementById("checkAnswerBtn").disabled=true;
+  answerInput.disabled=true;
+
+  setTimeout(()=>{
+    document.getElementById("problemCard").classList.remove("pop","shake");
+    if(current<order.length-1){
+      current++;
+      loadPuzzle();
+      document.getElementById("checkAnswerBtn").disabled=false;
+    }else{
+      finish();
+    }
+  },900);
+}
+
+
+  if(locked)return;
+  if(!input){
+    document.getElementById("feedback").textContent="Isi dulu jawabannya ya!";
+    return;
+  }
+  locked=true;
+  const correct=Number(input)===order[current].answer;
+  const feedback=document.getElementById("feedback");
+
+  if(correct){
+    score++;
+    document.getElementById("scoreCount").textContent=score;
+    feedback.textContent="✅ Benar! Hebat!";
+    feedback.className="feedback benar";
+    document.getElementById("problemCard").classList.add("pop");
+  }else{
+    feedback.textContent="❌ Belum tepat.";
+    feedback.className="feedback salah";
+    document.getElementById("problemCard").classList.add("shake");
+  }
+
+  setTimeout(()=>{
+    document.getElementById("problemCard").classList.remove("pop","shake");
+    if(current<order.length-1){
+      current++;
+      loadPuzzle();
+    }else{
+      finish();
+    }
+  },900);
+}
+
+function showResult(correct,title){
+  document.getElementById("modalTitle").textContent=title;
+  document.getElementById("modalText").innerHTML=
+    `Jawaban yang benar adalah <b>${order[current].answer}</b>.`;
+  document.getElementById("modalButton").textContent="Lanjut";
+  document.getElementById("modalButton").onclick=()=>{
+    closeModal();
+    if(current<order.length-1){
+      current++;loadPuzzle();
+    }else finish();
+  };
+  document.getElementById("overlay").style.display="grid";
+}
+
+function showHelp(){
+  document.getElementById("modalTitle").textContent="Cara bermain";
+  document.getElementById("modalText").textContent=
+    "Hitung seluruh kubus, termasuk kubus yang tertutup di bawah tumpukan. Masukkan jawabannya melalui keypad lalu tekan ✓.";
+  document.getElementById("modalButton").textContent="Mengerti";
+  document.getElementById("modalButton").onclick=closeModal;
+  document.getElementById("overlay").style.display="grid";
+}
+function closeModal(){document.getElementById("overlay").style.display="none";}
+
+function finish(){
+  document.getElementById("modalTitle").textContent="🎉 Selesai!";
+  document.getElementById("modalText").innerHTML=
+    `Skor kamu <b>${score} / ${order.length}</b>.<br><br>`+
+    (score===order.length ? "Sempurna! 🌟" :
+     score>=order.length*.8 ? "Hebat sekali! 🎈" :
+     "Terus berlatih, pasti bisa! 💪");
+  document.getElementById("modalButton").textContent="Main Lagi";
+  document.getElementById("modalButton").onclick=()=>{
+    closeModal();start();
+  };
+  document.getElementById("progressFill").style.width="100%";
+  document.getElementById("overlay").style.display="grid";
+}
+
+document.getElementById("answerInput").addEventListener("keydown",(e)=>{
+  if(e.key==="Enter") check();
+});
+
+start();
+</script>
+</body>
+</html>
