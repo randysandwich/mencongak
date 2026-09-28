@@ -116,6 +116,20 @@ button.action:disabled{opacity:.55}
 </div></div>
 
 <script>
+// ---------- Suara jawaban salah ----------
+const wrongSound = new Audio('sound/faaah.mp3');
+wrongSound.preload = 'auto';
+
+function playWrongSound(){
+  try{
+    wrongSound.currentTime = 0;
+    const playPromise = wrongSound.play();
+    if(playPromise !== undefined){
+      playPromise.catch(()=>{});
+    }
+  }catch(e){}
+}
+
 const TOTAL=100;
 let questions=[],current=0,score=0,selected=null,locked=false;
 const qNum=document.getElementById('qNum'),qTotal=document.getElementById('qTotal'),scoreEl=document.getElementById('scoreCount');
@@ -160,7 +174,12 @@ function checkAnswer(){
     if(n===selected && selected!==q.answer)b.classList.add('wrong');
   });
   if(selected===q.answer){score++;scoreEl.textContent=score;feedback.textContent='✅ Benar! Pintar sekali!';feedback.className='feedback benar';card.classList.add('pop')}
-  else{feedback.textContent='❌ Belum tepat. Coba perhatikan angka terbesar.';feedback.className='feedback salah';card.classList.add('shake')}
+  else{
+    feedback.textContent='❌ Belum tepat. Coba perhatikan angka terbesar.';
+    feedback.className='feedback salah';
+    card.classList.add('shake');
+    playWrongSound();
+  }
   check.disabled=true;skip.disabled=true;
   setTimeout(()=>{card.classList.remove('pop','shake');next()},900);
 }
