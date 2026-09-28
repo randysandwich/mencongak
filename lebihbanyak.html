@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Mana yang Lebih Banyak?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1e8; --surface:#fffdf7; --ink:#3f4743; --muted:#8b918c;
+  --teal:#438f8b; --teal-dark:#2f706d; --yellow:#f2c94c; --yellow-dark:#d6aa2c;
+  --coral:#e98a73; --green:#63ad82; --line:#dfe1d8;
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0;margin:0 auto}
+.board{
+  width:100%;height:100%;min-height:0;overflow:hidden;
+  background:
+    radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+    radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+  padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+           max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+  display:flex;flex-direction:column;
+}
+.topbar{flex:0 0 auto;display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:6px;margin:0 1px 2px}
+.icon-btn{
+  width:40px;height:40px;border:2px solid #d7d8d1;background:var(--surface);
+  border-radius:14px;color:var(--ink);display:grid;place-items:center;font-size:1.15rem;
+  font-weight:900;box-shadow:0 2px 0 rgba(58,65,61,.08);cursor:pointer
+}
+.brand{text-align:center;line-height:1.02}.brand h1{margin:0;font-size:1.22rem;font-weight:900;letter-spacing:-.4px}
+.brand .mini{margin-top:3px;color:var(--coral);font-size:.52rem;font-weight:900;letter-spacing:1.6px}
+.mode-pill{flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);
+border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill strong{color:var(--teal)}
+.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--teal);font-size:.68rem}
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+
+/* Area dua kelompok benda */
+.compare-card{
+  flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:9px;
+  background:transparent;margin:0 1px 7px;position:relative
+}
+.group-card{
+  min-height:0;background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
+  padding:9px;display:flex;flex-direction:column;box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
+  position:relative;overflow:hidden;cursor:pointer
+}
+.group-card::before{content:"";position:absolute;width:55px;height:55px;border-radius:50%;
+background:rgba(67,143,139,.06);top:-22px;right:-17px}
+.group-title{position:relative;z-index:1;text-align:center;color:var(--muted);font-size:.68rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.objects{
+  position:relative;z-index:1;flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:1fr;gap:4px;align-content:center;justify-items:center;align-items:center;padding:4px
+}
+.shape{width:clamp(24px,7.5vw,38px);height:clamp(24px,7.5vw,38px);filter:drop-shadow(0 2px 0 rgba(58,65,61,.10))}
+.circle{border-radius:50%;background:var(--teal)}
+.square{border-radius:7px;background:var(--coral)}
+.star{background:var(--yellow);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 56%,79% 91%,50% 70%,21% 91%,32% 56%,2% 35%,39% 35%)}
+.triangle{background:#63ad82;clip-path:polygon(50% 3%,97% 94%,3% 94%)}
+.count-badge{
+  position:relative;z-index:2;align-self:center;min-width:38px;padding:3px 10px;
+  border-radius:999px;background:#fff9df;color:var(--teal);font-size:.9rem;font-weight:900;
+  margin-top:4px
+}
+.group-card.selected{border-color:var(--teal);box-shadow:0 0 0 3px rgba(67,143,139,.12),0 4px 0 rgba(47,112,109,.18)}
+.group-card.correct{border-color:var(--green);background:#f5fbf7}
+.group-card.wrong{border-color:var(--coral);background:#fff7f4}
+.feedback{flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.benar{color:var(--green)}.feedback.salah{color:var(--coral)}
+.buttons{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{
+  min-height:45px;border:0;border-radius:15px;font-weight:900;font-size:.85rem;cursor:pointer;
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease
+}
+button.action:active{transform:translateY(3px);box-shadow:none}
+button.action:disabled{opacity:.55;cursor:default}
+#leftBtn{background:var(--teal);color:#fff;box-shadow:0 4px 0 var(--teal-dark)}
+#rightBtn{background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark)}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+.result-screen{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;
+  box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.result-screen .big-score{color:var(--teal);font-size:3rem;font-weight:900;letter-spacing:-2px;margin:6px 0 2px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);
+color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
+.hidden{display:none!important}
+.pop{animation:pop .35s}.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@media (max-height:620px){
+  .topbar{grid-template-columns:34px 1fr 34px}.icon-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+  .brand h1{font-size:1rem}.brand .mini{font-size:.43rem;margin-top:2px}
+  .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}.theme{font-size:.51rem;margin-bottom:2px}
+  .theme strong{font-size:.56rem}.progress-track{margin-bottom:4px}.group-card{border-radius:18px}
+  .feedback{min-height:19px;font-size:.66rem}button.action{min-height:38px;font-size:.72rem;border-radius:12px}.footer-note{display:none}
+  .shape{width:24px;height:24px}.objects{gap:2px}.count-badge{font-size:.76rem;min-width:32px}
+}
+@media (max-height:520px){
+  .mode-pill,.theme{display:none}.group-card{padding:6px}.group-title{font-size:.58rem}.shape{width:21px;height:21px}
+}
+@media (min-width:521px){.frame{max-width:520px}}
+</style>
+</head>
+<body>
+<div class="frame"><div class="board">
+  <div class="topbar">
+    <button class="icon-btn" type="button" aria-label="Kembali">←</button>
+    <div class="brand"><h1>Belajar Hitung</h1><div class="mini">PLAY • LEARN • SMILE</div></div>
+    <button class="icon-btn" type="button" aria-label="Bantuan">?</button>
+  </div>
+
+  <div class="mode-pill">🔢 Latihan <strong>Mana yang Lebih Banyak?</strong></div>
+  <div class="theme">UNTUK TK • <strong>JUMLAH 1–10</strong> • BANDINGKAN</div>
+
+  <div id="quizScreen">
+    <div class="score-row">
+      <span>Soal <span id="qNum">1</span> / <span id="qTotal">20</span></span>
+      <span>Skor <span class="count" id="scoreCount">0</span></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="compare-card" id="compareCard">
+      <div class="group-card" id="leftCard" role="button" tabindex="0">
+        <div class="group-title">KIRI</div>
+        <div class="objects" id="leftObjects"></div>
+        <div class="count-badge" id="leftCount">0</div>
+      </div>
+      <div class="group-card" id="rightCard" role="button" tabindex="0">
+        <div class="group-title">KANAN</div>
+        <div class="objects" id="rightObjects"></div>
+        <div class="count-badge" id="rightCount">0</div>
+      </div>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="buttons">
+      <button class="action" id="leftBtn">← KIRI LEBIH BANYAK</button>
+      <button class="action" id="rightBtn">KANAN LEBIH BANYAK →</button>
+    </div>
+    <div class="footer-note">Pilih kotak yang memiliki benda lebih banyak</div>
+  </div>
+
+  <div id="resultScreen" class="result-screen hidden">
+    <div>🎉 Selesai!</div>
+    <div class="big-score" id="finalScore">0 / 20</div>
+    <p id="finalMsg">Kerja bagus!</p>
+    <button id="restartBtn">↻ Main Lagi</button>
+  </div>
+</div></div>
+
+<script>
+const TOTAL = 20;
+let questions = [];
+let current = 0;
+let score = 0;
+let locked = false;
+
+const qNumEl = document.getElementById('qNum');
+const qTotalEl = document.getElementById('qTotal');
+const scoreCountEl = document.getElementById('scoreCount');
+const progressFill = document.getElementById('progressFill');
+const leftObjects = document.getElementById('leftObjects');
+const rightObjects = document.getElementById('rightObjects');
+const leftCount = document.getElementById('leftCount');
+const rightCount = document.getElementById('rightCount');
+const leftCard = document.getElementById('leftCard');
+const rightCard = document.getElementById('rightCard');
+const feedback = document.getElementById('feedback');
+const leftBtn = document.getElementById('leftBtn');
+const rightBtn = document.getElementById('rightBtn');
+const compareCard = document.getElementById('compareCard');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function generateQuestions(total){
+  const q=[];
+  for(let i=0;i<total;i++){
+    let left = Math.floor(Math.random()*10)+1;
+    let right = Math.floor(Math.random()*10)+1;
+    while(left === right) right = Math.floor(Math.random()*10)+1;
+    q.push({
+      left, right,
+      answer: left > right ? 'left' : 'right',
+      shape: ['circle','square','star','triangle'][Math.floor(Math.random()*4)]
+    });
+  }
+  return q;
+}
+
+function makeShapes(container, count, shape){
+  container.innerHTML='';
+  for(let i=0;i<count;i++){
+    const el=document.createElement('div');
+    el.className='shape '+shape;
+    container.appendChild(el);
+  }
+}
+
+function renderQuestion(){
+  locked=false;
+  leftBtn.disabled=false; rightBtn.disabled=false;
+  leftCard.classList.remove('selected','correct','wrong');
+  rightCard.classList.remove('selected','correct','wrong');
+  feedback.textContent='';
+  feedback.className='feedback';
+
+  const q=questions[current];
+  qNumEl.textContent=current+1;
+  progressFill.style.width=(current/questions.length*100)+'%';
+
+  makeShapes(leftObjects,q.left,q.shape);
+  makeShapes(rightObjects,q.right,q.shape);
+  leftCount.textContent=q.left;
+  rightCount.textContent=q.right;
+}
+
+function choose(side){
+  if(locked) return;
+  locked=true;
+
+  const q=questions[current];
+  const correct=side===q.answer;
+  const chosenCard=side==='left'?leftCard:rightCard;
+  const otherCard=side==='left'?rightCard:leftCard;
+
+  chosenCard.classList.add('selected');
+  leftBtn.disabled=true; rightBtn.disabled=true;
+
+  if(correct){
+    score++;
+    scoreCountEl.textContent=score;
+    feedback.textContent='✅ Benar! Hebat! 🎉';
+    feedback.className='feedback benar';
+    chosenCard.classList.add('correct','pop');
+    compareCard.classList.add('pop');
+    playCorrect();
+  }else{
+    const answerText=q.answer==='left'?'KIRI':'KANAN';
+    feedback.textContent=`❌ Coba lagi. Yang lebih banyak adalah ${answerText}.`;
+    feedback.className='feedback salah';
+    chosenCard.classList.add('wrong','shake');
+    otherCard.classList.add('correct');
+    compareCard.classList.add('shake');
+    playWrong();
+  }
+
+  setTimeout(()=>{
+    compareCard.classList.remove('pop','shake');
+    chosenCard.classList.remove('pop','shake');
+    nextQuestion();
+  },1100);
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length) showResult();
+  else renderQuestion();
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width='100%';
+  finalScore.textContent=`${score} / ${questions.length}`;
+  const pct=score/questions.length;
+  if(pct===1) finalMsg.textContent='Sempurna! Kamu hebat membandingkan jumlah! 🌟';
+  else if(pct>=.8) finalMsg.textContent='Hebat sekali! Terus berlatih ya! 🎈';
+  else if(pct>=.5) finalMsg.textContent='Bagus! Coba lagi supaya makin jago! 💪';
+  else finalMsg.textContent='Tidak apa-apa, ayo coba lagi! 📚';
+}
+
+let audioCtx=null;
+function getCtx(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function tone(freqStart,freqEnd,duration,type='sine',volume=.2){
+  try{
+    const ctx=getCtx(),osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=type; osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+function playCorrect(){tone(880,1760,.18);setTimeout(()=>tone(1318,1318,.22,'sine',.18),90)}
+function playWrong(){tone(220,110,.35,'sawtooth',.16)}
+
+leftBtn.addEventListener('click',()=>choose('left'));
+rightBtn.addEventListener('click',()=>choose('right'));
+leftCard.addEventListener('click',()=>choose('left'));
+rightCard.addEventListener('click',()=>choose('right'));
+leftCard.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')choose('left')});
+rightCard.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')choose('right')});
+
+document.getElementById('restartBtn').addEventListener('click',()=>{
+  questions=generateQuestions(TOTAL);current=0;score=0;scoreCountEl.textContent='0';
+  resultScreen.classList.add('hidden');quizScreen.classList.remove('hidden');renderQuestion();
+});
+
+qTotalEl.textContent=TOTAL;
+questions=generateQuestions(TOTAL);
+renderQuestion();
+</script>
+</body>
+</html>
