@@ -625,8 +625,22 @@ function playCorrect(){
   setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
 }
 
+// ---------- Suara jawaban salah ----------
+const wrongSound = new Audio('sound/faaah.mp3');
+wrongSound.preload = 'auto';
+
 function playWrong(){
-  playTone(220,110,.30,'sawtooth',.16);
+  try{
+    wrongSound.currentTime = 0;
+    const playPromise = wrongSound.play();
+    if(playPromise !== undefined){
+      playPromise.catch(()=>{
+        playTone(220,110,.30,'sawtooth',.16);
+      });
+    }
+  }catch(e){
+    playTone(220,110,.30,'sawtooth',.16);
+  }
 }
 
 [0,1,2].forEach(i=>{
