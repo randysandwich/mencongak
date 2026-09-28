@@ -442,6 +442,55 @@
     .compare-box span{width:14px;height:14px}
   }
 
+
+  /* Additional thumbnail menus */
+  .largest .number-paper,
+  .order-number .number-paper{
+    position:absolute; left:50%; top:8px; transform:translateX(-50%);
+    width:178px; height:116px; padding:12px;
+    background:#fffaf0; border:2px solid #68675f; border-radius:10px;
+    box-shadow:4px 5px 0 rgba(40,42,38,.18);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .largest .number-ball,
+  .order-number .number-ball{
+    width:42px; height:42px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:#cbd9c8; border:2px solid var(--line);
+    font-size:18px; font-weight:900;
+  }
+  .largest .number-ball:nth-child(2){background:#efb3c0}
+  .largest .number-ball:nth-child(3){background:#f5d36c}
+  .order-number .number-paper{flex-wrap:wrap; gap:7px; padding:15px 20px}
+  .order-number .number-ball{width:38px;height:38px;font-size:16px}
+  .order-number .number-ball:nth-child(1){background:#f5d36c}
+  .order-number .number-ball:nth-child(2){background:#cbd9c8}
+  .order-number .number-ball:nth-child(3){background:#efb3c0}
+  .order-number .number-ball:nth-child(4){background:#d9e6d4}
+
+  .syllable-paper{
+    position:absolute; left:50%; top:8px; transform:translateX(-50%);
+    width:188px; height:116px; background:#fffaf0;
+    border:2px solid #68675f; border-radius:10px;
+    box-shadow:4px 5px 0 rgba(40,42,38,.18);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .syllable{
+    min-width:62px; height:55px; padding:5px 8px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background:#cbd9c8; border:3px solid var(--line);
+    font-size:23px; font-weight:1000;
+  }
+  .syllable:nth-child(2){background:#efb3c0}
+
+  @media(max-width:520px){
+    .largest .number-paper,.order-number .number-paper{width:145px;height:100px}
+    .largest .number-ball,.order-number .number-ball{width:34px;height:34px;font-size:14px}
+    .order-number .number-ball{width:31px;height:31px}
+    .syllable-paper{width:150px;height:100px}
+    .syllable{min-width:50px;height:46px;font-size:18px}
+  }
+
 </style>
 </head>
 
@@ -456,6 +505,55 @@
 
   <div class="tagline">PLAY • LEARN • SMILE</div>
     <section class="grid" aria-label="Pilihan permainan">
+
+
+    <a class="game-card card-pink largest" href="bilanganterbesar.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">BILANGAN<br>TERBESAR</h2>
+        <div class="subtitle">PILIH ANGKA TERBESAR</div>
+        <div class="art">
+          <div class="number-paper">
+            <div class="number-ball">4</div>
+            <div class="number-ball">8</div>
+            <div class="number-ball">3</div>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-yellow syllable-game" href="duasukukatatertbuka.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">2 SUKU KATA<br>TERBUKA</h2>
+        <div class="subtitle">LATIHAN MEMBACA</div>
+        <div class="art">
+          <div class="syllable-paper">
+            <div class="syllable">Ra</div>
+            <div class="syllable">Gi</div>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-green order-number" href="urutkanbilangan.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">URUTKAN<br>BILANGAN</h2>
+        <div class="subtitle">DARI YANG TERKECIL</div>
+        <div class="art">
+          <div class="number-paper">
+            <div class="number-ball">7</div>
+            <div class="number-ball">2</div>
+            <div class="number-ball">9</div>
+            <div class="number-ball">4</div>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
 
     <a class="game-card card-green benda" href="hitungbenda.html">
       <div class="card-inner">
@@ -587,8 +685,10 @@
 
     <section class="more">
     <div class="more-label">MASIH BANYAK LAGI</div>
-    <h2>8 permainan untuk belajar sambil bermain.</h2>
+    <h2>11 permainan untuk belajar sambil bermain.</h2>
     <div class="more-list">
+      <div class="more-item">Bilangan Terbesar</div>
+      <div class="more-item">2 Suku Kata Terbuka</div>
       <div class="more-item">Hitung Benda</div>
       <div class="more-item">Hitung Kubus</div>
       <div class="more-item">Lebih Banyak</div>
@@ -597,6 +697,7 @@
       <div class="more-item">Perkalian</div>
       <div class="more-item">Tambah Kurang 2</div>
       <div class="more-item">Tambah Kurang 1</div>
+      <div class="more-item">Urutkan Bilangan</div>
     </div>
   </section>
 
