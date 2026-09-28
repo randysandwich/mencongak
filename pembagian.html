@@ -2,249 +2,89 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Mencongak Pembagian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --papan: #1f4c3f;
-    --papan-dark: #16382e;
-    --kapur: #f5f2e8;
-    --kapur-dim: #cfd6c9;
-    --kuning: #e8b93f;
-    --merah: #d9614f;
-    --hijau: #6fbf8b;
-    --kayu: #8a5a3b;
-    --kayu-dark: #6b431f;
-    --font-utama: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    background:
-      radial-gradient(ellipse at top, #2a5c4c 0%, var(--papan-dark) 70%);
-    font-family: var(--font-utama);
-    padding:24px;
-  }
-  .frame{
-    width:100%;
-    max-width:640px;
-    margin-top:32px;
-    background:var(--kayu);
-    border-radius:22px;
-    padding:14px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.45), inset 0 0 0 6px var(--kayu-dark);
-  }
-  .board{
-    background:
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 4px),
-      var(--papan);
-    border-radius:14px;
-    padding:28px 26px 22px;
-    position:relative;
-    overflow:hidden;
-  }
-  .board::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.05), transparent 40%);
-    pointer-events:none;
-  }
-  h1{
-    font-family: var(--font-utama);
-    font-weight:700;
-    color:var(--kapur);
-    text-align:center;
-    margin:0 0 4px;
-    font-size:1.6rem;
-    letter-spacing:0.5px;
-    text-shadow: 0 0 6px rgba(255,255,255,0.15);
-  }
-  .subtitle{
-    text-align:center;
-    color:var(--kapur-dim);
-    font-size:0.85rem;
-    margin-bottom:18px;
-    font-style:italic;
-  }
-  .score-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-    color:var(--kapur);
-    font-size:0.9rem;
-  }
-  .score-row span.count{
-    color:var(--kuning);
-    font-weight:700;
-    font-size:1.05rem;
-  }
-  .progress-track{
-    height:8px;
-    background:rgba(255,255,255,0.12);
-    border-radius:6px;
-    overflow:hidden;
-    margin-bottom:26px;
-  }
-  .progress-fill{
-    height:100%;
-    background:var(--kuning);
-    width:0%;
-    transition:width 0.4s ease;
-    border-radius:6px;
-  }
-  .problem-card{
-    background:rgba(255,255,255,0.04);
-    border:2px dashed rgba(255,255,255,0.25);
-    border-radius:16px;
-    padding:34px 20px;
-    text-align:center;
-    margin-bottom:20px;
-    min-height:120px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .equation{
-    font-family: var(--font-utama);
-    font-weight:700;
-    color:var(--kapur);
-    font-size:2.6rem;
-    letter-spacing:4px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    flex-wrap:wrap;
-    justify-content:center;
-  }
-  .answer-input{
-    width:88px;
-    font-size:2.2rem;
-    text-align:center;
-    font-family: var(--font-utama);
-    font-weight:700;
-    background:transparent;
-    border:none;
-    border-bottom:4px solid var(--kuning);
-    color:var(--kuning);
-    outline:none;
-    padding:2px 4px;
-  }
-  .answer-input::-webkit-outer-spin-button,
-  .answer-input::-webkit-inner-spin-button{
-    -webkit-appearance:none;
-    margin:0;
-  }
-  .answer-input[type=number]{-moz-appearance:textfield;}
-  .feedback{
-    text-align:center;
-    min-height:30px;
-    font-family: var(--font-utama);
-    font-weight:500;
-    font-size:1.15rem;
-    margin-bottom:14px;
-    transition:opacity 0.2s;
-  }
-  .feedback.benar{color:var(--hijau);}
-  .feedback.salah{color:var(--merah);}
-  .buttons{
-    display:flex;
-    gap:12px;
-  }
-  button{
-    flex:1;
-    padding:14px 10px;
-    border-radius:12px;
-    border:none;
-    font-size:1rem;
-    font-weight:700;
-    cursor:pointer;
-    font-family: var(--font-utama);
-    transition:transform 0.12s ease, box-shadow 0.12s ease;
-  }
-  button:active{transform:scale(0.96);}
-  #checkBtn{
-    background:var(--kuning);
-    color:#3a2a06;
-    box-shadow:0 4px 0 #b4881f;
-  }
-  #skipBtn{
-    background:transparent;
-    color:var(--kapur-dim);
-    border:2px solid rgba(255,255,255,0.25);
-  }
-  .result-screen{
-    text-align:center;
-    color:var(--kapur);
-    padding:20px 0;
-    font-family: var(--font-utama);
-  }
-  .result-screen .big-score{
-    font-family: var(--font-utama);
-    font-weight:900;
-    font-size:3rem;
-    color:var(--kuning);
-    margin:6px 0 2px;
-  }
-  .result-screen p{color:var(--kapur-dim); margin:4px 0 22px;}
-  .hidden{display:none;}
-  .shake{animation:shake 0.35s;}
-  @keyframes shake{
-    10%,90%{transform:translateX(-2px);}
-    20%,80%{transform:translateX(4px);}
-    30%,50%,70%{transform:translateX(-8px);}
-    40%,60%{transform:translateX(8px);}
-  }
-  .pop{animation:pop 0.35s;}
-  @keyframes pop{
-    0%{transform:scale(1);}
-    40%{transform:scale(1.08);}
-    100%{transform:scale(1);}
-  }
-  .chalk-dust{
-    position:absolute;
-    bottom:0; left:0; right:0;
-    height:10px;
-    background:linear-gradient(0deg, rgba(255,255,255,0.06), transparent);
-  }
-  @media (max-width:420px){
-    .equation{font-size:2rem; gap:8px;}
-    .answer-input{width:64px; font-size:1.7rem;}
-  }
+:root{--cream:#f4f1e8;--surface:#fffdf7;--ink:#3f4743;--muted:#8b918c;--teal:#438f8b;--teal-dark:#34716e;--yellow:#f2c94c;--coral:#e98a73;--green:#63ad82;--line:#e5e0d4}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:var(--cream);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
+button,input{font:inherit}
+.frame{width:100%;height:100dvh;max-width:520px;margin:0 auto;background:var(--cream)}
+.board{width:100%;height:100%;padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:40px;display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}
+.top-icon{width:40px;height:40px;border:0;border-radius:14px;background:var(--surface);color:var(--ink);font-size:20px;box-shadow:0 2px 8px rgba(63,71,67,.07)}
+.top-title{text-align:center;font-size:14px;font-weight:900;letter-spacing:.2px;line-height:1.1}
+.top-title small{display:block;color:var(--muted);font-size:8px;letter-spacing:1.6px;margin-top:3px}
+.mode-pill{align-self:center;margin-top:8px;background:var(--teal);color:white;border-radius:999px;padding:7px 13px;font-size:11px;font-weight:900;box-shadow:0 4px 0 var(--teal-dark)}
+.subtitle{text-align:center;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.5px;margin:9px 0 8px}
+#quizScreen{min-height:0;flex:1;display:flex;flex-direction:column}
+.score-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;margin:0 2px 6px;color:var(--muted)}
+.score-row .count{color:var(--teal);font-size:14px}
+.progress-track{height:7px;background:#e7e1d5;border-radius:99px;overflow:hidden;margin-bottom:10px;flex:0 0 auto}
+.progress-fill{height:100%;width:0;background:var(--yellow);border-radius:99px;transition:width .3s ease}
+.problem-card{min-height:0;flex:1;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 8px 22px rgba(63,71,67,.06);margin-bottom:8px}
+.equation{display:flex;align-items:center;justify-content:center;gap:clamp(7px,2.5vw,14px);flex-wrap:wrap;font-weight:900;color:var(--ink);font-size:clamp(2.25rem,11vw,4.2rem);line-height:1}
+.answer-input{width:clamp(68px,19vw,96px);font-size:clamp(2rem,9vw,3.4rem);text-align:center;font-weight:900;background:transparent;border:0;border-bottom:5px solid var(--yellow);color:var(--teal);outline:0;padding:0 2px 4px;border-radius:0}
+.answer-input:focus{border-bottom-color:var(--teal)}
+.answer-input::-webkit-outer-spin-button,.answer-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.answer-input[type=number]{-moz-appearance:textfield}
+.feedback{height:25px;flex:0 0 25px;text-align:center;font-weight:800;font-size:12px;color:var(--muted);margin-bottom:7px}
+.feedback.benar{color:var(--green)}.feedback.salah{color:var(--coral)}
+.buttons{display:flex;gap:9px;flex:0 0 auto}
+button{min-height:45px;border:0;border-radius:14px;font-size:13px;font-weight:900;cursor:pointer;transition:transform .12s ease,filter .12s ease}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.55;cursor:default}
+#checkBtn{flex:1;background:var(--yellow);color:#4b3b0b;box-shadow:0 4px 0 #d3ab35}
+#skipBtn{width:92px;background:var(--surface);color:var(--teal);border:1px solid #d9e5e1;box-shadow:0 3px 0 #dce7e3}
+.result-screen{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);padding:18px}
+.result-screen>div:first-child{font-size:18px;font-weight:900}
+.result-screen .big-score{font-size:48px;font-weight:1000;color:var(--teal);margin:10px 0 4px}
+.result-screen p{color:var(--muted);margin:0 0 22px;font-size:13px}
+#restartBtn{width:min(260px,100%);background:var(--yellow)!important;color:#4b3b0b!important;box-shadow:0 4px 0 #d3ab35!important}
+.hidden{display:none!important}
+.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.035)}100%{transform:scale(1)}}
+@media (max-height:620px){
+ .board{padding-top:8px}.topbar{height:34px}.top-icon{width:34px;height:34px;border-radius:12px}
+ .mode-pill{margin-top:5px;padding:5px 11px}.subtitle{margin:5px 0 5px}
+ .progress-track{margin-bottom:7px}.problem-card{border-radius:18px;margin-bottom:5px}
+ .feedback{height:20px;flex-basis:20px;margin-bottom:4px}.buttons button{min-height:40px}
+}
+@media (max-height:520px){
+ .topbar{height:30px}.top-icon{width:30px;height:30px;font-size:16px}.top-title{font-size:12px}.top-title small{display:none}
+ .mode-pill,.subtitle{display:none}.score-row{margin-bottom:4px}.progress-track{height:5px;margin-bottom:5px}
+ .feedback{display:none}.problem-card{margin-bottom:6px}
+ .buttons button{min-height:38px}
+}
 </style>
 </head>
 <body>
 
 <div class="frame">
   <div class="board">
-    <h1>➗ Mencongak Pembagian</h1>
+    <div class="topbar">
+      <button class="top-icon" type="button" aria-label="Kembali">‹</button>
+      <div class="top-title">Belajar Pembagian<small>PLAY • LEARN • SMILE</small></div>
+      <button class="top-icon" type="button" aria-label="Bantuan">?</button>
+    </div>
+<div class="subtitle">UNTUK TK • PEMBAGIAN 1–10 • 300 SOAL</div>
 
     <div id="quizScreen">
       <div class="score-row">
         <span>Soal <span id="qNum">1</span> / <span id="qTotal">300</span></span>
         <span>Skor: <span class="count" id="scoreCount">0</span></span>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-
-      <div class="problem-card" id="problemCard">
-        <div class="equation" id="equationText"></div>
-      </div>
-
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="problem-card" id="problemCard"><div class="equation" id="equationText"></div></div>
       <div class="feedback" id="feedback"></div>
-
       <div class="buttons">
-        <button id="checkBtn">✔️ Cek Jawaban</button>
-        <button id="skipBtn">⏭️ Lewati</button>
+        <button id="checkBtn">✓ Cek Jawaban</button>
+        <button id="skipBtn">→ Lewati</button>
       </div>
     </div>
 
@@ -252,10 +92,8 @@
       <div>🎉 Selesai! 🎉</div>
       <div class="big-score" id="finalScore">0 / 300</div>
       <p id="finalMsg">Kerja bagus!</p>
-      <button id="restartBtn" style="background:var(--kuning); color:#3a2a06; box-shadow:0 4px 0 #b4881f;">🔄 Main Lagi</button>
+      <button id="restartBtn">↻ Main Lagi</button>
     </div>
-
-    <div class="chalk-dust"></div>
   </div>
 </div>
 
