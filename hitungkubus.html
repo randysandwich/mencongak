@@ -124,30 +124,19 @@ button,input{font:inherit}
   height:min(54vh,330px);min-height:245px;
   display:grid;place-items:center;
 }
-.scene{width:360px;height:300px;position:relative;transform:scale(.86)}
-.cube{
-  position:absolute;width:78px;height:78px;transform-style:preserve-3d;
+.scene{
+  width:360px;
+  height:300px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-.face{position:absolute;border:1.6px solid var(--cube-line)}
-.top{
-  width:78px;height:78px;
-  transform:rotate(30deg) skewY(-30deg) scaleY(.866);
-  background:var(--cube-top);transform-origin:top left;left:0;top:0;
-}
-.left{
-  width:78px;height:78px;
-  transform:skewY(30deg) scaleY(.866);
-  background:var(--cube-left);transform-origin:top left;left:0;top:67px;
-}
-.right{
-  width:78px;height:78px;
-  transform:skewY(-30deg) scaleY(.866);
-  background:var(--cube-right);transform-origin:top left;left:78px;top:67px;
-}
-.scene-shadow{
-  position:absolute;width:235px;height:90px;left:62px;top:205px;
-  background:rgba(69,103,92,.12);transform:rotate(-30deg) skewX(30deg);
-  border-radius:50%;filter:blur(2px);
+.scene svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
 }
 .feedback{
   flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;
@@ -247,8 +236,7 @@ button,input{font:inherit}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
 
 @media(max-width:420px){
-  .scene{transform:scale(.78)}
-  .cube-area{height:min(51vh,310px);min-height:225px}
+    .cube-area{height:min(51vh,310px);min-height:225px}
 }
 @media(max-height:620px){
   .topbar{grid-template-columns:34px 1fr 34px}
@@ -386,31 +374,88 @@ function loadPuzzle(){
 }
 
 function draw(cells){
-  const scene=document.getElementById("scene");
-  scene.innerHTML='<div class="scene-shadow"></div>';
+  const scene = document.getElementById("scene");
 
-  const all=[];
+  /*
+    SVG isometrik dipakai agar bentuk kubus stabil di semua browser/mobile.
+    Setiap kubus terdiri dari 3 bidang: atas, kiri, kanan.
+  */
+  const NS = "http://www.w3.org/2000/svg";
+  const W = 360, H = 300;
+  const sx = 45;       // setengah lebar diamond
+  const sy = 26;       // setengah tinggi diamond
+  const cubeH = 52;    // tinggi vertikal kubus
+  const ox = 180;
+  const oy = 65;
+
+  const cubes = [];
   cells.forEach(([x,y,h])=>{
-    for(let z=0;z<h;z++) all.push({x,y,z});
+    for(let z=0; z<h; z++){
+      cubes.push({x,y,z});
+    }
   });
 
-  all.sort((a,b)=>
-    (a.x+a.y+a.z)-(b.x+b.y+b.z) || a.y-b.y || a.x-b.x
+  // Kubus yang lebih jauh digambar lebih dahulu.
+  cubes.sort((a,b)=>
+    (a.x+a.y+a.z)-(b.x+b.y+b.z) ||
+    (a.x+a.y)-(b.x+b.y) ||
+    a.x-b.x
   );
 
-  all.forEach(c=>{
-    const el=document.createElement("div");
-    el.className="cube";
-    const px=105+(c.x-c.y)*58;
-    const py=105+(c.x+c.y)*34-c.z*58;
-    el.style.left=px+"px";
-    el.style.top=py+"px";
-    el.innerHTML=
-      '<div class="face top"></div>'+
-      '<div class="face left"></div>'+
-      '<div class="face right"></div>';
-    scene.appendChild(el);
+  const svg = document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  svg.setAttribute("width","100%");
+  svg.setAttribute("height","100%");
+  svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+  svg.style.overflow="visible";
+
+  // Bayangan lembut di bawah struktur.
+  const shadow = document.createElementNS(NS,"ellipse");
+  shadow.setAttribute("cx","180");
+  shadow.setAttribute("cy","238");
+  shadow.setAttribute("rx","105");
+  shadow.setAttribute("ry","28");
+  shadow.setAttribute("fill","rgba(69,103,92,.12)");
+  shadow.setAttribute("transform","rotate(-10 180 238)");
+  svg.appendChild(shadow);
+
+  function poly(points, fill){
+    const p = document.createElementNS(NS,"polygon");
+    p.setAttribute("points",points.map(v=>v.join(",")).join(" "));
+    p.setAttribute("fill",fill);
+    p.setAttribute("stroke","#4b8174");
+    p.setAttribute("stroke-width","1.4");
+    p.setAttribute("stroke-linejoin","round");
+    return p;
+  }
+
+  cubes.forEach(c=>{
+    // Titik A adalah ujung atas diamond.
+    const A = [
+      ox + (c.x-c.y)*sx,
+      oy + (c.x+c.y)*sy - c.z*cubeH
+    ];
+    const B = [A[0]+sx, A[1]+sy];
+    const C = [A[0], A[1]+sy*2];
+    const D = [A[0]-sx, A[1]+sy];
+
+    const Ad = [A[0],A[1]+cubeH];
+    const Bd = [B[0],B[1]+cubeH];
+    const Cd = [C[0],C[1]+cubeH];
+    const Dd = [D[0],D[1]+cubeH];
+
+    const g = document.createElementNS(NS,"g");
+
+    // Urutan: kiri, kanan, lalu atas.
+    g.appendChild(poly([D,C,Cd,Dd],"#72aa98"));
+    g.appendChild(poly([B,C,Cd,Bd],"#5f9685"));
+    g.appendChild(poly([A,B,C,D],"#a8d2c4"));
+
+    svg.appendChild(g);
   });
+
+  scene.innerHTML="";
+  scene.appendChild(svg);
 }
 
 function check(){
