@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Bilangan Terbesar</title>
+<style>
+:root{
+  --bg:#f4f1e8; --surface:#fffdf7; --ink:#3f4743; --muted:#8b918c;
+  --teal:#438f8b; --teal-dark:#2f706d; --yellow:#f2c94c; --yellow-dark:#d6aa2c;
+  --coral:#e98a73; --green:#63ad82; --line:#dfe1d8;
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh}
+.board{
+ width:100%;height:100%;overflow:hidden;background:
+ radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+ radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+ padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+ max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+ display:flex;flex-direction:column;
+}
+.topbar{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:6px;margin:0 1px 2px}
+.icon-btn{width:40px;height:40px;border:2px solid #d7d8d1;background:var(--surface);border-radius:14px;color:var(--ink);display:grid;place-items:center;font-size:1.15rem;font-weight:900;box-shadow:0 2px 0 rgba(58,65,61,.08)}
+.brand{text-align:center;line-height:1.02}
+.brand h1{margin:0;font-size:1.22rem;font-weight:900;letter-spacing:-.4px}
+.brand .mini{margin-top:3px;color:var(--coral);font-size:.52rem;font-weight:900;letter-spacing:1.6px}
+.mode-pill{width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill strong{color:var(--teal)}
+.theme{text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--teal);font-size:.68rem}
+#quizScreen{flex:1;min-height:0;display:flex;flex-direction:column}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+.problem-card{
+ flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
+ flex-direction:column;background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
+ padding:18px 10px;margin:0 1px 7px;box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
+ position:relative;overflow:hidden;
+}
+.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
+.instruction{position:relative;z-index:1;font-size:1.15rem;font-weight:900;color:var(--teal);margin-bottom:24px;text-align:center}
+.number-row{position:relative;z-index:1;display:flex;justify-content:center;gap:12px;width:100%}
+.number-choice{
+ width:clamp(78px,22vw,105px);height:clamp(68px,19vw,88px);
+ border:2px solid #cfd9d7;border-radius:14px;background:#fff;
+ color:var(--ink);font-size:clamp(2.1rem,10vw,3.2rem);font-weight:900;
+ cursor:pointer;box-shadow:0 3px 0 rgba(58,65,61,.07);transition:.12s;
+}
+.number-choice:active{transform:translateY(3px);box-shadow:none}
+.number-choice.selected{border-color:var(--teal);background:#eaf5f3;color:var(--teal);box-shadow:0 0 0 3px rgba(67,143,139,.10)}
+.number-choice.correct{border-color:var(--green);background:#eaf7ef;color:var(--green)}
+.number-choice.wrong{border-color:var(--coral);background:#fff0eb;color:var(--coral)}
+.feedback{min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.benar{color:var(--green)} .feedback.salah{color:var(--coral)}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{min-height:45px;border:0;border-radius:15px;font-weight:900;font-size:.85rem;cursor:pointer}
+#checkBtn{background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark)}
+#skipBtn{background:var(--surface);color:var(--muted);border:2px solid #dedfd7;box-shadow:0 2px 0 rgba(58,65,61,.08)}
+button.action:disabled{opacity:.55}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+.result-screen{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)}
+.big-score{color:var(--teal);font-size:3rem;font-weight:900;margin:6px 0 2px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark)}
+.hidden{display:none!important}
+.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+@media(max-height:620px){
+ .topbar{grid-template-columns:34px 1fr 34px}.icon-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+ .brand h1{font-size:1rem}.brand .mini{font-size:.43rem}.mode-pill{font-size:.58rem;padding:3px 9px}
+ .theme{font-size:.51rem}.theme strong{font-size:.56rem}.progress-track{margin-bottom:4px}
+ .problem-card{margin-bottom:4px;border-radius:18px}.instruction{margin-bottom:12px;font-size:.95rem}
+ .number-row{gap:7px}.number-choice{height:58px}.feedback{min-height:19px;font-size:.66rem}
+ button.action{min-height:38px;font-size:.72rem;border-radius:12px}.footer-note{display:none}
+}
+@media(max-height:520px){.mode-pill,.theme{display:none}.problem-card{margin-top:2px}.number-choice{height:52px;font-size:1.8rem}}
+</style>
+</head>
+<body>
+<div class="frame"><div class="board">
+  <div class="topbar">
+    <button class="icon-btn" type="button">←</button>
+    <div class="brand"><h1>Belajar Hitung</h1><div class="mini">PLAY • LEARN • SMILE</div></div>
+    <button class="icon-btn" type="button">?</button>
+  </div>
+  <div class="mode-pill">🔢 Latihan <strong>Bilangan Terbesar</strong></div>
+  <div class="theme">UNTUK TK • <strong>ANGKA 1–9</strong> • PILIH YANG TERBESAR</div>
+
+  <div id="quizScreen">
+    <div class="score-row"><span>Soal <span id="qNum">1</span> / <span id="qTotal">100</span></span><span>Skor <span class="count" id="scoreCount">0</span></span></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="problem-card" id="problemCard">
+      <div class="instruction">Bilangan terbesar adalah...</div>
+      <div class="number-row" id="numberRow"></div>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="buttons">
+      <button class="action" id="checkBtn">✓ Cek Jawaban</button>
+      <button class="action" id="skipBtn">→ Lewati</button>
+    </div>
+    <div class="footer-note">Pilih satu angka, lalu tekan Cek Jawaban</div>
+  </div>
+
+  <div id="resultScreen" class="result-screen hidden">
+    <div>🎉 Selesai!</div><div class="big-score" id="finalScore">0 / 100</div>
+    <p id="finalMsg">Kerja bagus!</p><button id="restartBtn">↻ Main Lagi</button>
+  </div>
+</div></div>
+
+<script>
+const TOTAL=100;
+let questions=[],current=0,score=0,selected=null,locked=false;
+const qNum=document.getElementById('qNum'),qTotal=document.getElementById('qTotal'),scoreEl=document.getElementById('scoreCount');
+const row=document.getElementById('numberRow'),feedback=document.getElementById('feedback'),card=document.getElementById('problemCard');
+const fill=document.getElementById('progressFill'),check=document.getElementById('checkBtn'),skip=document.getElementById('skipBtn');
+const quiz=document.getElementById('quizScreen'),result=document.getElementById('resultScreen'),finalScore=document.getElementById('finalScore'),finalMsg=document.getElementById('finalMsg');
+
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function generateQuestions(){
+  const pool=[];
+  // Setiap soal wajib memiliki 3 angka yang berbeda.
+  for(let a=1;a<=9;a++) for(let b=1;b<=9;b++) for(let c=1;c<=9;c++){
+    const nums=[a,b,c];
+    if(new Set(nums).size===3){
+      pool.push({nums,answer:Math.max(...nums)});
+    }
+  }
+  return shuffle(pool).slice(0,TOTAL);
+}
+function render(){
+  const q=questions[current]; selected=null;locked=false;
+  qNum.textContent=current+1; qTotal.textContent=TOTAL; fill.style.width=(current/TOTAL*100)+'%';
+  feedback.textContent='';feedback.className='feedback';row.innerHTML='';
+  shuffle(q.nums).forEach(n=>{
+    const b=document.createElement('button');b.className='number-choice';b.textContent=n;
+    b.onclick=()=>select(b,n);row.appendChild(b);
+  });
+}
+function select(btn,n){
+  if(locked)return;
+  document.querySelectorAll('.number-choice').forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');selected=n;
+}
+function checkAnswer(){
+  if(locked)return;
+  if(selected===null){feedback.textContent='Pilih satu angka dulu ya!';return}
+  locked=true;
+  const q=questions[current];
+  document.querySelectorAll('.number-choice').forEach(b=>{
+    const n=Number(b.textContent);
+    if(n===q.answer)b.classList.add('correct');
+    if(n===selected && selected!==q.answer)b.classList.add('wrong');
+  });
+  if(selected===q.answer){score++;scoreEl.textContent=score;feedback.textContent='✅ Benar! Pintar sekali!';feedback.className='feedback benar';card.classList.add('pop')}
+  else{feedback.textContent='❌ Belum tepat. Coba perhatikan angka terbesar.';feedback.className='feedback salah';card.classList.add('shake')}
+  check.disabled=true;skip.disabled=true;
+  setTimeout(()=>{card.classList.remove('pop','shake');next()},900);
+}
+function next(){
+  current++;check.disabled=false;skip.disabled=false;
+  if(current>=TOTAL)showResult();else render();
+}
+function showResult(){
+  quiz.classList.add('hidden');result.classList.remove('hidden');fill.style.width='100%';
+  finalScore.textContent=`${score} / ${TOTAL}`;
+  finalMsg.textContent=score===TOTAL?'Sempurna! 🌟':score>=80?'Hebat sekali! 🎈':score>=50?'Bagus, terus berlatih ya! 💪':'Ayo coba lagi, pasti bisa! 📚';
+}
+check.onclick=checkAnswer;
+skip.onclick=()=>{if(!locked){feedback.textContent=`Jawabannya ${questions[current].answer}`;setTimeout(next,600)}};
+document.getElementById('restartBtn').onclick=()=>{questions=generateQuestions();current=0;score=0;scoreEl.textContent=0;result.classList.add('hidden');quiz.classList.remove('hidden');render()};
+questions=generateQuestions();render();
+</script>
+</body>
+</html>
