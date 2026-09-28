@@ -383,7 +383,7 @@
 
     <div class="mode-pill">🍎 Latihan <strong>Tambah & Kurang</strong></div>
 
-    <div class="theme">UNTUK TK • <strong>ANGKA 1–19</strong> • TAMBAH / KURANG 1</div>
+    <div class="theme">UNTUK TK • <strong>ANGKA 1–98</strong> • TAMBAH / KURANG 1</div>
 
     <div id="quizScreen">
       <div class="score-row">
@@ -421,108 +421,20 @@
 
 <script>
 // ---------- Soal ----------
-const rawQuestions = [
-  "13 - 1",
-  "2 + 1",
-  "16 + 1",
-  "3 + 1",
-  "9 - 1",
-  "4 - 1",
-  "7 - 1",
-  "5 - 1",
-  "18 - 1",
-  "17 + 1",
-  "12 + 1",
-  "18 + 1",
-  "15 - 1",
-  "6 - 1",
-  "11 + 1",
-  "7 + 1",
-  "10 + 1",
-  "19 - 1",
-  "9 - 1",
-  "11 - 1",
-  "4 - 1",
-  "10 - 1",
-  "15 + 1",
-  "17 - 1",
-  "1 - 1",
-  "15 - 1",
-  "17 - 1",
-  "13 - 1",
-  "5 + 1",
-  "13 - 1",
-  "16 + 1",
-  "19 + 1",
-  "16 + 1",
-  "10 + 1",
-  "16 - 1",
-  "5 + 1",
-  "14 + 1",
-  "9 + 1",
-  "8 - 1",
-  "17 - 1",
-  "8 - 1",
-  "1 + 1",
-  "15 - 1",
-  "10 - 1",
-  "19 - 1",
-  "12 + 1",
-  "2 - 1",
-  "12 + 1",
-  "11 + 1",
-  "12 + 1",
-  "12 + 1",
-  "7 + 1",
-  "14 - 1",
-  "19 + 1",
-  "18 - 1",
-  "8 + 1",
-  "16 + 1",
-  "8 + 1",
-  "12 + 1",
-  "3 - 1",
-  "12 + 1",
-  "12 + 1",
-  "9 - 1",
-  "4 - 1",
-  "1 + 1",
-  "9 - 1",
-  "14 + 1",
-  "10 + 1",
-  "2 - 1",
-  "18 - 1",
-  "5 - 1",
-  "6 + 1",
-  "10 + 1",
-  "4 - 1",
-  "14 + 1",
-  "17 - 1",
-  "9 + 1",
-  "14 + 1",
-  "17 + 1",
-  "15 - 1",
-  "16 - 1",
-  "17 + 1",
-  "15 + 1",
-  "4 - 1",
-  "5 + 1",
-  "14 - 1",
-  "9 - 1",
-  "12 - 1",
-  "14 + 1",
-  "19 - 1",
-  "8 - 1",
-  "2 - 1",
-  "10 + 1",
-  "1 + 1",
-  "14 + 1",
-  "2 + 1",
-  "4 + 1",
-  "18 + 1",
-  "2 - 1",
-  "11 + 1"
-];
+function generateQuestions(total = 100){
+  // Angka awal selalu 1–98.
+  // Operasi tetap +1 atau -1.
+  // Dibuat unik agar 100 soal tidak berulang pada satu sesi.
+  const pool = [];
+
+  for(let n = 1; n <= 98; n++){
+    pool.push(`${n} + 1`);
+    pool.push(`${n} - 1`);
+  }
+
+  const shuffled = shuffle(pool);
+  return shuffled.slice(0, total);
+}
 
 function shuffle(arr){
   const a = arr.slice();
@@ -542,7 +454,7 @@ function parseExpr(expr){
   return {a, op, b, result};
 }
 
-let questions = shuffle(rawQuestions).map(parseExpr);
+let questions = generateQuestions(100).map(parseExpr);
 let current = 0;
 let score = 0;
 
@@ -696,7 +608,7 @@ skipBtn.addEventListener('click', ()=>{
   setTimeout(nextQuestion, 700);
 });
 restartBtn.addEventListener('click', ()=>{
-  questions = shuffle(rawQuestions).map(parseExpr);
+  questions = generateQuestions(100).map(parseExpr);
   current = 0;
   score = 0;
   scoreCountEl.textContent = 0;
