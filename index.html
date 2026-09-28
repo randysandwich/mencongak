@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Mencongak • Pilih Permainan</title>
+<style>
+  :root{
+    --bg:#f7f0e4;
+    --ink:#242735;
+    --muted:#657a70;
+    --line:#30332f;
+    --cream:#fff8e9;
+    --pink:#ef8fa8;
+    --sage:#cbd9c8;
+    --yellow:#f8d36a;
+    --green:#b9d1c1;
+    --shadow:0 5px 0 #30332f, 0 9px 18px rgba(47,48,43,.10);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg)}
+  body{
+    font-family: "Trebuchet MS","Arial Rounded MT Bold",Arial,sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .app{
+    width:min(100%,760px);
+    margin:0 auto;
+    padding:18px 18px 32px;
+  }
+
+  /* Header */
+  .header{
+    height:78px;
+    display:grid;
+    grid-template-columns:72px 1fr 92px;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+  }
+
+  .brand{
+    text-align:center;
+    font-weight:900;
+    font-size:42px;
+    line-height:1;
+    letter-spacing:-3px;
+  }
+  .brand span{
+    color:var(--pink);
+    font-size:.48em;
+    vertical-align:top;
+    letter-spacing:-1px;
+    position:relative;
+    top:-7px;
+    margin-left:2px;
+  }
+
+  .icon-btn,.login{
+    height:68px;
+    border:3px solid var(--line);
+    background:#fffdf7;
+    border-radius:23px;
+    box-shadow:var(--shadow);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+  }
+
+  .icon-btn{
+    width:68px;
+    font-size:30px;
+    cursor:pointer;
+    text-decoration:none;
+    color:var(--ink);
+  }
+
+  .login{
+    font-size:18px;
+  }
+
+  .tagline{
+    text-align:center;
+    margin:-5px 0 18px;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:2px;
+  }
+
+  /* Cards */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+  }
+
+  .game-card{
+    position:relative;
+    min-height:310px;
+    border:4px solid var(--line);
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    text-decoration:none;
+    color:var(--ink);
+    transition:transform .12s ease, box-shadow .12s ease;
+    isolation:isolate;
+  }
+
+  .game-card:active{
+    transform:translateY(4px);
+    box-shadow:0 2px 0 var(--line);
+  }
+
+  .card-green{background:#d9e6d4}
+  .card-yellow{background:#f8d36a}
+  .card-pink{background:#f5d5d7}
+  .card-cream{background:#eee4cf}
+
+  .card-inner{
+    position:absolute;
+    inset:0;
+    padding:18px 14px 14px;
+  }
+
+  .mini-brand{
+    text-align:center;
+    font-size:14px;
+    font-weight:900;
+    letter-spacing:-1px;
+    margin-bottom:2px;
+  }
+  .mini-brand span{color:var(--pink);font-size:9px;vertical-align:top}
+
+  .title{
+    text-align:center;
+    font-size:30px;
+    line-height:.94;
+    font-weight:1000;
+    letter-spacing:.5px;
+    margin:0;
+  }
+
+  .subtitle{
+    text-align:center;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:1px;
+    opacity:.75;
+    margin-top:8px;
+  }
+
+  .art{
+    position:absolute;
+    left:50%;
+    top:100px;
+    transform:translateX(-50%);
+    width:80%;
+    height:125px;
+  }
+
+  /* Common paper */
+  .paper{
+    position:absolute;
+    left:50%;
+    top:4px;
+    transform:translateX(-50%);
+    width:170px;
+    height:120px;
+    background:#fffaf0;
+    border:2px solid #68675f;
+    border-radius:7px;
+    box-shadow:4px 5px 0 rgba(40,42,38,.18);
+  }
+
+  /* Division */
+  .division .paper{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-template-rows:repeat(3,1fr);
+    overflow:hidden;
+  }
+  .division .paper i{
+    border-right:1px solid #c4c1b7;
+    border-bottom:1px solid #c4c1b7;
+    display:flex;align-items:center;justify-content:center;
+    font-style:normal;font-weight:900;font-size:17px;
+  }
+  .division .paper i:nth-child(4n){border-right:0}
+  .division .paper i:nth-last-child(-n+4){border-bottom:0}
+  .brain{
+    position:absolute;
+    left:4px;bottom:0;
+    width:54px;height:54px;border-radius:48% 52% 45% 55%;
+    background:#ef8fa8;border:3px solid var(--line);
+    box-shadow:inset 7px -5px 0 rgba(255,255,255,.18);
+  }
+  .brain:before,.brain:after{
+    content:"";position:absolute;background:var(--line);border-radius:50%;
+    width:5px;height:5px;top:18px;
+  }
+  .brain:before{left:15px}.brain:after{right:13px}
+  .brain .smile{
+    position:absolute;left:19px;top:28px;width:17px;height:9px;
+    border-bottom:3px solid var(--line);border-radius:50%;
+  }
+
+  /* Multiplication */
+  .multiplication .paper{
+    width:180px;height:112px;padding:9px;
+    display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:8px;
+  }
+  .multiplication .box{
+    width:48px;height:34px;background:#cfe0d0;
+    border:2px solid #8d9d91;border-radius:4px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;
+  }
+  .multiplication .box:nth-child(2){background:#efb3c0}
+  .multiplication .box:nth-child(3){background:#f5d36c}
+
+  /* +2 -2 */
+  .plusminus2 .paper{
+    width:184px;height:120px;
+    padding:10px;
+  }
+  .plusminus2 .sum{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:5px;
+  }
+  .plusminus2 .sum span{
+    height:24px;border-radius:4px;background:#d9e6d4;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:900;
+  }
+  .plusminus2 .sum span:nth-child(2n){background:#efb3c0}
+  .plusminus2 .pencil{
+    position:absolute;left:-20px;bottom:-4px;width:95px;height:13px;
+    background:#ef8fa8;border:2px solid var(--line);border-radius:8px;
+    transform:rotate(-48deg);
+  }
+
+  /* +1 -1 */
+  .plusminus1 .paper{
+    width:180px;height:116px;padding:12px;
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    flex-wrap:wrap;
+  }
+  .plusminus1 .number{
+    width:43px;height:43px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:#cbd9c8;border:2px solid #89998e;
+    font-size:19px;font-weight:900;
+  }
+  .plusminus1 .number:nth-child(2){background:#efb3c0}
+  .plusminus1 .number:nth-child(3){background:#f5d36c}
+
+  .main-btn{
+    position:absolute;
+    right:12px;
+    bottom:12px;
+    padding:15px 18px;
+    min-width:108px;
+    border:3px solid var(--line);
+    border-radius:20px;
+    background:#fff6d9;
+    box-shadow:3px 4px 0 var(--line);
+    font-size:14px;
+    font-weight:1000;
+    letter-spacing:.6px;
+    text-align:center;
+  }
+
+  /* Bottom info */
+  .more{
+    margin-top:30px;
+    padding:26px 22px 22px;
+    border:3px solid #ddd4c4;
+    border-radius:30px;
+    background:#fffdf7;
+    box-shadow:0 4px 0 rgba(50,50,45,.06);
+  }
+  .more-label{
+    color:#4f8277;
+    font-size:13px;
+    font-weight:1000;
+    letter-spacing:1.8px;
+  }
+  .more h2{
+    margin:10px 0 18px;
+    font-size:27px;
+    line-height:1.05;
+  }
+  .more-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px 14px;
+  }
+  .more-item{
+    background:#f5ead9;
+    border-radius:14px;
+    padding:11px 13px;
+    font-size:14px;
+    font-weight:900;
+  }
+
+  @media(max-width:520px){
+    .app{padding:12px 14px 28px}
+    .header{
+      height:68px;
+      grid-template-columns:62px 1fr 82px;
+      gap:8px;
+      margin-bottom:12px;
+    }
+    .icon-btn{width:62px;height:62px;border-radius:20px;font-size:27px}
+    .login{height:62px;border-radius:20px;font-size:16px}
+    .brand{font-size:38px}
+    .tagline{margin:-2px 0 14px;font-size:10px}
+    .grid{gap:14px}
+    .game-card{min-height:255px;border-radius:25px;border-width:3px}
+    .card-inner{padding:14px 10px}
+    .title{font-size:24px}
+    .mini-brand{font-size:12px}
+    .art{top:82px;height:105px}
+    .paper{width:145px;height:100px}
+    .division .paper{width:145px;height:100px}
+    .division .paper i{font-size:13px}
+    .multiplication .paper{width:150px;height:92px}
+    .multiplication .box{width:38px;height:27px;font-size:12px}
+    .plusminus2 .paper{width:150px;height:100px}
+    .plusminus1 .paper{width:150px;height:96px}
+    .plusminus1 .number{width:34px;height:34px;font-size:15px}
+    .main-btn{right:8px;bottom:8px;min-width:92px;padding:12px 12px;border-radius:17px;font-size:12px}
+    .brain{width:44px;height:44px}
+    .more{margin-top:22px;padding:22px 16px}
+    .more h2{font-size:23px}
+  }
+
+  @media(max-width:370px){
+    .game-card{min-height:235px}
+    .title{font-size:21px}
+    .art{top:76px}
+    .main-btn{min-width:82px;padding:10px 9px}
+    .more-list{grid-template-columns:1fr}
+  }
+</style>
+</head>
+
+<body>
+<main class="app">
+
+  <header class="header">
+    <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back(); return false;">←</a>
+    <div class="brand">nyon<span>3</span></div>
+    <div class="login">Log In</div>
+  </header>
+
+  <div class="tagline">PLAY • LEARN • SMILE</div>
+
+  <section class="grid" aria-label="Pilihan permainan">
+
+    <a class="game-card card-green division" href="pembagian.html">
+      <div class="card-inner">
+        <div class="mini-brand">nyon<span>3</span></div>
+        <h2 class="title">PEMBAGIAN</h2>
+        <div class="subtitle">LATIHAN BERHITUNG</div>
+        <div class="art">
+          <div class="paper">
+            <i>12</i><i>÷</i><i>3</i><i>4</i>
+            <i>20</i><i>÷</i><i>5</i><i>4</i>
+            <i>18</i><i>÷</i><i>6</i><i>3</i>
+          </div>
+          <div class="brain"><div class="smile"></div></div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-cream multiplication" href="perkalian.html">
+      <div class="card-inner">
+        <div class="mini-brand">nyon<span>3</span></div>
+        <h2 class="title">PERKALIAN</h2>
+        <div class="subtitle">HITUNG CEPAT & SERU</div>
+        <div class="art">
+          <div class="paper">
+            <div class="box">2 × 3</div>
+            <div class="box">4 × 5</div>
+            <div class="box">3 × 6</div>
+          </div>
+          <div class="brain"><div class="smile"></div></div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-yellow plusminus2" href="tambahkurangdua.html">
+      <div class="card-inner">
+        <div class="mini-brand">nyon<span>3</span></div>
+        <h2 class="title">TAMBAH<br>&amp; KURANG 2</h2>
+        <div class="subtitle">ANGKA 1–20</div>
+        <div class="art">
+          <div class="paper">
+            <div class="sum">
+              <span>5</span><span>+2</span><span>9</span><span>−2</span><span>7</span>
+              <span>4</span><span>+2</span><span>8</span><span>−2</span><span>6</span>
+            </div>
+          </div>
+          <div class="pencil"></div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-green plusminus1" href="tambahkurangsatu.html">
+      <div class="card-inner">
+        <div class="mini-brand">nyon<span>3</span></div>
+        <h2 class="title">TAMBAH<br>&amp; KURANG 1</h2>
+        <div class="subtitle">LATIHAN DASAR</div>
+        <div class="art">
+          <div class="paper">
+            <div class="number">7</div>
+            <div class="number">+1</div>
+            <div class="number">8</div>
+            <div class="number">−1</div>
+            <div class="number">6</div>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+  </section>
+
+  <section class="more">
+    <div class="more-label">MASIH BANYAK LAGI</div>
+    <h2>4 permainan untuk belajar sambil bermain.</h2>
+    <div class="more-list">
+      <div class="more-item">Pembagian</div>
+      <div class="more-item">Perkalian</div>
+      <div class="more-item">Tambah Kurang 2</div>
+      <div class="more-item">Tambah Kurang 1</div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
