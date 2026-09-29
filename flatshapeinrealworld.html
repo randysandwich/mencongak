@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Flat Shape in Real World</title>
+<style>
+:root{
+  --bg:#f4f1e8;--surface:#fffdf7;--ink:#303936;--muted:#8b918c;
+  --teal:#3e918e;--yellow:#f2c94c;--yellow-dark:#d6aa2c;
+  --green:#63ad82;--coral:#e98a73;
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button{font:inherit}
+.frame{width:100%;max-width:620px;height:100dvh}
+.board{
+  width:100%;height:100%;padding:8px;display:flex;flex-direction:column;overflow:hidden;
+  background:
+    radial-gradient(circle at 8% 4%,rgba(67,143,139,.07),transparent 24%),
+    radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+}
+.topbar{flex:0 0 auto;display:grid;grid-template-columns:42px 1fr 42px;align-items:center;gap:6px;margin:0 1px 4px}
+.icon-btn{
+  width:42px;height:42px;border:2px solid #d7d8d1;background:var(--surface);
+  border-radius:14px;color:var(--ink);display:grid;place-items:center;
+  font-size:1.15rem;font-weight:900;box-shadow:0 2px 0 rgba(58,65,61,.08);cursor:pointer
+}
+.brand{text-align:center;line-height:1.05}
+.brand h1{margin:0;font-size:1.28rem;font-weight:900;letter-spacing:-.4px}
+.brand .mini{margin-top:3px;color:var(--coral);font-size:.53rem;font-weight:900;letter-spacing:1.5px}
+.mode-pill{
+  flex:0 0 auto;width:max-content;margin:2px auto 6px;padding:6px 13px;background:var(--surface);
+  border-radius:999px;color:var(--muted);font-size:.7rem;font-weight:800;
+  box-shadow:0 2px 0 rgba(58,65,61,.05)
+}
+.mode-pill strong{color:var(--teal)}
+.score-row{
+  flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;
+  margin:0 7px 4px;color:var(--muted);font-size:.68rem;font-weight:800
+}
+.score-row .count{color:var(--teal);font-size:.86rem;font-weight:900}
+.progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+.quiz{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.problem-card{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:14px 12px 16px;margin:0 1px 7px;
+  box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);overflow:hidden;position:relative
+}
+.problem-card::before{
+  content:"";position:absolute;width:70px;height:70px;border-radius:50%;
+  background:rgba(67,143,139,.06);top:-28px;right:-18px
+}
+.question-text{
+  position:relative;z-index:1;flex:0 0 auto;text-align:center;
+  font-size:clamp(1.1rem,4.2vw,1.45rem);font-weight:900;margin:0 0 10px
+}
+.image-wrap{
+  position:relative;z-index:1;width:min(88vw,440px);height:min(49vh,330px);min-height:170px;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 12px
+}
+.shape-image{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:12px;user-select:none;-webkit-user-drag:none}
+.choices{position:relative;z-index:2;width:min(96%,500px);display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.choice{
+  min-height:52px;padding:8px 5px;border:2px solid #8fd7f4;border-radius:6px;background:#fff;color:#171717;
+  font-weight:800;font-size:clamp(.8rem,3.1vw,1rem);cursor:pointer;transition:transform .1s ease,background .15s ease,border-color .15s ease
+}
+.choice:active{transform:translateY(2px)}
+.choice.correct{background:#eef9f1;border-color:var(--green);color:#28704a}
+.choice.wrong{background:#fff1ed;border-color:var(--coral);color:#a94f38}
+.choice:disabled{cursor:default}
+.feedback{flex:0 0 auto;min-height:26px;text-align:center;margin:0 5px 3px;font-size:.8rem;font-weight:900}
+.feedback.benar{color:var(--green)}
+.feedback.salah{color:var(--coral)}
+.footer-note{flex:0 0 auto;text-align:center;color:#a1a59f;font-size:.56rem;font-weight:700;margin-top:3px}
+.result-screen{
+  flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.big-score{color:var(--teal);font-size:3rem;font-weight:900;margin:7px 0 3px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.86rem}
+#restartBtn{
+  width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);
+  color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer
+}
+.hidden{display:none!important}
+.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.02)}100%{transform:scale(1)}}
+@media (max-width:430px){
+  .board{padding:5px 7px}.topbar{grid-template-columns:38px 1fr 38px}
+  .icon-btn{width:38px;height:38px;border-radius:12px}.brand h1{font-size:1.12rem}
+  .mode-pill{font-size:.63rem;padding:5px 10px}.image-wrap{height:min(44vh,270px);min-height:150px;margin-bottom:9px}
+  .choices{gap:7px}.choice{min-height:48px;font-size:.75rem}
+}
+@media (max-height:620px){
+  .mode-pill{display:none}.image-wrap{height:min(40vh,220px);min-height:125px}
+  .question-text{font-size:1rem;margin-bottom:6px}.choice{min-height:42px}.footer-note{display:none}
+}
+</style>
+</head>
+<body>
+<div class="frame"><div class="board">
+
+<div class="topbar">
+  <button class="icon-btn" type="button" aria-label="Back" onclick="history.back()">←</button>
+  <div class="brand"><h1>Flat Shape in Real World</h1><div class="mini">LOOK • THINK • CHOOSE</div></div>
+  <button class="icon-btn" type="button" aria-label="Help" onclick="showHelp()">?</button>
+</div>
+
+<div class="mode-pill">🔷 Learn <strong>Flat Shape in Real World</strong></div>
+
+<div id="quizScreen" class="quiz">
+  <div class="score-row">
+    <span>Question <span id="qNum">1</span> / <span id="qTotal">100</span></span>
+    <span>Score <span class="count" id="scoreCount">0</span></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="problem-card" id="problemCard">
+    <div class="question-text">What shape does the object look like?</div>
+    <div class="image-wrap"><img id="shapeImage" class="shape-image" alt="Real world object" draggable="false"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="footer-note">Choose the flat shape that matches the picture.</div>
+</div>
+
+<div id="resultScreen" class="result-screen hidden">
+  <div>🎉 Finished!</div>
+  <div class="big-score" id="finalScore">0 / 100</div>
+  <p id="finalMsg">Great job!</p>
+  <button id="restartBtn">↻ Play Again</button>
+</div>
+
+</div></div>
+
+<script>
+const TOTAL_QUESTIONS = 69;
+
+const SHAPES = ["Persegi", "Persegi Panjang", "Segitiga", "Jajar Genjang", "Trapesium", "Belah Ketupat", "Lingkaran", "Segilima", "Segienam", "Layang-layang"];
+const IMAGE_DATA = [
+  {
+    "url": "https://www.ixl.com/~media/1/5bXfBU1rN0LrHtaVNFm58---rO8gTvR5mKJOlmDnQvDS-I0BekHsMH0Hsfz_woj7dEFb_iI2zy9EDNLC2SlghGQrL_DrLaCublNgM79k4-dQMAFO0yxCPvX_H80FgqpFtXUl_vvrbn1Db9f43SIYOUUjgRl39rjNAJ9yW9Jkzh8.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/S_Eo9XdVGhOkI9KIZvK-RO5Tlb-OWc5qNgY6tDdA18sDQySaDPVelwjHqgRJEAvTyqV-0cyEehqyQxyXC66Xrp8HwGptvj3qyhgTP20cqNVoiX31rUmAVmX4e0vH1B22T-lnVcAa3RRHNEHjBDyXEeewO3xiwCANGfXNtsBOzQs.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/cORgb5Sy8WBVqlJfdtSs2zHjY24wmTb42VeieQnjATOlKbTooM6Fy9hXTl49WWaBzzogJ36cMi8OqEWPou4_66OVFZ4G6AKoBQpStB4Sa-H-7n9EGHE2LJIVq9d_WnYU_XJ1OJuQZjGkeN3eu7cvL34c2GNKczOeL6752vzWEns.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/ljsV2GiruHOyhha9FZICkcx8FK50iZNizZ02f670bjZrKrRmGQNVe4kOL929c54zYavT8TK6KA_y7ygnG8GnjGk_RgURtXPpqA3HzJxAcSAW17mI41uY25DUbMNzaaGFZKfJdhT2ippOW3mA_pSDIutZnDmtq8T4b8aCb0u2ojs.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/KcutuxEe1K6wKM711V_0nbYoyMEmOp6-HWUwx4WvuDcSlWVOPD05osWDG_Bd802G6oie33BbkEeT5lzMtF_4qTczTvSCWfBPDpTlvAFHFE_qSxbinYY9Quv2XTEksMv-8CvkUF83E_7KlUgRax76s4MDj1S1ykNMMs83dRa_exg.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/wJvdIM914Ar25PIxoYt70iscK87nVxIKcQi5S2TqOi10fJJWFcvriA38nAEaLHJHOTz8g71NFzefAlJa9HPmmniiRLjMBW3WyI4XcLjnqA5bfKaWJ5XrrKVQ_m42m1ywzvcHrSMA7vSOdL-MTzw14R1QsB7lAhRvBp_HEpWO-YA.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/8vKpEbw177GdQiFOkjqYjucLVSKSIjl93j5UpJEeyGJfltHwLzb6YZpitDoAIzYEnu7CRopWZssv8A1WA0fVrE1tS-L2TTRtXcr_wcBtIFwOOCxke7QeU5EJfOzacp6JurSrXDlES13CKEJbYNkh12sI3bg82UrdBE2Rj7jd16o.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/eamsOf1WIeoedNS3OafRw3guvNosBUChkOXyMQ9k5fY-58thBktzUw7qUkAv9pMhsKgs6TPun-PxVSr8Q9xrMXwgfxPi-QGt_gP1-lfy0Q8sO4a1vQErP_4i3ZiW2v4TkQS2qsOh6M9egHnDv8jKNcrWRdqp5GcdyPywTNqaJeg.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/4v9ovyRYnrLesWbWb5tpx5xFb-7XCGOLDHEtXnmET3Di9Mw1_RnLVnIMusfL7vq5OWShqA7NdV3rmARikULCi1U9w23wAG3RwMSBbYcC03J0dE3QeVLvgBPCpgF6WZW2tm9fb9L5Zyggc5RrcuadzJW4PnLbylItzairkjFk1-4.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/-Um_smDF7achU1b76FwmWevSqO7vZPrPvD45RMOmmFgNJMtkX1luH9--F_ZoBSCd7SIGavFg0X_YLLMb18xtLxHkqcENcBWQtLgp5r51xTYqpfp5hLaVa_GsX1odxqh2y3kkt6usz2jKANnJ9rsiqyf_8GMQoiUVvEmImpwQMqU.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/0uKFGBLtCNWMKoITc3_FWcoi9HDHMp6EPJVqA-mA1e8ZK5edgrQeaXogGDvyMEbL5KNTR8HDHGqimt-roA2JsOFND41F9Vsqo7lA5x6w9vZEBTFGPV0pvLwx-u2Rh3GWk1HSvA_jsYCWO6D8cypoB4acl6qsnH2m-BemVUmvDq4.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/IUGUvIS1cxuczgH5K76hJdbeJcXPNkiVWhiUniUYvQydfrzWpPx5sugFxgRyqrO5V_IgQnzNIMaxHWq1VSzGtrPnVsnyNSAsdNVgEhBjS5iHCRzlVhsCOomiJxAkzh2YzrbSX1zguaLB-OKu1WUnyL1QVZPgyWyPetHvLS8jeMo.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/FbzXTqwYmE-gJJYDmMntjnIGtmsa67R1kdTyenlwytEqGi70mOk54dW2bysonP7aE7VHfVlZOOP7wnoZovziUKiYuqqLdeOuZs2RuQ1loUfoM7wHhT-ugw2c-Q7lu9m0LGVkb6HXR4AxuZKIihL4k9lk6qJBuR_IgfkCWxxKvUY.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/_xmzfDkNdHE7RQMTcY810aq9FtsqH3hlpg-uOmD48SR-qfSP70C5GmnAi3MFjQlkz7WjGR60Yinu3Gn-7nKax2UFE_al8xucPFeWI-jHCf89tc3Up1k9grVh10gWogbNgYtmEi8DTRC7jLlG-6wrr0X0_gCeVX5ZWEC-l5ahdus.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/EG_bQ-k_kTN0p3DJf1LTGxnztNYWhktGOmOFZhvDFzVHMsO6NnX-Ollx2-n7kBTzMaB-KAHmNpncK4HNTInDy_MRPugWP3DtR--fWURr6bfgkOMXsNhwQWaelBxkgUAwLBXUnKi8_hyJyL_KLaQH3vRZxqYf_VwvXpWBQS-hmXo.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/4NXlelTPtKpTfZIZCshghipyR93cOaEPvIXR-xLtieNk2wVEhNQAVYUEraCuqiBhAT17KmTRlHnKoc2zKyzEBt5GzCf1vd82T6O2WaUy0I3IegePPggxIkrdi17BA-CSQQRrq9rWdMoitgtMGrNTF2p1mPWbpBZgVrTI8Z59m84.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/dqSWaoaF5-_rbQcBMZZCYPyHPjtaTl15pcWBE2EgzE1AvjHhgp99s34YWSxkXH-vfJN063aiYXM7TvbzfCEEF7JOkBu4HxPZ4GkxpTlWaz7q0McBviKHp6n7FD5PDHimsQFdE8SlwIroJi48ROOi5wcG3AKor5orYf90NH05RFI.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/5HYv1NO4NF-F0BZ-InBo9dFI5__MfB_7SHTPprPSKqJz0NMddJaxpdZfyxovNJY5efJjWhP6Zc8l3ln57N4iM_U9plbWCxLKsxJA8TCShcC3pNPK9p_PlMvywV6E2SnbuRblOboQNst5ChSkhcdteaD7NAwLTURh8tO5mUsTJU4.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/ige-Nt2TG1D8NXDdc8Ynz5qc4b9ND4Tg71Mqz2O23kNExWAfGIroFG1SRJ4-KZ4NfgVAV5mT3ZuuBRVkn81Vc_7NZr_WKtFHt7DvDAUfliqXJyqKC7lsvoNTZ5hix_cEBuSNODePOEhyLrhgrxwTmObWTupTqE7h1dr7EuMOwvg.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/XAUX0P1JwaaUt2AVlEJxNTf3fSe2axCor8RnjaNBHrLTdVABDVfB_RBnsyu849d3HhbW4--qlNtvrP3DyEVQtUwL7Q_18YWQf--7wJ3ZKrFQKTDVVrpp0Kal5duBUBfwWeW6JF9L2ny69CaJgqhE0P_qFQj_M-_v_xD7w0_kRAg.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/n5qfW9SkAL8J1JxeP3JWlPOKrzT8qhB6taN7Kb_JP15wrzAITXR0L2AUJSrc92pIDCANrYZzcU7U1-uPjPbcXrZOyCpgbfW4dxDMctMTnGUOdkZQLipwpbW8U1fPSVocl796C9KHGiBlSJQ5S6lPnGY3cjtLh1-CuwH8T8PwFLE.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/gnk7oKNMAfO4cGF-4JOiNyp15SZqOLufvgMoVSZVzZvqGYjd8_Z-jiAGdYGxa52Of9lZyiaPhEH2NsxTtkmuv4WDxfpQPP216iIeZ72GB-wPzE1aDu0xa1vH_V64BXVSAd7O9Ct_RuokWKzIOLn5W96kf2gBwg7EpmJpSe39MiA.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/Y0-7XFxB7BA7jiGxGhpnu5yp3kthDKqhR8Z8Zwq9v0Mc7tP4ESM-s1vaS4-lznhOB6DxF_ZcNNfZaV9M-orloMRWIog6GLxDae_vO99h2kqjbGDy6-j0EW3gjYL0WFDg1JNlTLjkDTRA67eCypmES9XAtdppBAMQ0CgICCAv4YQ.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/sBqumVaj8v5tLPpvwXX2wrxzjdaK8A78Yaemkv8dOw0grCKNHd-SYmAkRzAt6uier389KKdznRenIjsQgJdbiSJ30GA_0_d6meonY6Rmo6js-rrL9EEHRfCtGLLWwQ4gqBOJQELmTcoFE5IQ_CqkxfsVunZxRCsA0P37O_Y5bt4.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/EYpGHww2BHVNeoCF22blqsSTFBEE-HKIoCkQ8iY81CuSQF9Xt7CQg9IiDF7qrxOlQtqkw9RYp9rd0VkGEh04oADSiietM9auWOWVZ3wk1ukx17YtpZnulYDdRaDBzaqGeFO14wYDQUzPSEs220wmPZPpMfAHZRsLUsq8yS98GLI.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/IYDMdDRZrxwmrgm1yvg3h2MmxIiU3omDziyVkVqRLzTOkypXO5lyZOBXVfwGxTJDH0rEv89GImxkfg7nqDnndiRyB1hiaI_CRIDy31TbsMkwb2Bi-zNqJqZUkroXlCj1SIGmlsNTfEp5i83BAXspsVhsQ7P7FW28DbYhI9GSWUQ.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/mkD-hYffvMiMxveZeC6x6VpdRWm4rNdeSLstJAVRCFiQ6P0gncQ5VkhNz-jZpbyJGdQF69TVNQvjst3SEmFthrXjXb8UPCmgjs5_0OGPfDiPCT7UGPApEgEfAnGmdFNENFjdw6FLRKX0ExmC8AWXwtKjm-P1tZeX46ULcDsUlkM.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/oGoPjPrvgd6on-W0gFe6PjHtQKNlmDlzBtNHQ_Q01owCjk-RdNrCmnmeXH8wmXTAv8hgBtFSjlXwnt6frEVV8iVwMgccbmt8Z6XbVbnETFDjjq1aEi2ckSmDXZeOj0pR2ydGQFxSz1JBChVjV0FEkHbp9OK1Mmnlkcha_CjnVd4.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/NZYWUKjTt0BCQdwdkdYDGIlHIzq_q9Dt4ioXl_Ke8pnRPy0BjyMmMjBNfid6r4ySI1hKPvs_g-4u90BxduD9grgYwQicjOmMyNkGmsahhpzFWGXmBXcFA-WoaT3RTm_XWnRDoeSxbbQFwLLop18-mL21D3uMId6lfYfG9OK3rEs.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/VKLAJdDwG-V4BM5lcQbp5DU0_cOG6bcsli169GSINDW5q-06uiFL-5j2eIM2OcJerMS1MFBpAR6OZ65NGh6pYY5HwES-y1Xqziu2s33weU87fQqbOQigJLQUWT41zNrpsRv0b_kEQ9UuAQr7ZlYivqyP_IJ4yH6aKkFyLd3i7o8.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/C9VKxJZw08k3F70o1StZjjC-R6VciChN-yCEElxFyrNoMU78H_FoQa0snuk7wkR-gvj_lpnmVlaMhefAcUWfffqqEk0Tp-UgetDrdC44nwhcuDMZUjsCbEvEeJlDKI8VtVEQM_81o6-uLt6dIH6ymvFum9Lt7Z4sYn47ST1lRPE.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/XPxSXV906eYTzLNwkMaAWOYFsb1zEldzRlw8wn9wsbtBrpUz5L_Zajdloc-cbUmLhjgD3ghyO4HLRiHBdSe2Rt4I2RE5qoViAZDDFHN2h_DtnUzEjE_pHZg5tEvnKIILDPIM42pUN--sFxtIJ9VZrkfV08CA7Mr0UViC2Ye5rUU.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/3yUq9DZvE2oL6AsaQzuAkgBtZvCtBFQgJ_dbt4Kk1JcY89_OaMa41z-_CXGQOkf_yzJKJO3kLKwbh6oKnDXjTNoaeXQ1n-sQ1cTWZQ-AVYKMPycDU0qTatx7d1UdeRNLGflV7YLVxgy2fNfOtF2DSGk2RfbsnV_x6Z8gaQT2g28.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/B7eHXPr2gsn64OohbNIfoPbfgKLeN_kB80at3W8MdKPWOUNYGlWJo3Uu5vOZbI33Kto1jfm_Z0LyKss7ruQ6zJttcDiIJFmUUN0yOwnBISqBoSpicOXXHTkqW9hngxnXpg3O-hDPP4khfQbfQIHZjBZfgH9nNFMTnY3UjbRLnzs.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/0/e0O89pti5j9kJzNtgvzSz_x8MzCwuX_YWnekPWVZsgtnut-SSuNMSv12zMY8Z9vTnifHhe4IMH9JclCgLL7teUmdWgjRLQijxZda-I2uxdV7wV2lT_jS0hJFLI9aytVNfCOB7RcFDCTA5iY9CUYH7ecpRbIFTWm2FRWa52jbRdMIQ7Szlk6-MeVT2i_fPOY1.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/L8f3KIbwFE2iBHcH6X9ht5-Nzbo1n4Foc5E2DU1caDmUYgMDYvzvUlFx6p_SsLFZe63bsmSwoD0XaCP2lk-Pd7QpiZ6cN5G5sTDzeQvHh9o88FgjAhjpEgtfp3gwS7OM6wDILZLfM306xUCmxWHB5ixs3y8K1huwpqhkYyJMQ4s.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/0/woXMcWCK8Yk2kfVS1Cpe_n21-FIUsgDfKFTU11jaVz5mgu093hbC0eQJ6uWDLF4etQ65vZv_Rp6yMLb2TjlAbMCDQzWZqIEUbqfAOcZfNqPKs5Kn-6DSIDH8qLVfPz3gisLZ5jVh7XUbmmVJ5WHp6c7NTvggl-0cOpDtkXj4lbRI-n2ttazVFXDC1Ex4T1qm.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/6tWtDqbN75PK7nqtVBqss9BYqVbmgIIxdkR5ktVawJi6_fD-2Ge0oq2GgwGgPEP6YCJ4bvxuyhuCejlVYGLCaxwOaf5Rg8LHSmqVbgELeToPP7S-cOHaOpHr-vJM2urczE1SC-oOZ3638OQLO8xryDPnyePvUfzNiAoFjJdia30.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/OQbSHwad4OgTga4UnnPvHk4iSsOnlv3YfxbRJuxpFhYgNlaDvW3GC2fd4HcUZHONqOtLWS4HgLQaO6cz1AA3w5wCDr7Insbypt-siS8oD3NasfFWErfnMx0NvfdyEkjEbyUBEX16ws8KS0X8gYE4f6vBUviDJkxfNMCKaLT6NUo.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/7Coqx3Q3Z5Gp00WIe1obKfv9KBhB-uZVIkJuuzpdlRYRUNa6_0bc9RJdN5lkhY_3REhULKsO53Zx9TkAu4Hyj_vmAV34vbGx2y5xkYAls3MT0TQiytymhLWCR8Oe8wYJtKLtd9ucuv-Uo83_A8DG3OWpq6tCQtvzipalYdXeUNc.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/RRgPBIXtkCTBjkBNJTcBp0nljmlO3vqIHKl1uFMGV6UezFmJeExYHrfnFsvxRyUEBl32O9HguOGzyj_4Yip5fQK1I7KDNpt8f_OxEcaqnQ4ZSh2f9nuqop8_9uMsZPZdlZajL21xGE2vIzTC5pnWNL_JZyCsCYVmrI8WS1Unksg.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/pWvyrL2axuyj-eJim6sm--nhwur9wonsel1XqNDML9Sxa2jJVUeHXDMSxM_jdotbNzRrsIiK6O2cuLnJITjEkVsdtRAyFxrtb0AwjXHO0EbxA48U2o4P9jrogg3hYbOWajJzMGq587OtSTrMmZg4z-hlmIWHoPCjs0Oj8gBwHxs.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/f2A4PZSX1rUsNqRWkRcyh_liEArCrlaqvh1TT1ZElCqjzDqb6A7AGh5kHZm48GR_itfqBA651GsMtqpSyOrgNzR1o-qMRLCDEiOHPxqQd-fP3F2JcDjmHEXSCDZ2GW5U8ViAdWm1lPhV1DkT9vbdmjQQY4Y4Kjp84xl0koKDcSg.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/RpJXRknJvxO_vIgHA_9NH0IsLBiERGXoXcYGXWeiwoTWEGv4CUgalC8ujDT_CCE1JN5Vwt_k-3LItlRNeEYVSZhoHHrs8tvFxatStHT_R9P5_J2xpgQ2QYtZoxuLDxXy-Ib3pj1IPxlBxKEWRiqzUiiEUPi86Y4Kx6J8uo2asps.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/7a63b5_kiMhmhefPXd2mbV5u9G0EcbuiA2zU6-Rf8z3Gae4TJOca-NpZn8S3x3CfQM5SwnV6ZutGlhgsWTXpgHqJK7VycicxC44iQ_pke6CGcZ7jIy7IN56cMkbytvAFdaUqQAh7HZX5aVN3IjSqvgFwBUKN6BqSBMt_-l0Y420.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/Jb3I73yX8OlDn0xqAwA6XVSA23zfeRMBN6FwlFF4a-AO-sedK2GyY_MNDkuogU4QumjrB3U3czVFXi8P6veIUsdeSmX7Fy7nXGD6tT8FS9I3q959k1PedOCrUK0hlUTK2vGfeURrwQKaJHc7NxFP71p-kIfN3-aR5RQXCysvDPU.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/YJpHDzUnObO1LA5sNbvp_YJurUkJJQc7qWZ1u_5i6cKk5I3BYs0jSuk1ZtW7ZJUQR_wYe7u31zA4T31FezQdPb2uVgsUbUwFUFqydRM_uhM7b2XCpY_DyVvA1XvhxnNA_3zB6NVYXeIZ1C-yDtrctsb5wHw2ZOKdVGY45OZqTLI.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/wXVFGq3GCrELRYgOBpjTIl-7NW2HWBrgEeqSgEpe75hF6ub3xpRjcB0Ut94wPyL0E2BchSliURZMx4HfQQMEDEFVqgbq9kCVXKGQtWWu70M6-m4EjT5hY3fPxJqA17kaBRxcvIM75ajNqR4nWaAa9Z6syEDvyN3s_JLiuiiyrcc.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/a47UDo9mmu67jExuXEV2Ttac1oXw4A_D_OiPvF10LD84uAPU90lL2yG3QLbWCY5d5Iby7HYSvPLnDSmb4vUTt-ejSE4mZDsvsrd1iv9-54YiIRCWBERFvUCJMkdd9gM-zU5AzBJfsdwW2XQkT7j1EuDUNstqyV3d5UhVW_DOoQs.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/0PF2sDwmqS6tc-NI21fbuT7QUqbZ1vu2r3F70v2fIezVt9as5Y60IEXwLdriceoSJUIkKTXTqg1gR0R1o5Ngq4HsyIn5eib5g1qnYePX8VDLYUBs1rAOhSPSFVfk1uhwq5iJCM8hIOD6w_Pnqiz6cSDX7LYmeniM4lJcaSQAP-c.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/PeQfFc_pxtqfkXhfnN2f6FrTVdJ6Z0q0_8w450Hwv7U7ICKQvZ1ChijDa1nvS9BOaZv5yMZuhXrxQ9OsVs0CGee_vvTq-Td99rbZFKgUMwubmge0hjTb5T_pruQ6puj8ir81tzItdXKvYd7OKrl-hFteJvNISpPxjClU9n8CXck.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/0/oJtqNZWqx4CbfSHYieqOd1axQJJ1u0agMCMC5rwBYfVrdmeUh8RnT0eLfG9I86yCQ3Gy5ANRWf2WZ_1QaitN1MyLaz18XV85d0WQ7Fdxvw3XhaND0U5VoleNg5uGsEBgHkQzz0YKAr3NDZVRyKe6cPZwU1w0N4Lnsad-0NMiIX524zVQokt_XEU2MzMzqoe9.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/EeKtM51ATBJeaTT7nah3O8jOJSkP8uOTeZ4Qo7PveUL7_XFm30IjlsmAsBg--lZKTlgrYf0tTS2aTqFihrCprw8iVUevL0jVIfyo68b-t-PF0H5I3kCFJauLhpWR7Id__TJY9GhoW7tcFxsBE8z49rD1LRPrwBGnKVn6wvP8_x0.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/zJcitUlWfoO33ZLuFQCXsj1-RBVD9xsoc9YtZn0_8qQ6Vzc3iZPFQ2ilGUOXaZMvRrKNxojJEfKTZTzEM354dN9fF5P8N9EfDl-gZY8lZmsTxZ4ss-JtCWO1vhJQf-vZPWLCYfS-LqteBFaBa3dhU04IaULpjIMt7oZrNn7TN7Y.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/YAdHDSaqml0n94gAWsieQp94alL2ATwi0d4RvzWlkJ4vZs-8oTAI8kSgWx4XN03mjOlFGttVdr5Ego6NCjQqTD4EV77rmNNLK1RSViEFofUDLZwknUVYTwhT2qcbfQDO23nhQ3Pxt6RSMAXCa8hVsbVh30PyImVAwOpB9o7G6Jc.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/jDTKiv9uAGfPMPbY9BK9cAY17DS7Ea4K15H_PnTfUCFrI-rYBfR-KptSmhQuSznHOHOd92bgyNxf1b5gjZxMABXhUQKyzyQsjrehsYbIZvn6VrbZ9BHLB1IDQj-oX4yohZQ88ogihu-MRLKOVGM1sY2vbx2dItd6kNRxoDtzKqY.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/dK5-KYHOu_O8aEz2owza2742BpijDK2DZe7i8-x8AdTTk7s6pz0J8vrxERewY7w_c9SM7P-eXUoWQvgvLwXprA7piYyB1NkYNqkFz814sIhxSLNAkK4vg66O-h5P8g9VybnXa3Fm5HBJPSOjFf8gMYcIpmsqEXHxf5ZG6x-ciFM.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/2cua7dHU4ez8EzoLJNf5GaODeH4u9SFpwYutUL8Zkg4yJnivHDdmTrOwycGaUkyt3q2WRbB64hYTtVY1O165F1HK3mhfCo0t4htSaeLlM14SJfweGp6G40_J95S1PyOdya_HUnaYd6ew1gD0gKzbMosutbJTjtDjYNJkAf9FB_4.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/0/sq8a5E092hVFSlv2m-A3PIVsSHj3PbvRthE7HV0NGqGxvyJ8NejcJBm1aahJJVPHoThRLIE6jD-7Z3P2ltusgXShql3pBcPoyjUOPwAHX72T-Ve3enDg9-_7BkYZfCUBsApESO5AaUY582fcdXD_tjIu36HvmI_jNI7p4LAzK-nwNrhkAPp518zk4xrNRzoT.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/UIMzaJFWbTLU8ME9S6iJkgSsl_ucO4kMcK05-ooLUpR-HbRGhM_PtyerEyUzn39jUPJXkybd4pxlfdnOgU5pRHzXVJYILNTwd5qwYEkderejC6WCEOV26fpuzsWHW9Ce01Woa62THImexeeQsek-w8C48InWrIYgMXcVFHfwXvw.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/DcF1zGXRQfmcZQIz3AABULylc5ptk42KgyH1MKOJ1bKWs-elHrdunv-xuZwgOh30-3Pp-VtCL6t8vgL0ptiFw5DJAXAV0ZidMmKs_Dp3t1n0vbkERsxKfJZMSWvQbDbspmIbvV-Csn-tMa6zipt63_Mg2_mMaf51EHdnLDJnc1g.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/tE8ArKfZpFifhfz_9rXvm4qChums9VxH9ETZ2KGavsVpiyM4f9TK9lJaRvVvDyxlewGSiOys-_CgGmM1ATks5QLOV1AaoqwX52Hj8zze7-xcr-WpcplDoZBcieIA8O4gEj96DShZkQYPv6X0F0CywuuRWhn9RSNFZqYESQW7Png.jpg",
+    "answer": "Persegi Panjang"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/DScQ_Bk3RknlKmUy_HuN79-keLHH0R3Z1YLWOIuBf-kplcX7tAto6XHp52btb-IWKHnbarPR8Mz4K-Bn4wol-uuO5A9xdl94YRU79c4tyTtKbSjcR_PCHDY-f5UpY1B0lxel8JYUNu830djfc9PmiGH9TGt8cP-Es7R2sKy53UA.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/0/4w_rCfz-UXklHxMDM2CDmshgdGeYQirPquGI7jdb_4B9IhiCekDyYyqMMzyZipPvxufdrVGpstCsGByImcJFlDKi-agKQHrIIpv3g8FcrAEErH0ZCk_MLF1RoG17WEzfqMUKsHNGMqxuqiAWIWv8O2M-UPoGvXKnWCvQpZGM9Z41cVnsfVIvkiv0WYJyOyiU.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/UQeje4WqVvCTP_3Vlkpa8yR1JUlzr3ypdpJw_MIVU8ZSIP-MwwMwL8k7YObxd0rFOLa18KeEuIQhbUtr12HmJ-XuVwBcSIbZvBkEhRqBv1fuNIeVcw2E_01dtRvcDZisAxEVhhVRZzlEH6bjWRBZuosMJOWjL7Is1Db2Rhj9DP4.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/s19NIVDYvEb7atV91UYW4UZjKEY1GYoQEyhRXZNQUGqK__bZhWGLMTZgumgP13i2z-sWxpQr5QyYfio-wiAnvGIbE3KIAXxtZAAVA2Rb31vX11vXbPdydaoXj1sEvSp-7z-uKKs_LHGQugJJq9F6E3bxPlx0eX-W16aLzmdesxc.jpg",
+    "answer": "Segitiga"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/1jDUDDbpd6NAlYeapQfYxHYF-FZTqrbzChy1YtrqXR6OSWS-VvgapbNDT9tP7G-AItizoa8brAaWsmWQN1K_gsfP62T-yFrd_w7gIDRatgNwBgmVBLGBesjYzJm-l4ugedzjTfnH6ObTNdE4gP23guWSsooJ-Au616P0JlyxOFU.jpg",
+    "answer": "Persegi"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/77QBYFZAx4YFZ5945_6Pw_o8ufocHkJy264r5TUaRK_7pkbvQtrce-C6NFvmseHReJRjmCD7nCnSx6I8n9SLIiDeF9uzAKMRh-lan-w-0j0Vow9WOLe_W0iH3-S4tcPg2vPMCDULqdQFvnYmlcAslIbPIQUtTz1pALzk8cUmM7s.jpg",
+    "answer": "Lingkaran"
+  },
+  {
+    "url": "https://www.ixl.com/~media/1/Yed_2r2zWq6VWq1qUAobMGgpWxDwt5sVmu4ZsCEnKrACFudatdkMiqdetOQ15PNzF4_aznm_SMiwLF6Wv-L3Ba4hVGDXVvkCs9YrJKLGGnwXl3O4eP-QAqQMWQEN6FzHUS8NwdLBtT4ylHCTUT9HZDssJIm3cRf3cY2hRICTPn4.jpg",
+    "answer": "Persegi Panjang"
+  }
+];
+
+let questions = [], current = 0, score = 0, locked = false;
+
+const qNumEl=document.getElementById('qNum');
+const qTotalEl=document.getElementById('qTotal');
+const scoreCountEl=document.getElementById('scoreCount');
+const progressFill=document.getElementById('progressFill');
+const shapeImage=document.getElementById('shapeImage');
+const choicesEl=document.getElementById('choices');
+const feedback=document.getElementById('feedback');
+const problemCard=document.getElementById('problemCard');
+const quizScreen=document.getElementById('quizScreen');
+const resultScreen=document.getElementById('resultScreen');
+const finalScore=document.getElementById('finalScore');
+const finalMsg=document.getElementById('finalMsg');
+const restartBtn=document.getElementById('restartBtn');
+
+qTotalEl.textContent=TOTAL_QUESTIONS;
+
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function makeChoices(answer){
+  const others=shuffle(SHAPES.filter(s=>s!==answer)).slice(0,2);
+  return shuffle([answer,...others]);
+}
+
+function generateQuestions(total){
+  const result=[];
+  for(let i=0;i<total;i++){
+    const item=IMAGE_DATA[i%IMAGE_DATA.length];
+    result.push({image:item.url,answer:item.answer,choices:makeChoices(item.answer)});
+  }
+  return shuffle(result);
+}
+
+function renderQuestion(){
+  locked=false;
+  const q=questions[current];
+  qNumEl.textContent=current+1;
+  progressFill.style.width=((current)/questions.length*100)+'%';
+  shapeImage.src=q.image;
+  shapeImage.alt='Real world object representing '+q.answer;
+  choicesEl.innerHTML='';
+  q.choices.forEach(choice=>{
+    const btn=document.createElement('button');
+    btn.className='choice';
+    btn.type='button';
+    btn.textContent=choice;
+    btn.addEventListener('click',()=>checkAnswer(choice,btn));
+    choicesEl.appendChild(btn);
+  });
+  feedback.textContent='';
+  feedback.className='feedback';
+}
+
+function checkAnswer(answer,button){
+  if(locked)return;
+  locked=true;
+  const q=questions[current];
+  const allButtons=[...document.querySelectorAll('.choice')];
+  allButtons.forEach(b=>b.disabled=true);
+
+  if(answer===q.answer){
+    score++;
+    scoreCountEl.textContent=score;
+    button.classList.add('correct');
+    feedback.textContent='✅ Correct! Great job!';
+    feedback.className='feedback benar';
+    problemCard.classList.add('pop');
+    playCorrect();
+  }else{
+    button.classList.add('wrong');
+    const correctBtn=allButtons.find(b=>b.textContent===q.answer);
+    if(correctBtn)correctBtn.classList.add('correct');
+    feedback.textContent='❌ Not quite. The answer is '+q.answer+'.';
+    feedback.className='feedback salah';
+    problemCard.classList.add('shake');
+    playWrong();
+  }
+
+  setTimeout(()=>{
+    problemCard.classList.remove('pop','shake');
+    nextQuestion();
+  },1200);
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length)showResult();
+  else renderQuestion();
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width='100%';
+  finalScore.textContent=score+' / '+questions.length;
+  const pct=score/questions.length;
+  if(pct===1)finalMsg.textContent='Perfect! You know your flat shapes! 🌟';
+  else if(pct>=.8)finalMsg.textContent='Excellent! Keep it up! 🎈';
+  else if(pct>=.5)finalMsg.textContent='Good work! Keep practicing! 💪';
+  else finalMsg.textContent='Let’s try again. You can do it! 📚';
+}
+
+function restart(){
+  questions=generateQuestions(TOTAL_QUESTIONS);
+  current=0;score=0;scoreCountEl.textContent='0';
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+}
+
+function showHelp(){
+  alert('How to play:\\n\\n1. Look at the real-world picture.\\n2. Think about its flat shape.\\n3. Choose one of the 3 answers.');
+}
+
+let audioCtx=null;
+function getCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freqStart,freqEnd,duration,type,volume){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended')ctx.resume();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=type;
+    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+function playCorrect(){
+  playTone(880,1760,.18,'sine',.22);
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+}
+const wrongSound=new Audio('sound/faaah.mp3');
+wrongSound.preload='auto';
+function playWrong(){
+  try{
+    wrongSound.currentTime=0;
+    const p=wrongSound.play();
+    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+  }catch(e){playTone(220,110,.30,'sawtooth',.16);}
+}
+
+restartBtn.addEventListener('click',restart);
+questions=generateQuestions(TOTAL_QUESTIONS);
+renderQuestion();
+</script>
+</body>
+</html>
