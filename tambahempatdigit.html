@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Penjumlahan 4 Digit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1e8;
+  --surface:#fffdf7;
+  --ink:#3f4743;
+  --muted:#8b918c;
+  --teal:#438f8b;
+  --teal-dark:#2f706d;
+  --yellow:#f2c94c;
+  --yellow-dark:#d6aa2c;
+  --coral:#e98a73;
+  --green:#63ad82;
+  --line:#dfe1d8;
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;padding:0;overflow:hidden}
+button,input{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0;margin:0 auto}
+.board{
+  width:100%;height:100%;min-height:0;overflow:hidden;
+  background:
+    radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+    radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),
+    var(--bg);
+  padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+           max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+  display:flex;flex-direction:column;
+}
+.topbar{flex:0 0 auto;display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:6px;margin:0 1px 2px}
+.icon-btn{
+  width:40px;height:40px;border:2px solid #d7d8d1;background:var(--surface);
+  border-radius:14px;color:var(--ink);display:grid;place-items:center;
+  font-size:1.15rem;font-weight:900;box-shadow:0 2px 0 rgba(58,65,61,.08);cursor:pointer
+}
+.brand{text-align:center;line-height:1.02}
+.brand h1{margin:0;font-size:1.22rem;font-weight:900;letter-spacing:-.4px}
+.brand .mini{margin-top:3px;color:var(--coral);font-size:.52rem;font-weight:900;letter-spacing:1.6px}
+.mode-pill{
+  flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;
+  background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;
+  font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)
+}
+.mode-pill strong{color:var(--teal)}
+.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--teal);font-size:.68rem}
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+.problem-card{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:18px 10px;margin:0 1px 7px;
+  box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);position:relative;overflow:hidden
+}
+.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
+
+/* Bentuk soal mengikuti contoh foto: angka kanan, + di kanan angka kedua, lalu garis. */
+.addition-wrap{position:relative;z-index:1;width:min(88vw,330px);display:flex;flex-direction:column;align-items:flex-end}
+.addition-line{
+  width:100%;display:flex;align-items:center;justify-content:flex-end;
+  min-height:clamp(54px,12vw,70px);position:relative
+}
+.addition-number{
+  text-align:right;font-size:clamp(2.2rem,11vw,3.3rem);
+  line-height:1;font-weight:900;letter-spacing:.14em;padding-right:48px
+}
+.addition-plus{
+  position:absolute;right:0;text-align:center;font-size:clamp(2rem,9vw,2.8rem);
+  line-height:1;font-weight:900
+}
+.addition-rule{width:100%;border-top:4px solid var(--ink);margin-top:4px}
+.answer-box{
+  width:100%;display:flex;justify-content:flex-end;padding-top:10px;padding-right:48px;box-sizing:border-box
+}
+.answer-input{
+  width:clamp(210px,63vw,275px);height:clamp(54px,16vw,68px);
+  border:2px solid #293f4d;border-radius:9px;background:#fff;color:var(--teal);
+  text-align:right;font-size:clamp(1.8rem,8vw,2.5rem);font-weight:900;
+  outline:none;padding:0 10px;letter-spacing:.12em
+}
+.answer-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.answer-input.correct{border-color:var(--green);background:#eef9f1}
+.answer-input.wrong{border-color:var(--coral);background:#fff1ed}
+.answer-input::-webkit-outer-spin-button,.answer-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.answer-input[type=number]{-moz-appearance:textfield}
+.feedback{flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.benar{color:var(--green)}
+.feedback.salah{color:var(--coral)}
+.buttons{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{min-height:45px;border:0;border-radius:15px;font-weight:900;font-size:.85rem;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease}
+button.action:active{transform:translateY(3px);box-shadow:none}
+button.action:disabled{opacity:.55;cursor:default}
+#checkBtn{background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark)}
+#skipBtn{background:var(--surface);color:var(--muted);border:2px solid #dedfd7;box-shadow:0 2px 0 rgba(58,65,61,.08)}
+.footer-note{flex:0 0 auto;text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+.result-screen{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.result-screen .big-score{color:var(--teal);font-size:3rem;font-weight:900;letter-spacing:-2px;margin:6px 0 2px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow)!important;color:#5c4b18!important;box-shadow:0 4px 0 var(--yellow-dark)!important;cursor:pointer}
+.hidden{display:none!important}
+.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+@media (max-height:620px){
+  .topbar{grid-template-columns:34px 1fr 34px}.icon-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+  .brand h1{font-size:1rem}.brand .mini{font-size:.43rem;margin-top:2px}
+  .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}.theme{font-size:.51rem;margin-bottom:2px}.theme strong{font-size:.56rem}
+  .progress-track{margin-bottom:4px}.problem-card{margin-bottom:4px;border-radius:18px}
+  .addition-line{min-height:48px}.addition-number{font-size:2rem;padding-right:42px}.addition-plus{font-size:1.8rem}
+  .answer-input{height:48px;width:210px;font-size:1.7rem}.feedback{min-height:19px;font-size:.66rem}
+  button.action{min-height:38px;font-size:.72rem;border-radius:12px}.footer-note{display:none}
+}
+@media (max-height:520px){
+  .mode-pill,.theme{display:none}.problem-card{margin-top:2px}
+  .addition-line{min-height:43px}.addition-number{font-size:1.8rem;padding-right:38px}.addition-plus{font-size:1.6rem}
+  .answer-input{height:45px;width:190px}
+}
+@media (min-width:521px){body{padding:0}.frame{max-width:520px}}
+</style>
+</head>
+<body>
+<div class="frame">
+<div class="board">
+  <div class="topbar">
+    <button class="icon-btn" type="button" aria-label="Kembali" onclick="history.back()">←</button>
+    <div class="brand"><h1>Belajar Hitung</h1><div class="mini">PLAY • LEARN • SMILE</div></div>
+    <button class="icon-btn" type="button" aria-label="Bantuan" onclick="showHelp()">?</button>
+  </div>
+
+  <div class="mode-pill">➕ Latihan <strong>Penjumlahan 4 Digit</strong></div>
+  <div class="theme">UNTUK TK • <strong>4 DIGIT</strong> • PENJUMLAHAN</div>
+
+  <div id="quizScreen">
+    <div class="score-row">
+      <span>Soal <span id="qNum">1</span> / <span id="qTotal">100</span></span>
+      <span>Skor <span class="count" id="scoreCount">0</span></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="problem-card" id="problemCard">
+      <div class="addition-wrap" id="additionWrap"></div>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+    <div class="buttons">
+      <button class="action" id="checkBtn">✓ Cek Jawaban</button>
+      <button class="action" id="skipBtn">→ Lewati</button>
+    </div>
+    <div class="footer-note">Tekan Enter untuk memeriksa jawaban</div>
+  </div>
+
+  <div id="resultScreen" class="result-screen hidden">
+    <div>🎉 Selesai!</div>
+    <div class="big-score" id="finalScore">0 / 100</div>
+    <p id="finalMsg">Kerja bagus!</p>
+    <button id="restartBtn">↻ Main Lagi</button>
+  </div>
+</div>
+</div>
+
+<script>
+const TOTAL_QUESTIONS = 100;
+let questions = [];
+let current = 0;
+let score = 0;
+let locked = false;
+
+const qNumEl = document.getElementById('qNum');
+const qTotalEl = document.getElementById('qTotal');
+const scoreCountEl = document.getElementById('scoreCount');
+const progressFill = document.getElementById('progressFill');
+const additionWrap = document.getElementById('additionWrap');
+const feedback = document.getElementById('feedback');
+const problemCard = document.getElementById('problemCard');
+const checkBtn = document.getElementById('checkBtn');
+const skipBtn = document.getElementById('skipBtn');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const finalScore = document.getElementById('finalScore');
+const finalMsg = document.getElementById('finalMsg');
+const restartBtn = document.getElementById('restartBtn');
+
+qTotalEl.textContent = TOTAL_QUESTIONS;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function generateQuestions(total = TOTAL_QUESTIONS){
+  const result = [];
+
+  for(let i=0;i<total;i++){
+    let a, b;
+
+    // 1/4 soal menggunakan pola angka pada baris pertama:
+    // X000 atau X0X0.
+    if(i < Math.ceil(total / 4)){
+      if(i % 2 === 0){
+        // X000, contoh: 4000, 7000, 9000
+        a = (Math.floor(Math.random() * 9) + 1) * 1000;
+      }else{
+        // X0X0, contoh: 4050, 7080, 9030
+        const x1 = Math.floor(Math.random() * 9) + 1;
+        const x2 = Math.floor(Math.random() * 9) + 1;
+        a = x1 * 1000 + x2 * 10;
+      }
+    }else{
+      a = Math.floor(Math.random() * 9000) + 1000;
+    }
+
+    b = Math.floor(Math.random() * 9000) + 1000;
+    result.push({a,b,result:a+b});
+  }
+
+  return shuffle(result);
+}
+
+function renderQuestion(){
+  locked = false;
+  const q = questions[current];
+
+  qNumEl.textContent = current + 1;
+  progressFill.style.width = ((current) / questions.length * 100) + '%';
+
+  additionWrap.innerHTML = `
+    <div class="addition-line">
+      <div class="addition-number">${q.a}</div>
+    </div>
+    <div class="addition-line">
+      <div class="addition-number">${q.b}</div>
+      <div class="addition-plus">+</div>
+    </div>
+    <div class="addition-rule"></div>
+    <div class="answer-box">
+      <input type="number" class="answer-input" id="answerInput"
+             inputmode="numeric" autocomplete="off" aria-label="Jawaban">
+    </div>
+  `;
+
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  checkBtn.disabled = false;
+  skipBtn.disabled = false;
+
+  const input = document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('keydown', e => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      checkAnswer();
+    }
+  });
+}
+
+function checkAnswer(){
+  if(locked) return;
+  const input = document.getElementById('answerInput');
+  if(!input || input.value.trim() === ''){
+    feedback.textContent = 'Isi dulu jawabannya ya!';
+    feedback.className = 'feedback';
+    input?.focus();
+    return;
+  }
+
+  const q = questions[current];
+  const userAnswer = Number(input.value);
+  locked = true;
+  input.disabled = true;
+
+  if(userAnswer === q.result){
+    score++;
+    scoreCountEl.textContent = score;
+    input.classList.add('correct');
+    feedback.textContent = '✅ Benar! Hebat sekali!';
+    feedback.className = 'feedback benar';
+    problemCard.classList.add('pop');
+    playCorrect();
+  }else{
+    input.classList.add('wrong');
+    feedback.textContent = `❌ Belum tepat. Jawabannya ${q.result}`;
+    feedback.className = 'feedback salah';
+    problemCard.classList.add('shake');
+    playWrong();
+  }
+
+  checkBtn.disabled = true;
+  skipBtn.disabled = true;
+
+  setTimeout(()=>{
+    problemCard.classList.remove('pop','shake');
+    nextQuestion();
+  },1200);
+}
+
+function skipQuestion(){
+  if(locked) return;
+  locked = true;
+  const q = questions[current];
+  feedback.textContent = `Jawabannya ${q.result}`;
+  feedback.className = 'feedback';
+  checkBtn.disabled = true;
+  skipBtn.disabled = true;
+  setTimeout(nextQuestion,900);
+}
+
+function nextQuestion(){
+  current++;
+  checkBtn.disabled = false;
+  skipBtn.disabled = false;
+  if(current >= questions.length) showResult();
+  else renderQuestion();
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width = '100%';
+  finalScore.textContent = `${score} / ${questions.length}`;
+
+  const pct = score / questions.length;
+  if(pct === 1) finalMsg.textContent = 'Sempurna! Kamu jagoan berhitung! 🌟';
+  else if(pct >= .8) finalMsg.textContent = 'Hebat sekali! Hampir sempurna! 🎈';
+  else if(pct >= .5) finalMsg.textContent = 'Bagus, terus berlatih ya! 💪';
+  else finalMsg.textContent = 'Ayo coba lagi, pasti bisa lebih baik! 📚';
+}
+
+function restart(){
+  questions = generateQuestions();
+  current = 0;
+  score = 0;
+  scoreCountEl.textContent = '0';
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+}
+
+function showHelp(){
+  alert(
+    'Cara bermain:\\n\\n' +
+    '1. Hitung dua bilangan 4 digit.\\n' +
+    '2. Masukkan hasil penjumlahannya.\\n' +
+    '3. Tekan Cek Jawaban.\\n\\n' +
+    'Contoh: 4870 + 1985 = 6855'
+  );
+}
+
+// ---------- Suara ----------
+let audioCtx = null;
+function getCtx(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+function playTone(freqStart,freqEnd,duration,type,volume){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended') ctx.resume();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.type=type;
+    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+function playCorrect(){
+  playTone(880,1760,.18,'sine',.22);
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+}
+const wrongSound = new Audio('sound/faaah.mp3');
+wrongSound.preload='auto';
+function playWrong(){
+  try{
+    wrongSound.currentTime=0;
+    const p=wrongSound.play();
+    if(p!==undefined) p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+  }catch(e){ playTone(220,110,.30,'sawtooth',.16); }
+}
+
+checkBtn.addEventListener('click',checkAnswer);
+skipBtn.addEventListener('click',skipQuestion);
+restartBtn.addEventListener('click',restart);
+
+questions = generateQuestions();
+renderQuestion();
+</script>
+</body>
+</html>
