@@ -4,424 +4,648 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Mencongak Pembagian</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
 <style>
-:root{--cream:#f4f1e8;--surface:#fffdf7;--ink:#3f4743;--muted:#8b918c;--teal:#438f8b;--teal-dark:#34716e;--yellow:#f2c94c;--coral:#e98a73;--green:#63ad82;--line:#e5e0d4}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{background:var(--cream);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
-button,input{font:inherit}
-.frame{width:100%;height:100dvh;max-width:520px;margin:0 auto;background:var(--cream)}
-.board{width:100%;height:100%;padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:40px;display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}
-.top-icon{width:40px;height:40px;border:0;border-radius:14px;background:var(--surface);color:var(--ink);font-size:20px;box-shadow:0 2px 8px rgba(63,71,67,.07)}
-.top-title{text-align:center;font-size:14px;font-weight:900;letter-spacing:.2px;line-height:1.1}
-.top-title small{display:block;color:var(--muted);font-size:8px;letter-spacing:1.6px;margin-top:3px}
-.mode-pill{align-self:center;margin-top:8px;background:var(--teal);color:white;border-radius:999px;padding:7px 13px;font-size:11px;font-weight:900;box-shadow:0 4px 0 var(--teal-dark)}
-.subtitle{text-align:center;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.5px;margin:9px 0 8px}
-#quizScreen{min-height:0;flex:1;display:flex;flex-direction:column}
-.score-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;margin:0 2px 6px;color:var(--muted)}
-.score-row .count{color:var(--teal);font-size:14px}
-.progress-track{height:7px;background:#e7e1d5;border-radius:99px;overflow:hidden;margin-bottom:10px;flex:0 0 auto}
-.progress-fill{height:100%;width:0;background:var(--yellow);border-radius:99px;transition:width .3s ease}
-.problem-card{min-height:0;flex:1;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 8px 22px rgba(63,71,67,.06);margin-bottom:8px}
-.equation{display:flex;align-items:center;justify-content:center;gap:clamp(7px,2.5vw,14px);flex-wrap:wrap;font-weight:900;color:var(--ink);font-size:clamp(2.25rem,11vw,4.2rem);line-height:1}
-.answer-input{width:clamp(68px,19vw,96px);font-size:clamp(2rem,9vw,3.4rem);text-align:center;font-weight:900;background:transparent;border:0;border-bottom:5px solid var(--yellow);color:var(--teal);outline:0;padding:0 2px 4px;border-radius:0}
-.answer-input:focus{border-bottom-color:var(--teal)}
-.answer-input::-webkit-outer-spin-button,.answer-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.answer-input[type=number]{-moz-appearance:textfield}
-.feedback{height:25px;flex:0 0 25px;text-align:center;font-weight:800;font-size:12px;color:var(--muted);margin-bottom:7px}
-.feedback.benar{color:var(--green)}.feedback.salah{color:var(--coral)}
-.buttons{display:flex;gap:9px;flex:0 0 auto}
-button{min-height:45px;border:0;border-radius:14px;font-size:13px;font-weight:900;cursor:pointer;transition:transform .12s ease,filter .12s ease}
-button:active{transform:scale(.97)}
-button:disabled{opacity:.55;cursor:default}
-#checkBtn{flex:1;background:var(--yellow);color:#4b3b0b;box-shadow:0 4px 0 #d3ab35}
-#skipBtn{width:92px;background:var(--surface);color:var(--teal);border:1px solid #d9e5e1;box-shadow:0 3px 0 #dce7e3}
-.result-screen{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);padding:18px}
-.result-screen>div:first-child{font-size:18px;font-weight:900}
-.result-screen .big-score{font-size:48px;font-weight:1000;color:var(--teal);margin:10px 0 4px}
-.result-screen p{color:var(--muted);margin:0 0 22px;font-size:13px}
-#restartBtn{width:min(260px,100%);background:var(--yellow)!important;color:#4b3b0b!important;box-shadow:0 4px 0 #d3ab35!important}
-.hidden{display:none!important}
-.shake{animation:shake .35s}.pop{animation:pop .35s}
-@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.035)}100%{transform:scale(1)}}
-@media (max-height:620px){
- .board{padding-top:8px}.topbar{height:34px}.top-icon{width:34px;height:34px;border-radius:12px}
- .mode-pill{margin-top:5px;padding:5px 11px}.subtitle{margin:5px 0 5px}
- .progress-track{margin-bottom:7px}.problem-card{border-radius:18px;margin-bottom:5px}
- .feedback{height:20px;flex-basis:20px;margin-bottom:4px}.buttons button{min-height:40px}
+:root{
+  --cream:#f4f1e8;
+  --surface:#fffdf7;
+  --ink:#3f4743;
+  --muted:#8b918c;
+  --teal:#438f8b;
+  --teal-dark:#34716e;
+  --yellow:#f2c94c;
+  --coral:#e98a73;
+  --green:#63ad82;
+  --line:#e5e0d4
 }
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden
+}
+
+body{
+  background:var(--cream);
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,
+  "Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--ink)
+}
+
+button,input{
+  font:inherit
+}
+
+.frame{
+  width:100%;
+  height:100dvh;
+  max-width:520px;
+  margin:0 auto;
+  background:var(--cream)
+}
+
+.board{
+  width:100%;
+  height:100%;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+  overflow:hidden
+}
+
+.topbar{
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex:0 0 auto
+}
+
+.top-icon{
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:14px;
+  background:var(--surface);
+  color:var(--ink);
+  font-size:20px;
+  box-shadow:0 2px 8px rgba(63,71,67,.07)
+}
+
+.top-title{
+  text-align:center;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.2px;
+  line-height:1.1
+}
+
+.top-title small{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+  letter-spacing:1.6px;
+  margin-top:3px
+}
+
+.mode-pill{
+  align-self:center;
+  margin-top:8px;
+  background:var(--teal);
+  color:white;
+  border-radius:999px;
+  padding:7px 13px;
+  font-size:11px;
+  font-weight:900;
+  box-shadow:0 4px 0 var(--teal-dark)
+}
+
+.subtitle{
+  text-align:center;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.5px;
+  margin:9px 0 8px
+}
+
+#quizScreen{
+  min-height:0;
+  flex:1;
+  display:flex;
+  flex-direction:column
+}
+
+.score-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:11px;
+  font-weight:800;
+  margin:0 2px 6px;
+  color:var(--muted)
+}
+
+.score-row .count{
+  color:var(--teal);
+  font-size:14px
+}
+
+.progress-track{
+  height:7px;
+  background:#e7e1d5;
+  border-radius:99px;
+  overflow:hidden;
+  margin-bottom:10px;
+  flex:0 0 auto
+}
+
+.progress-fill{
+  height:100%;
+  width:0;
+  background:var(--yellow);
+  border-radius:99px;
+  transition:width .3s ease
+}
+
+.problem-card{
+  min-height:0;
+  flex:1;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  box-shadow:0 8px 22px rgba(63,71,67,.06);
+  margin-bottom:8px
+}
+
+.equation{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(7px,2.5vw,14px);
+  flex-wrap:wrap;
+  font-weight:900;
+  color:var(--ink);
+  font-size:clamp(2.25rem,11vw,4.2rem);
+  line-height:1
+}
+
+.answer-input{
+  width:clamp(68px,19vw,96px);
+  font-size:clamp(2rem,9vw,3.4rem);
+  text-align:center;
+  font-weight:900;
+  background:transparent;
+  border:0;
+  border-bottom:5px solid var(--yellow);
+  color:var(--teal);
+  outline:0;
+  padding:0 2px 4px;
+  border-radius:0
+}
+
+.answer-input:focus{
+  border-bottom-color:var(--teal)
+}
+
+.answer-input::-webkit-outer-spin-button,
+.answer-input::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0
+}
+
+.answer-input[type=number]{
+  -moz-appearance:textfield
+}
+
+.feedback{
+  height:25px;
+  flex:0 0 25px;
+  text-align:center;
+  font-weight:800;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:7px
+}
+
+.feedback.benar{color:var(--green)}
+.feedback.salah{color:var(--coral)}
+
+.buttons{
+  display:flex;
+  gap:9px;
+  flex:0 0 auto
+}
+
+button{
+  min-height:45px;
+  border:0;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+  transition:transform .12s ease,filter .12s ease
+}
+
+button:active{
+  transform:scale(.97)
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:default
+}
+
+#checkBtn{
+  flex:1;
+  background:var(--yellow);
+  color:#4b3b0b;
+  box-shadow:0 4px 0 #d3ab35
+}
+
+#skipBtn{
+  width:92px;
+  background:var(--surface);
+  color:var(--teal);
+  border:1px solid #d9e5e1;
+  box-shadow:0 3px 0 #dce7e3
+}
+
+.result-screen{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--ink);
+  padding:18px
+}
+
+.result-screen>div:first-child{
+  font-size:18px;
+  font-weight:900
+}
+
+.result-screen .big-score{
+  font-size:48px;
+  font-weight:1000;
+  color:var(--teal);
+  margin:10px 0 4px
+}
+
+.result-screen p{
+  color:var(--muted);
+  margin:0 0 22px;
+  font-size:13px
+}
+
+#restartBtn{
+  width:min(260px,100%);
+  background:var(--yellow)!important;
+  color:#4b3b0b!important;
+  box-shadow:0 4px 0 #d3ab35!important
+}
+
+.hidden{
+  display:none!important
+}
+
+.shake{
+  animation:shake .35s
+}
+
+.pop{
+  animation:pop .35s
+}
+
+@keyframes shake{
+  10%,90%{transform:translateX(-2px)}
+  20%,80%{transform:translateX(4px)}
+  30%,50%,70%{transform:translateX(-8px)}
+  40%,60%{transform:translateX(8px)}
+}
+
+@keyframes pop{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.035)}
+  100%{transform:scale(1)}
+}
+
+@media (max-height:620px){
+  .board{padding-top:8px}
+  .topbar{height:34px}
+  .top-icon{
+    width:34px;
+    height:34px;
+    border-radius:12px
+  }
+  .mode-pill{
+    margin-top:5px;
+    padding:5px 11px
+  }
+  .subtitle{
+    margin:5px 0 5px
+  }
+  .progress-track{
+    margin-bottom:7px
+  }
+  .problem-card{
+    border-radius:18px;
+    margin-bottom:5px
+  }
+  .feedback{
+    height:20px;
+    flex-basis:20px;
+    margin-bottom:4px
+  }
+  .buttons button{
+    min-height:40px
+  }
+}
+
 @media (max-height:520px){
- .topbar{height:30px}.top-icon{width:30px;height:30px;font-size:16px}.top-title{font-size:12px}.top-title small{display:none}
- .mode-pill,.subtitle{display:none}.score-row{margin-bottom:4px}.progress-track{height:5px;margin-bottom:5px}
- .feedback{display:none}.problem-card{margin-bottom:6px}
- .buttons button{min-height:38px}
+  .topbar{height:30px}
+
+  .top-icon{
+    width:30px;
+    height:30px;
+    font-size:16px
+  }
+
+  .top-title{
+    font-size:12px
+  }
+
+  .top-title small{
+    display:none
+  }
+
+  .mode-pill,
+  .subtitle{
+    display:none
+  }
+
+  .score-row{
+    margin-bottom:4px
+  }
+
+  .progress-track{
+    height:5px;
+    margin-bottom:5px
+  }
+
+  .feedback{
+    display:none
+  }
+
+  .problem-card{
+    margin-bottom:6px
+  }
+
+  .buttons button{
+    min-height:38px
+  }
 }
 </style>
 </head>
+
 <body>
 
 <div class="frame">
   <div class="board">
+
     <div class="topbar">
       <button class="top-icon" type="button" aria-label="Kembali">‹</button>
-      <div class="top-title">Belajar Pembagian<small>PLAY • LEARN • SMILE</small></div>
+
+      <div class="top-title">
+        Belajar Pembagian
+        <small>PLAY • LEARN • SMILE</small>
+      </div>
+
       <button class="top-icon" type="button" aria-label="Bantuan">?</button>
     </div>
-<div class="subtitle">UNTUK TK • PEMBAGIAN 1–10 • 300 SOAL</div>
+
+    <div class="subtitle">
+      UNTUK TK • PEMBAGIAN 1–10 • 100 SOAL
+    </div>
 
     <div id="quizScreen">
+
       <div class="score-row">
-        <span>Soal <span id="qNum">1</span> / <span id="qTotal">300</span></span>
-        <span>Skor: <span class="count" id="scoreCount">0</span></span>
+        <span>
+          Soal <span id="qNum">1</span> /
+          <span id="qTotal">100</span>
+        </span>
+
+        <span>
+          Skor:
+          <span class="count" id="scoreCount">0</span>
+        </span>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="problem-card" id="problemCard"><div class="equation" id="equationText"></div></div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="problem-card" id="problemCard">
+        <div class="equation" id="equationText"></div>
+      </div>
+
       <div class="feedback" id="feedback"></div>
+
       <div class="buttons">
         <button id="checkBtn">✓ Cek Jawaban</button>
         <button id="skipBtn">→ Lewati</button>
       </div>
+
     </div>
 
     <div id="resultScreen" class="result-screen hidden">
+
       <div>🎉 Selesai! 🎉</div>
-      <div class="big-score" id="finalScore">0 / 300</div>
-      <p id="finalMsg">Kerja bagus!</p>
-      <button id="restartBtn">↻ Main Lagi</button>
+
+      <div class="big-score" id="finalScore">
+        0 / 100
+      </div>
+
+      <p id="finalMsg">
+        Kerja bagus!
+      </p>
+
+      <button id="restartBtn">
+        ↻ Main Lagi
+      </button>
+
     </div>
+
   </div>
 </div>
 
 <script>
-// ---------- Soal (Pembagian, hasil bagi 1-10, pembagi 1-10, 300 soal) ----------
+
+// ======================================================
+// SOAL PEMBAGIAN — 100 SOAL
+// ======================================================
+
 const rawQuestions = [
-"10 : 5",
-"54 : 6",
-"24 : 3",
-"5 : 1",
-"70 : 10",
-"90 : 9",
-"28 : 4",
-"5 : 5",
-"21 : 7",
-"8 : 1",
-"20 : 2",
-"60 : 10",
-"100 : 10",
-"60 : 6",
-"9 : 9",
-"4 : 1",
-"12 : 6",
-"63 : 9",
-"25 : 5",
-"20 : 4",
-"5 : 5",
-"36 : 9",
-"3 : 3",
-"40 : 8",
-"54 : 9",
-"81 : 9",
-"16 : 2",
-"27 : 9",
-"6 : 2",
-"48 : 6",
-"10 : 10",
-"35 : 7",
-"4 : 2",
-"8 : 8",
-"24 : 6",
-"42 : 6",
-"20 : 5",
-"20 : 2",
-"54 : 6",
-"54 : 9",
-"8 : 1",
-"24 : 6",
-"42 : 7",
-"30 : 6",
-"48 : 8",
-"30 : 3",
-"48 : 6",
-"30 : 5",
-"30 : 10",
-"6 : 1",
-"6 : 6",
-"35 : 7",
-"30 : 5",
-"14 : 7",
-"9 : 3",
-"64 : 8",
-"56 : 8",
-"50 : 10",
-"54 : 6",
-"12 : 6",
-"40 : 5",
-"48 : 8",
-"42 : 7",
-"8 : 4",
-"70 : 10",
-"63 : 7",
-"70 : 7",
-"35 : 7",
-"27 : 3",
-"30 : 6",
-"16 : 4",
-"8 : 8",
-"45 : 9",
-"8 : 2",
-"4 : 2",
-"24 : 6",
-"5 : 1",
-"28 : 7",
-"45 : 5",
-"90 : 9",
-"12 : 4",
-"24 : 3",
-"9 : 1",
-"3 : 1",
-"49 : 7",
-"4 : 4",
-"40 : 10",
-"48 : 8",
-"14 : 2",
-"45 : 9",
-"12 : 4",
-"63 : 9",
-"40 : 4",
-"10 : 5",
-"14 : 7",
-"12 : 6",
-"25 : 5",
-"9 : 3",
-"27 : 3",
-"63 : 7",
-"6 : 2",
-"90 : 10",
-"72 : 9",
-"40 : 4",
-"21 : 7",
-"12 : 2",
-"80 : 10",
-"4 : 2",
-"36 : 6",
-"10 : 1",
-"6 : 6",
-"72 : 8",
-"9 : 1",
-"6 : 2",
-"24 : 8",
-"3 : 3",
-"18 : 9",
-"1 : 1",
-"32 : 4",
-"7 : 1",
-"10 : 5",
-"27 : 9",
-"10 : 2",
-"1 : 1",
-"42 : 6",
-"36 : 4",
-"9 : 1",
-"40 : 10",
-"2 : 1",
-"16 : 4",
-"36 : 9",
-"21 : 3",
-"24 : 4",
-"56 : 7",
-"32 : 8",
-"24 : 8",
-"7 : 1",
-"8 : 2",
-"4 : 4",
-"14 : 7",
-"18 : 9",
-"50 : 10",
-"28 : 4",
-"12 : 3",
-"60 : 10",
-"2 : 1",
-"28 : 7",
-"56 : 7",
-"40 : 5",
-"15 : 3",
-"4 : 1",
-"2 : 2",
-"56 : 7",
-"18 : 9",
-"30 : 5",
-"6 : 3",
-"18 : 3",
-"60 : 6",
-"80 : 10",
-"20 : 10",
-"7 : 1",
-"50 : 10",
-"49 : 7",
-"2 : 2",
-"45 : 9",
-"16 : 8",
-"5 : 5",
-"3 : 1",
-"20 : 10",
-"27 : 3",
-"20 : 5",
-"12 : 2",
-"1 : 1",
-"2 : 1",
-"50 : 5",
-"16 : 4",
-"20 : 4",
-"36 : 6",
-"90 : 10",
-"40 : 4",
-"20 : 10",
-"42 : 6",
-"20 : 5",
-"10 : 10",
-"18 : 2",
-"6 : 1",
-"81 : 9",
-"6 : 3",
-"90 : 10",
-"36 : 9",
-"24 : 8",
-"24 : 4",
-"40 : 8",
-"15 : 5",
-"100 : 10",
-"80 : 8",
-"80 : 8",
-"30 : 10",
-"12 : 2",
-"14 : 2",
-"8 : 8",
-"35 : 5",
-"6 : 3",
-"70 : 7",
-"32 : 8",
-"16 : 2",
-"18 : 6",
-"5 : 1",
-"16 : 8",
-"24 : 3",
-"18 : 6",
-"90 : 9",
-"64 : 8",
-"21 : 3",
-"9 : 9",
-"10 : 1",
-"80 : 10",
-"35 : 5",
-"15 : 5",
-"60 : 10",
-"81 : 9",
-"16 : 8",
-"2 : 2",
-"30 : 3",
-"18 : 3",
-"36 : 4",
-"32 : 4",
-"40 : 10",
-"15 : 5",
-"8 : 1",
-"8 : 4",
-"7 : 7",
-"18 : 2",
-"36 : 6",
-"70 : 7",
-"72 : 8",
-"63 : 9",
-"72 : 9",
-"15 : 3",
-"21 : 3",
-"20 : 4",
-"6 : 6",
-"40 : 5",
-"3 : 3",
-"21 : 7",
-"100 : 10",
-"72 : 8",
-"27 : 9",
-"56 : 8",
-"80 : 8",
-"56 : 8",
-"49 : 7",
-"14 : 2",
-"28 : 4",
-"50 : 5",
-"36 : 4",
-"7 : 7",
-"18 : 2",
-"30 : 6",
-"6 : 1",
-"9 : 9",
-"12 : 4",
-"50 : 5",
-"10 : 10",
-"70 : 10",
-"18 : 6",
-"30 : 10",
-"48 : 6",
-"7 : 7",
-"32 : 8",
-"54 : 9",
-"45 : 5",
-"63 : 7",
-"12 : 3",
-"8 : 2",
-"18 : 3",
-"4 : 1",
-"8 : 4",
-"10 : 2",
-"28 : 7",
-"4 : 4",
-"16 : 2",
-"35 : 5",
-"12 : 3",
-"24 : 4",
-"10 : 2",
-"9 : 3",
-"25 : 5",
-"20 : 2",
-"10 : 1",
-"60 : 6",
-"30 : 3",
-"72 : 9",
-"45 : 5",
-"40 : 8",
-"32 : 4",
-"15 : 3",
-"3 : 1",
-"64 : 8",
-"42 : 7"
+
+  "10 : 5",
+  "54 : 6",
+  "24 : 3",
+  "5 : 1",
+  "70 : 10",
+  "90 : 9",
+  "28 : 4",
+  "5 : 5",
+  "21 : 7",
+  "8 : 1",
+
+  "20 : 2",
+  "60 : 10",
+  "100 : 10",
+  "60 : 6",
+  "9 : 9",
+  "4 : 1",
+  "12 : 6",
+  "63 : 9",
+  "25 : 5",
+  "20 : 4",
+
+  "36 : 9",
+  "3 : 3",
+  "40 : 8",
+  "54 : 9",
+  "81 : 9",
+  "16 : 2",
+  "27 : 9",
+  "6 : 2",
+  "48 : 6",
+  "10 : 10",
+
+  "35 : 7",
+  "4 : 2",
+  "8 : 8",
+  "24 : 6",
+  "42 : 6",
+  "20 : 5",
+  "54 : 6",
+  "54 : 9",
+  "8 : 1",
+  "24 : 6",
+
+  "42 : 7",
+  "30 : 6",
+  "48 : 8",
+  "30 : 3",
+  "48 : 6",
+  "30 : 5",
+  "30 : 10",
+  "6 : 1",
+  "6 : 6",
+  "35 : 7",
+
+  "14 : 7",
+  "9 : 3",
+  "64 : 8",
+  "56 : 8",
+  "50 : 10",
+  "12 : 6",
+  "40 : 5",
+  "48 : 8",
+  "42 : 7",
+  "8 : 4",
+
+  "70 : 10",
+  "63 : 7",
+  "70 : 7",
+  "35 : 7",
+  "27 : 3",
+  "30 : 6",
+  "16 : 4",
+  "8 : 8",
+  "45 : 9",
+  "8 : 2",
+
+  "4 : 2",
+  "24 : 6",
+  "5 : 1",
+  "28 : 7",
+  "45 : 5",
+  "90 : 9",
+  "12 : 4",
+  "24 : 3",
+  "9 : 1",
+  "3 : 1",
+
+  "49 : 7",
+  "4 : 4",
+  "40 : 10",
+  "48 : 8",
+  "14 : 2",
+  "45 : 9",
+  "12 : 4",
+  "63 : 9",
+  "40 : 4",
+  "10 : 5",
+
+  "14 : 7",
+  "12 : 6",
+  "25 : 5",
+  "9 : 3",
+  "27 : 3",
+  "63 : 7",
+  "6 : 2",
+  "90 : 10",
+  "72 : 9",
+  "40 : 4"
+
 ];
+
+
+// ======================================================
+// RANDOM
+// ======================================================
 
 function shuffle(arr){
   const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
+
   return a;
 }
 
+
+// ======================================================
+// PARSE SOAL
+// ======================================================
+
 function parseExpr(expr){
+
   const m = expr.match(/(\d+)\s*:\s*(\d+)/);
+
   const a = parseInt(m[1],10);
   const b = parseInt(m[2],10);
+
   const result = a / b;
-  return {a, op: ':', b, result};
+
+  return {
+    a,
+    op: ':',
+    b,
+    result
+  };
 }
 
+
+// ======================================================
+// STATE
+// ======================================================
+
 let questions = shuffle(rawQuestions).map(parseExpr);
+
 let current = 0;
 let score = 0;
+
+
+// ======================================================
+// ELEMENT
+// ======================================================
 
 const qNumEl = document.getElementById('qNum');
 const qTotalEl = document.getElementById('qTotal');
@@ -438,151 +662,433 @@ const finalScore = document.getElementById('finalScore');
 const finalMsg = document.getElementById('finalMsg');
 const restartBtn = document.getElementById('restartBtn');
 
+
+// Jumlah soal otomatis = 100
 qTotalEl.textContent = questions.length;
 
-// ---------- Suara ----------
+
+// ======================================================
+// SUARA
+// ======================================================
+
 let audioCtx = null;
+
 function getCtx(){
+
   if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx = new (
+      window.AudioContext ||
+      window.webkitAudioContext
+    )();
   }
+
   return audioCtx;
 }
 
-function playTone(freqStart, freqEnd, duration, type, volume){
+
+function playTone(
+  freqStart,
+  freqEnd,
+  duration,
+  type,
+  volume
+){
+
   const ctx = getCtx();
+
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
+
   osc.type = type;
-  osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(freqEnd, ctx.currentTime + duration);
-  gain.gain.setValueAtTime(volume, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+  osc.frequency.setValueAtTime(
+    freqStart,
+    ctx.currentTime
+  );
+
+  osc.frequency.exponentialRampToValueAtTime(
+    freqEnd,
+    ctx.currentTime + duration
+  );
+
+  gain.gain.setValueAtTime(
+    volume,
+    ctx.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    ctx.currentTime + duration
+  );
+
   osc.connect(gain);
   gain.connect(ctx.destination);
+
   osc.start();
-  osc.stop(ctx.currentTime + duration);
+
+  osc.stop(
+    ctx.currentTime + duration
+  );
 }
+
 
 function playTing(){
-  // suara ceria naik - benar (tetap pakai nada sintetis)
-  playTone(880, 1760, 0.18, 'sine', 0.25);
-  setTimeout(()=>playTone(1318, 1318, 0.22, 'sine', 0.2), 90);
+
+  playTone(
+    880,
+    1760,
+    0.18,
+    'sine',
+    0.25
+  );
+
+  setTimeout(
+    () => playTone(
+      1318,
+      1318,
+      0.22,
+      'sine',
+      0.2
+    ),
+    90
+  );
 }
 
-// suara salah memakai file audio dari folder sound/faaah.mp3 (path relatif)
-const wrongSound = new Audio('sound/faaah.mp3');
+
+// ======================================================
+// SUARA SALAH
+// ======================================================
+
+const wrongSound =
+  new Audio('sound/faaah.mp3');
+
 wrongSound.preload = 'auto';
 
+
 function playTung(){
+
   try{
+
     wrongSound.currentTime = 0;
-    const playPromise = wrongSound.play();
+
+    const playPromise =
+      wrongSound.play();
+
     if(playPromise !== undefined){
-      playPromise.catch(()=>{
-        // fallback ke nada sintetis jika file tidak bisa diputar
-        playTone(220, 110, 0.35, 'sawtooth', 0.2);
+
+      playPromise.catch(() => {
+
+        playTone(
+          220,
+          110,
+          0.35,
+          'sawtooth',
+          0.2
+        );
+
       });
     }
+
   }catch(e){
-    playTone(220, 110, 0.35, 'sawtooth', 0.2);
+
+    playTone(
+      220,
+      110,
+      0.35,
+      'sawtooth',
+      0.2
+    );
+
   }
 }
 
-// ---------- Render soal ----------
+
+// ======================================================
+// RENDER SOAL
+// ======================================================
+
 function renderQuestion(){
+
   const q = questions[current];
-  qNumEl.textContent = current + 1;
-  progressFill.style.width = ((current) / questions.length * 100) + '%';
+
+  qNumEl.textContent =
+    current + 1;
+
+  progressFill.style.width =
+    ((current) / questions.length * 100) + '%';
+
   equationText.innerHTML = `
+
     <span>${q.a}</span>
+
     <span>÷</span>
+
     <span>${q.b}</span>
+
     <span>=</span>
-    <input type="number" id="answerInput" class="answer-input" inputmode="numeric" autofocus />
+
+    <input
+      type="number"
+      id="answerInput"
+      class="answer-input"
+      inputmode="numeric"
+      autofocus
+    />
+
   `;
+
   feedback.textContent = '';
-  feedback.className = 'feedback';
-  document.getElementById('answerInput').focus();
-  document.getElementById('answerInput').addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter') checkAnswer();
-  });
+
+  feedback.className =
+    'feedback';
+
+  const input =
+    document.getElementById('answerInput');
+
+  input.focus();
+
+  input.addEventListener(
+    'keydown',
+    (e) => {
+
+      if(e.key === 'Enter'){
+        checkAnswer();
+      }
+
+    }
+  );
 }
+
+
+// ======================================================
+// CEK JAWABAN
+// ======================================================
 
 function checkAnswer(){
-  const input = document.getElementById('answerInput');
-  const val = input.value.trim();
+
+  const input =
+    document.getElementById('answerInput');
+
+  const val =
+    input.value.trim();
+
   if(val === ''){
-    feedback.textContent = 'Isi dulu jawabannya ya!';
-    feedback.className = 'feedback';
+
+    feedback.textContent =
+      'Isi dulu jawabannya ya!';
+
+    feedback.className =
+      'feedback';
+
     return;
   }
-  const q = questions[current];
-  const userAnswer = parseInt(val, 10);
+
+
+  const q =
+    questions[current];
+
+  const userAnswer =
+    parseInt(val,10);
+
 
   if(userAnswer === q.result){
+
     score++;
-    scoreCountEl.textContent = score;
-    feedback.textContent = '✅ Benar! Ting~';
-    feedback.className = 'feedback benar';
-    problemCard.classList.add('pop');
+
+    scoreCountEl.textContent =
+      score;
+
+    feedback.textContent =
+      '✅ Benar! Ting~';
+
+    feedback.className =
+      'feedback benar';
+
+    problemCard.classList.add(
+      'pop'
+    );
+
     playTing();
-  } else {
-    feedback.textContent = `❌ Salah. Jawabannya ${q.result}. Tung...`;
-    feedback.className = 'feedback salah';
-    problemCard.classList.add('shake');
+
+  }else{
+
+    feedback.textContent =
+      `❌ Salah. Jawabannya ${q.result}. Tung...`;
+
+    feedback.className =
+      'feedback salah';
+
+    problemCard.classList.add(
+      'shake'
+    );
+
     playTung();
+
   }
+
 
   checkBtn.disabled = true;
   skipBtn.disabled = true;
 
-  setTimeout(()=>{
-    problemCard.classList.remove('pop','shake');
+
+  setTimeout(() => {
+
+    problemCard.classList.remove(
+      'pop',
+      'shake'
+    );
+
     nextQuestion();
-  }, 1100);
+
+  },1100);
+
 }
 
+
+// ======================================================
+// SOAL BERIKUTNYA
+// ======================================================
+
 function nextQuestion(){
+
   current++;
+
   checkBtn.disabled = false;
   skipBtn.disabled = false;
+
+
   if(current >= questions.length){
+
     showResult();
-  } else {
+
+  }else{
+
     renderQuestion();
+
   }
 }
 
+
+// ======================================================
+// HASIL
+// ======================================================
+
 function showResult(){
-  quizScreen.classList.add('hidden');
-  resultScreen.classList.remove('hidden');
-  progressFill.style.width = '100%';
-  finalScore.textContent = `${score} / ${questions.length}`;
-  const pct = score / questions.length;
-  if(pct === 1) finalMsg.textContent = 'Sempurna! Kamu jagoan pembagian! 🌟';
-  else if(pct >= 0.8) finalMsg.textContent = 'Hebat sekali! Hampir sempurna! 🎈';
-  else if(pct >= 0.5) finalMsg.textContent = 'Bagus, terus berlatih ya! 💪';
-  else finalMsg.textContent = 'Ayo coba lagi, pasti bisa lebih baik! 📚';
+
+  quizScreen.classList.add(
+    'hidden'
+  );
+
+  resultScreen.classList.remove(
+    'hidden'
+  );
+
+  progressFill.style.width =
+    '100%';
+
+  finalScore.textContent =
+    `${score} / ${questions.length}`;
+
+
+  const pct =
+    score / questions.length;
+
+
+  if(pct === 1){
+
+    finalMsg.textContent =
+      'Sempurna! Kamu jagoan pembagian! 🌟';
+
+  }else if(pct >= 0.8){
+
+    finalMsg.textContent =
+      'Hebat sekali! Hampir sempurna! 🎈';
+
+  }else if(pct >= 0.5){
+
+    finalMsg.textContent =
+      'Bagus, terus berlatih ya! 💪';
+
+  }else{
+
+    finalMsg.textContent =
+      'Ayo coba lagi, pasti bisa lebih baik! 📚';
+
+  }
 }
 
-checkBtn.addEventListener('click', checkAnswer);
-skipBtn.addEventListener('click', ()=>{
-  feedback.textContent = `Jawabannya ${questions[current].result}`;
-  feedback.className = 'feedback';
-  setTimeout(nextQuestion, 700);
-});
-restartBtn.addEventListener('click', ()=>{
-  questions = shuffle(rawQuestions).map(parseExpr);
-  current = 0;
-  score = 0;
-  scoreCountEl.textContent = 0;
-  resultScreen.classList.add('hidden');
-  quizScreen.classList.remove('hidden');
-  renderQuestion();
-});
+
+// ======================================================
+// BUTTON CEK
+// ======================================================
+
+checkBtn.addEventListener(
+  'click',
+  checkAnswer
+);
+
+
+// ======================================================
+// BUTTON LEWATI
+// ======================================================
+
+skipBtn.addEventListener(
+  'click',
+  () => {
+
+    feedback.textContent =
+      `Jawabannya ${questions[current].result}`;
+
+    feedback.className =
+      'feedback';
+
+    setTimeout(
+      nextQuestion,
+      700
+    );
+
+  }
+);
+
+
+// ======================================================
+// MAIN LAGI
+// ======================================================
+
+restartBtn.addEventListener(
+  'click',
+  () => {
+
+    questions =
+      shuffle(rawQuestions)
+      .map(parseExpr);
+
+    current = 0;
+
+    score = 0;
+
+    scoreCountEl.textContent = 0;
+
+    resultScreen.classList.add(
+      'hidden'
+    );
+
+    quizScreen.classList.remove(
+      'hidden'
+    );
+
+    renderQuestion();
+
+  }
+);
+
+
+// ======================================================
+// MULAI
+// ======================================================
 
 renderQuestion();
+
 </script>
 
 </body>
