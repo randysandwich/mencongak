@@ -308,6 +308,40 @@
     font-weight:900;
   }
 
+  .four-digit-sub .paper,
+  .four-digit-add .paper{
+    width:210px;
+    min-height:130px;
+    padding:16px 20px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px 16px;
+    align-content:center;
+    justify-items:center;
+    background:#fffdf7;
+    border:3px solid var(--ink);
+    border-radius:18px;
+    box-shadow:6px 6px 0 var(--ink);
+    transform:rotate(-2deg);
+  }
+  .four-digit-sub .number,
+  .four-digit-add .number{
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:1px;
+    line-height:1.05;
+  }
+  .four-digit-sub .number:nth-child(2),
+  .four-digit-add .number:nth-child(2){
+    border-bottom:3px solid var(--ink);
+    padding-bottom:5px;
+  }
+  .four-digit-sub .number:nth-child(4),
+  .four-digit-add .number:nth-child(4){
+    border-bottom:3px solid var(--ink);
+    padding-bottom:5px;
+  }
+
   @media(max-width:520px){
     .app{padding:12px 14px 28px}
     .header{
@@ -524,6 +558,50 @@
     }
   }
 
+
+/* Thumbnail operasi 4 digit — sederhana dan tebal */
+.four-digit-art{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:150px;
+}
+.stacked-calc{
+  position:relative;
+  width:150px;
+  min-height:118px;
+  padding:12px 24px 10px 10px;
+  text-align:right;
+  font-family:Arial, Helvetica, sans-serif;
+  color:#202020;
+  background:#fff;
+  border:3px solid #202020;
+  border-radius:12px;
+  box-sizing:border-box;
+  box-shadow:0 4px 0 rgba(0,0,0,.12);
+}
+.calc-number{
+  font-size:30px;
+  line-height:1.08;
+  font-weight:900;
+  letter-spacing:.5px;
+}
+.calc-line{
+  height:4px;
+  width:128px;
+  margin:6px 0 0 auto;
+  background:#202020;
+  border-radius:2px;
+}
+.calc-sign{
+  position:absolute;
+  right:0;
+  bottom:22px;
+  font-size:30px;
+  line-height:1;
+  font-weight:900;
+}
+
 </style>
 </head>
 
@@ -714,11 +792,44 @@
       </div>
     </a>
 
+    <a class="game-card card-pink" href="kurangempatdigit.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">KURANG<br>4 DIGIT</h2>
+        <div class="subtitle">LATIHAN PENGURANGAN</div>
+        <div class="art four-digit-art">
+          <div class="stacked-calc">
+            <div class="calc-number">7870</div>
+            <div class="calc-number">− 985</div>
+            <div class="calc-line"></div>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
+    <a class="game-card card-yellow" href="tambahempatdigit.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">TAMBAH<br>4 DIGIT</h2>
+        <div class="subtitle">LATIHAN PENJUMLAHAN</div>
+        <div class="art four-digit-art">
+          <div class="stacked-calc">
+            <div class="calc-number">7870</div>
+            <div class="calc-number">985</div>
+            <div class="calc-line"></div>
+            <div class="calc-sign">+</div>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
     </section>
 
     <section class="more">
     <div class="more-label">MASIH BANYAK LAGI</div>
-    <h2>11 permainan untuk belajar sambil bermain.</h2>
+    <h2>13 permainan untuk belajar sambil bermain.</h2>
     <div class="more-list">
       <div class="more-item">Bilangan Terbesar</div>
       <div class="more-item">2 Suku Kata Terbuka</div>
