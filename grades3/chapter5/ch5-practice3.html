@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Multiplication With Regrouping In Ones, Tens And Hundreds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f0e4;--surface:#fffdf7;--ink:#242735;--muted:#657a70;
+  --line:#30332f;--pink:#ef8fa8;--green:#b9d1c1;--teal:#438f8b;
+  --coral:#e98a73;--yellow:#f8d36a;--yellow-dark:#d6aa2c;
+  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button,input{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0;margin:0 auto}
+.board{
+ width:100%;height:100%;min-height:0;overflow:hidden;
+ background:
+ radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+ radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+ padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+ max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+ display:flex;flex-direction:column;
+}
+.header{
+ flex:0 0 auto;height:82px;display:grid;
+ grid-template-columns:62px 1fr 62px 62px;align-items:center;gap:8px;margin:0 1px 20px;
+}
+.brand-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.brand{text-align:center;font-weight:900;font-size:42px;line-height:1;letter-spacing:-3px}
+.brand-subtitle{margin-top:4px;font-size:9px;line-height:1;font-weight:900;letter-spacing:5px;color:var(--coral)}
+.brand sup{color:var(--pink);font-size:.48em;vertical-align:top;letter-spacing:-1px;position:relative;top:-7px;margin-left:2px}
+.icon-btn,.music-btn,.help-btn{
+ width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;border-radius:20px;
+ box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-weight:900;
+}
+.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink);transition:transform .12s ease,background .12s ease}
+.music-btn:active,.help-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+.music-btn.off{background:#eee4cf}
+
+.help-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,39,53,.42)}
+.help-modal.show{display:flex}
+.help-dialog{width:min(92vw,520px);max-height:80vh;overflow:auto;background:var(--surface);border:3px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}
+.help-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.help-title-row h2{margin:0;font-size:1.25rem;font-weight:900}
+.help-close{width:44px;height:44px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;box-shadow:0 3px 0 var(--line);font-size:28px;font-weight:900;line-height:1;cursor:pointer}
+.help-close:active{transform:translateY(3px);box-shadow:none}
+.help-content{color:var(--ink);font-size:.95rem;line-height:1.6}
+.help-content p{margin:0 0 10px}
+
+.mode-pill{flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill strong{color:var(--teal)}
+.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--teal);font-size:.68rem}
+.theme .chapter-label{color:#4f8277}
+
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+
+.problem-card{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:18px 10px;margin:0 1px 7px;
+ box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);position:relative;overflow:hidden
+}
+.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
+.multiplication-wrap{position:relative;z-index:1;width:min(88vw,330px);display:flex;flex-direction:column;align-items:center}
+.multiplication-wrap:has(.match-wrap),.multiplication-wrap:has(.story-wrap){width:100%}
+
+.multiplication-line{width:100%;display:flex;align-items:center;justify-content:flex-end;min-height:clamp(54px,12vw,70px);position:relative}
+.multiplication-number{text-align:right;font-size:clamp(2.2rem,11vw,3.3rem);line-height:1;font-weight:900;letter-spacing:.14em;padding-right:48px}
+.multiplication-sign{position:absolute;right:0;text-align:center;font-size:clamp(2rem,9vw,2.8rem);line-height:1;font-weight:900}
+.multiplication-rule{width:100%;border-top:4px solid var(--ink);margin-top:4px}
+.answer-box{width:100%;display:flex;justify-content:flex-end;padding-top:10px;padding-right:48px}
+.answer-input{
+ width:clamp(210px,63vw,275px);height:clamp(54px,16vw,68px);border:2px solid #293f4d;border-radius:9px;
+ background:#fff;text-align:right;font-size:clamp(1.8rem,8vw,2.5rem);font-weight:900;outline:none;padding:0 10px;
+ letter-spacing:.12em;color:var(--teal)
+}
+.answer-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.answer-input.correct{border-color:var(--green);background:#eef9f1}
+.answer-input.wrong{border-color:var(--coral);background:#fff1ed}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}
+
+.feedback{flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.benar{color:var(--green)}.feedback.salah{color:var(--coral)}
+.buttons{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{
+ min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
+ box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer;
+ transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease,background .12s ease
+}
+button.action:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+button.action:disabled{opacity:.55;cursor:default}
+#checkBtn{background:var(--green);color:var(--ink)}
+#skipBtn{background:#fffdf7;color:var(--muted)}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+
+.result-screen{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.result-screen .score-title{color:var(--ink);font-size:clamp(.9rem,3vw,1.2rem);font-weight:900;letter-spacing:.5px;margin:0 0 2px}
+.result-screen .big-score{color:var(--coral);font-size:clamp(5.5rem,22vw,9rem);line-height:.9;font-weight:900;letter-spacing:-5px;margin:4px 0 2px}
+.result-screen .score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
+.hidden{display:none!important}.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+
+/* Match and Correct — Monkey & Banana */
+.match-wrap{width:min(96vw,420px);display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;margin:0 auto}
+.match-title{font-size:clamp(1.25rem,5.8vw,1.8rem);font-weight:900;color:var(--ink);text-align:center;margin-bottom:2px}
+.match-subtitle{font-size:.68rem;font-weight:800;color:var(--muted);text-align:center;margin-bottom:3px}
+.match-board{position:relative;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:24px;background:var(--surface);border-radius:18px;padding:10px}
+.match-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.match-column{display:flex;flex-direction:column;gap:7px;position:relative;z-index:2}
+.match-card{
+ min-height:54px;border:2px solid #293f4d;border-radius:12px;background:#fff;display:flex;align-items:center;
+ justify-content:center;gap:7px;padding:6px 7px;font-size:clamp(.9rem,4.1vw,1.12rem);font-weight:900;
+ color:var(--ink);cursor:pointer;transition:transform .12s ease,background .12s ease,border-color .12s ease;user-select:none
+}
+.match-card .match-icon{font-size:1.35rem;line-height:1}
+.match-card.selected{border-color:var(--coral);background:#fff1ed;transform:scale(1.02)}
+.match-card.matched{border-color:var(--green);background:#eef9f1;color:#2f706d;cursor:default}
+.match-card.wrong{border-color:var(--coral);background:#fff1ed}
+.match-label{font-size:.55rem;font-weight:900;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px}
+.match-instruction{min-height:20px;color:var(--muted);font-size:.68rem;font-weight:800;text-align:center}
+.match-progress{font-size:.68rem;color:var(--teal);font-weight:900}
+
+/* Real World Problems */
+.story-wrap{width:min(92vw,430px);max-width:430px;display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:1;margin:0 auto}
+.story-title{font-size:clamp(.72rem,2.6vw,.82rem);font-weight:900;color:var(--coral);text-align:center}
+.story-card{width:100%;max-width:430px;background:var(--surface);border-radius:18px;padding:18px 16px;text-align:center}
+.story-question{font-size:clamp(1.25rem,5.2vw,1.45rem);line-height:1.45;font-weight:900;color:var(--ink);margin-bottom:14px}
+.story-answer-row{
+ display:flex;align-items:center;justify-content:center;text-align:center;flex-wrap:wrap;gap:7px;padding-top:12px;
+ border-top:4px solid var(--line);font-size:clamp(1.25rem,5.2vw,1.45rem);font-weight:900;line-height:1.4;color:var(--teal)
+}
+.story-input{width:110px;height:52px;border:2px solid #293f4d;border-radius:9px;background:#fff;text-align:center;font-size:1.45rem;font-weight:900;outline:none;color:var(--teal)}
+.story-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.story-input.correct{border-color:var(--green);background:#eef9f1}
+.story-input.wrong{border-color:var(--coral);background:#fff1ed}
+
+@media(max-height:620px){
+ .header{height:68px;grid-template-columns:62px 1fr 62px 62px;gap:8px;margin-bottom:12px}
+ .icon-btn{width:62px;height:62px;border-radius:20px;font-size:27px}
+ .music-btn,.help-btn{width:62px;height:62px;border-radius:20px;font-size:25px}
+ .brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
+ .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+ .theme{font-size:.51rem;margin-bottom:2px}.theme strong{font-size:.56rem}
+ .progress-track{margin-bottom:4px}.problem-card{margin-bottom:4px;border-radius:18px}
+ .multiplication-line{min-height:48px}.multiplication-number{font-size:2rem;padding-right:42px}.multiplication-sign{font-size:1.8rem}
+ .answer-input{height:48px;width:210px;font-size:1.7rem}
+ .feedback{min-height:19px;font-size:.66rem}
+ button.action{min-height:52px;font-size:.72rem;border-radius:18px;border-width:3px}.footer-note{display:none}
+ .match-wrap{gap:3px}.match-title{font-size:1.2rem}.match-board{gap:12px;padding:7px;border-radius:15px}
+ .match-column{gap:5px}.match-card{min-height:43px;padding:4px;font-size:.76rem;border-radius:10px}
+ .match-card .match-icon{font-size:1.05rem}.match-label{font-size:.48rem}
+ .match-instruction{font-size:.58rem;min-height:15px}
+ .story-wrap{gap:4px}.story-title{font-size:.72rem}.story-card{padding:10px;border-radius:15px}
+ .story-question{font-size:1.05rem;margin-bottom:8px}
+ .story-answer-row{font-size:1.05rem;gap:4px;padding-top:8px;border-top-width:3px}
+ .story-input{width:90px;height:40px;font-size:1.15rem}
+}
+@media(max-height:520px){
+ .mode-pill,.theme{display:none}.problem-card{margin-top:2px}.multiplication-line{min-height:43px}
+ .multiplication-number{font-size:1.8rem;padding-right:38px}.multiplication-sign{font-size:1.6rem}
+ .answer-input{height:45px;width:190px}
+}
+</style>
+</head>
+<body>
+<div class="frame"><div class="board">
+
+<header class="header">
+  <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+  <div class="brand-wrap">
+    <div class="brand">taci<sup>2</sup></div>
+    <div class="brand-subtitle">MENCONGAK GAMES</div>
+  </div>
+  <button class="help-btn" type="button" aria-label="Bantuan" onclick="showHelp()">?</button>
+  <button id="musicToggle" class="music-btn" type="button" aria-label="Matikan musik" aria-pressed="true">♪</button>
+</header>
+
+<div id="helpModal" class="help-modal" aria-hidden="true">
+  <div class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="help-title-row">
+      <h2 id="helpTitle">PRACTICE 3</h2>
+      <button class="help-close" type="button" aria-label="Tutup" onclick="closeHelp()">×</button>
+    </div>
+    <div class="help-content">
+      <p>Latihan perkalian dengan regrouping pada Ones, Tens, dan Hundreds.</p>
+      <p>Terdiri dari perkalian langsung, mencocokkan hasil, dan soal cerita.</p>
+      <p>Kerjakan setiap soal dengan teliti lalu tekan <b>Cek Jawaban</b>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="mode-pill">✖️ <strong>PRACTICE 3</strong> - Multiplication With Regrouping In Ones, Tens And Hundreds</div>
+<div class="theme">GRADES 3 • <span class="chapter-label">CHAPTER 5</span> • <strong>MULTIPLICATION</strong></div>
+
+<div id="quizScreen">
+  <div class="score-row">
+    <span>Soal <span id="qNum">1</span> / <span id="qTotal">50</span></span>
+    <span>Skor <span class="count" id="scoreCount">0</span></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="problem-card" id="problemCard">
+    <div class="multiplication-wrap" id="multiplicationWrap"></div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="buttons">
+    <button class="action" id="checkBtn">✓ Cek Jawaban</button>
+    <button class="action" id="skipBtn">→ Lewati</button>
+  </div>
+  <div class="footer-note">copyright © 2026</div>
+</div>
+
+<div id="resultScreen" class="result-screen hidden">
+  <div class="score-title">NILAI KAMU</div>
+  <div class="big-score" id="finalScore">0</div>
+  <div class="score-ratio" id="finalRatio">0 / 50</div>
+  <p id="finalMsg">Kerja bagus!</p>
+  <button id="restartBtn">↻ Main Lagi</button>
+</div>
+
+</div></div>
+
+<script>
+const TOTAL_QUESTIONS=50;
+let questions=[],current=0,score=0,locked=false,matchState=null;
+
+const qNumEl=document.getElementById('qNum');
+const qTotalEl=document.getElementById('qTotal');
+const scoreCountEl=document.getElementById('scoreCount');
+const progressFill=document.getElementById('progressFill');
+const multiplicationWrap=document.getElementById('multiplicationWrap');
+const feedback=document.getElementById('feedback');
+const problemCard=document.getElementById('problemCard');
+const checkBtn=document.getElementById('checkBtn');
+const skipBtn=document.getElementById('skipBtn');
+const quizScreen=document.getElementById('quizScreen');
+const resultScreen=document.getElementById('resultScreen');
+const finalScore=document.getElementById('finalScore');
+const finalMsg=document.getElementById('finalMsg');
+const restartBtn=document.getElementById('restartBtn');
+qTotalEl.textContent=TOTAL_QUESTIONS;
+
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* Tipe 1 — 25 Direct Multiplication
+   Semua soal mempunyai regrouping pada Ones, Tens, dan Hundreds. */
+const directPool=[
+  [228,5],
+  [789,2],
+  [456,4],
+  [856,4],
+  [644,5],
+  [367,3],
+  [578,4],
+  [689,5],
+  [746,6],
+  [857,7],
+  [268,4],
+  [397,6],
+  [486,7],
+  [597,8],
+  [678,9],
+  [3438,4],
+  [1457,6],
+  [2369,3],
+  [2784,5],
+  [3286,4],
+  [4275,6],
+  [5387,7],
+  [6498,5],
+  [7569,8],
+  [8647,9]
+];
+
+/* Tipe 2 — 10 Match and Correct.
+   Setiap ronde = 1 soal, berisi 5 pasangan.
+   Tema: ROOSTER & HATCHING CHICK. */
+const matchRounds=[
+  {type:'match',title:'Match and Correct',pairs:[{result:1140,a:228,b:5},{result:1578,a:789,b:2},{result:1824,a:456,b:4},{result:4280,a:856,b:5},{result:3220,a:644,b:5}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:1101,a:367,b:3},{result:2312,a:578,b:4},{result:3445,a:689,b:5},{result:4476,a:746,b:6},{result:5999,a:857,b:7}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:1072,a:268,b:4},{result:2382,a:397,b:6},{result:3402,a:486,b:7},{result:4776,a:597,b:8},{result:6102,a:678,b:9}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:13752,a:3438,b:4},{result:8742,a:1457,b:6},{result:7107,a:2369,b:3},{result:13920,a:2784,b:5},{result:13144,a:3286,b:4}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:25650,a:4275,b:6},{result:37709,a:5387,b:7},{result:32490,a:6498,b:5},{result:60552,a:7569,b:8},{result:77823,a:8647,b:9}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:1428,a:238,b:6},{result:1437,a:479,b:3},{result:4102,a:586,b:7},{result:5576,a:697,b:8},{result:6822,a:758,b:9}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:1740,a:348,b:5},{result:2814,a:469,b:6},{result:4109,a:587,b:7},{result:5584,a:698,b:8},{result:6831,a:759,b:9}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:13184,a:3296,b:4},{result:7390,a:1478,b:5},{result:15522,a:2587,b:6},{result:14792,a:3698,b:4},{result:23945,a:4789,b:5}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:13122,a:2187,b:6},{result:22932,a:3276,b:7},{result:34920,a:4365,b:8},{result:32868,a:5478,b:6},{result:46123,a:6589,b:7}]},
+  {type:'match',title:'Match and Correct',pairs:[{result:9592,a:2398,b:4},{result:17435,a:3487,b:5},{result:27456,a:4576,b:6},{result:39823,a:5689,b:7},{result:54384,a:6798,b:8}]}
+];
+
+/* Tipe 3 — 15 Real World Problems */
+const storyRounds=[
+  {type:'story',title:'Real World Problems',question:"A school has 228 pencils in each box. How many pencils are in 5 boxes?",answerText:"There are",unit:"pencils in 5 boxes.",a:228,b:5,result:1140},
+  {type:'story',title:'Real World Problems',question:"A farm packs 789 apples in each large basket. How many apples are in 2 baskets?",answerText:"There are",unit:"apples in 2 baskets.",a:789,b:2,result:1578},
+  {type:'story',title:'Real World Problems',question:"A factory makes 456 toys each day. How many toys does it make in 4 days?",answerText:"It makes",unit:"toys in 4 days.",a:456,b:4,result:1824},
+  {type:'story',title:'Real World Problems',question:"A library puts 856 books on each cart. How many books are on 5 carts?",answerText:"There are",unit:"books on 5 carts.",a:856,b:5,result:4280},
+  {type:'story',title:'Real World Problems',question:"A farmer collects 644 eggs each morning. How many eggs are collected in 5 mornings?",answerText:"There are",unit:"eggs in 5 mornings.",a:644,b:5,result:3220},
+  {type:'story',title:'Real World Problems',question:"A shop receives 367 stickers in each pack. How many stickers are in 3 packs?",answerText:"There are",unit:"stickers in 3 packs.",a:367,b:3,result:1101},
+  {type:'story',title:'Real World Problems',question:"A baker makes 578 cookies each morning. How many cookies does she make in 4 mornings?",answerText:"She makes",unit:"cookies in 4 mornings.",a:578,b:4,result:2312},
+  {type:'story',title:'Real World Problems',question:"A school orders 689 notebooks for each grade. How many notebooks are ordered for 5 grades?",answerText:"The school orders",unit:"notebooks for 5 grades.",a:689,b:5,result:3445},
+  {type:'story',title:'Real World Problems',question:"A farmer plants 746 flowers in each row. How many flowers are in 6 rows?",answerText:"There are",unit:"flowers in 6 rows.",a:746,b:6,result:4476},
+  {type:'story',title:'Real World Problems',question:"A warehouse stores 857 cans on each shelf. How many cans are on 7 shelves?",answerText:"There are",unit:"cans on 7 shelves.",a:857,b:7,result:5999},
+  {type:'story',title:'Real World Problems',question:"A printer makes 3,438 cards each hour. How many cards does it make in 4 hours?",answerText:"It makes",unit:"cards in 4 hours.",a:3438,b:4,result:13752},
+  {type:'story',title:'Real World Problems',question:"A factory packs 1,457 bottles in each truck. How many bottles are in 6 trucks?",answerText:"There are",unit:"bottles in 6 trucks.",a:1457,b:6,result:8742},
+  {type:'story',title:'Real World Problems',question:"A stadium has 2,369 seats in each section. How many seats are in 3 sections?",answerText:"There are",unit:"seats in 3 sections.",a:2369,b:3,result:7107},
+  {type:'story',title:'Real World Problems',question:"A warehouse has 2,784 boxes on each floor. How many boxes are on 5 floors?",answerText:"There are",unit:"boxes on 5 floors.",a:2784,b:5,result:13920},
+  {type:'story',title:'Real World Problems',question:"A company prints 3,286 flyers for each event. How many flyers are printed for 4 events?",answerText:"The company prints",unit:"flyers for 4 events.",a:3286,b:4,result:13144}
+];
+
+function generateQuestions(){
+  const direct=shuffle(directPool).map(([a,b])=>({a,b,result:a*b,type:'standard'}));
+  const matches=matchRounds.map(round=>({...round,pairs:shuffle(round.pairs).map(p=>({...p}))}));
+  const stories=shuffle(storyRounds).map(q=>({...q}));
+  return shuffle([...direct,...matches,...stories]);
+}
+
+function renderQuestion(){
+  locked=false;
+  matchState=null;
+  const q=questions[current];
+  qNumEl.textContent=current+1;
+  progressFill.style.width=(current/questions.length*100)+'%';
+  multiplicationWrap.innerHTML='';
+
+  if(q.type==='match') renderMatchQuestion(q);
+  else if(q.type==='story') renderStoryQuestion(q);
+  else{
+    multiplicationWrap.innerHTML=`
+      <div class="multiplication-line"><div class="multiplication-number">${q.a}</div></div>
+      <div class="multiplication-line"><div class="multiplication-number">${q.b}</div><div class="multiplication-sign">×</div></div>
+      <div class="multiplication-rule"></div>
+      <div class="answer-box"><input type="number" class="answer-input" id="answerInput" inputmode="numeric" autocomplete="off" aria-label="Jawaban"></div>`;
+  }
+
+  feedback.textContent='';
+  feedback.className='feedback';
+  checkBtn.disabled=false;
+  skipBtn.disabled=false;
+  checkBtn.style.display='';
+  skipBtn.style.display='';
+
+  const input=document.getElementById('answerInput');
+  if(input){
+    input.focus();
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault();checkAnswer()}
+      if(e.key==='ArrowUp'||e.key==='ArrowDown')e.preventDefault();
+    });
+  }
+}
+
+function renderStoryQuestion(q){
+  multiplicationWrap.innerHTML=`
+    <div class="story-wrap">
+      <div class="story-title">${q.title}</div>
+      <div class="story-card">
+        <div class="story-question">${q.question}</div>
+        <div class="story-answer-row">
+          <span>${q.answerText}</span>
+          <input type="number" id="answerInput" class="story-input" inputmode="numeric" autocomplete="off" aria-label="Jawaban cerita">
+          <span>${q.unit}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderMatchQuestion(q){
+  matchState={pairs:q.pairs,selectedLeft:null,selectedRight:null,matched:0};
+
+  multiplicationWrap.innerHTML=`
+    <div class="match-wrap">
+      <div class="match-title">Match and Correct</div>
+      <div class="match-subtitle">Pasangkan rooster dengan hatching chick yang memiliki perkalian benar.</div>
+      <div class="match-progress" id="matchProgress">0 / ${q.pairs.length} pasangan</div>
+      <div class="match-board" id="matchBoard">
+        <svg class="match-lines" id="matchLines"></svg>
+        <div class="match-column" id="matchLeft"><div class="match-label">ROOSTER 🐓</div></div>
+        <div class="match-column" id="matchRight"><div class="match-label">HATCHING CHICK 🐣</div></div>
+      </div>
+      <div class="match-instruction" id="matchInstruction">Pilih satu rooster, lalu pilih hatching chick pasangannya.</div>
+    </div>`;
+
+  const left=shuffle(q.pairs);
+  const right=shuffle(q.pairs);
+  const leftCol=document.getElementById('matchLeft');
+  const rightCol=document.getElementById('matchRight');
+
+  left.forEach(pair=>{
+    const card=document.createElement('div');
+    card.className='match-card';
+    card.dataset.id=String(pair.result);
+    card.dataset.side='left';
+    card.innerHTML=`<span class="match-icon">🐓</span><span>${pair.result}</span>`;
+    card.onclick=()=>selectMatchCard(card,'left');
+    leftCol.appendChild(card);
+  });
+
+  right.forEach(pair=>{
+    const card=document.createElement('div');
+    card.className='match-card';
+    card.dataset.id=String(pair.result);
+    card.dataset.side='right';
+    card.innerHTML=`<span class="match-icon">🐣</span><span>${pair.a} × ${pair.b}</span>`;
+    card.onclick=()=>selectMatchCard(card,'right');
+    rightCol.appendChild(card);
+  });
+}
+
+function selectMatchCard(card,side){
+  if(!matchState||locked||card.classList.contains('matched'))return;
+
+  if(side==='left'){
+    if(matchState.selectedLeft)matchState.selectedLeft.classList.remove('selected');
+    matchState.selectedLeft=card;
+    card.classList.add('selected');
+  }else{
+    if(matchState.selectedRight)matchState.selectedRight.classList.remove('selected');
+    matchState.selectedRight=card;
+    card.classList.add('selected');
+  }
+
+  if(matchState.selectedLeft&&matchState.selectedRight)checkMatchPair();
+}
+
+function checkMatchPair(){
+  const left=matchState.selectedLeft;
+  const right=matchState.selectedRight;
+  const instruction=document.getElementById('matchInstruction');
+
+  if(left.dataset.id===right.dataset.id){
+    left.classList.remove('selected');
+    right.classList.remove('selected');
+    left.classList.add('matched');
+    right.classList.add('matched');
+    drawMatchLine(left,right,'#b9d1c1');
+    matchState.matched++;
+    document.getElementById('matchProgress').textContent=`${matchState.matched} / ${matchState.pairs.length} pasangan`;
+    instruction.textContent='✅ Cocok!';
+    matchState.selectedLeft=null;
+    matchState.selectedRight=null;
+    playCorrect();
+
+    if(matchState.matched===matchState.pairs.length){
+      locked=true;
+      score++;
+      scoreCountEl.textContent=score;
+      instruction.textContent='🎉 Semua pasangan benar!';
+      setTimeout(nextQuestion,900);
+    }
+  }else{
+    left.classList.add('wrong');
+    right.classList.add('wrong');
+    instruction.textContent='❌ Belum cocok. Coba lagi!';
+    playWrong();
+    setTimeout(()=>{
+      left.classList.remove('selected','wrong');
+      right.classList.remove('selected','wrong');
+      matchState.selectedLeft=null;
+      matchState.selectedRight=null;
+      instruction.textContent='Pilih satu rooster, lalu pilih hatching chick pasangannya.';
+    },650);
+  }
+}
+
+function drawMatchLine(fromEl,toEl,color){
+  const svg=document.getElementById('matchLines');
+  const board=document.getElementById('matchBoard');
+  const br=board.getBoundingClientRect();
+  const fr=fromEl.getBoundingClientRect();
+  const tr=toEl.getBoundingClientRect();
+  const x1=fr.right-br.left,y1=fr.top+fr.height/2-br.top;
+  const x2=tr.left-br.left,y2=tr.top+tr.height/2-br.top;
+  const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1',x1);line.setAttribute('y1',y1);
+  line.setAttribute('x2',x2);line.setAttribute('y2',y2);
+  line.setAttribute('stroke',color);line.setAttribute('stroke-width','4');line.setAttribute('stroke-linecap','round');
+  svg.appendChild(line);
+}
+
+function checkAnswer(){
+  if(locked)return;
+  const q=questions[current];
+
+  if(q.type==='match'){
+    const instruction=document.getElementById('matchInstruction');
+    instruction.textContent=`Pasangkan semua pasangan dulu (${matchState?.matched||0}/${matchState?.pairs.length||0}).`;
+    return;
+  }
+
+  const input=document.getElementById('answerInput');
+  if(!input||input.value.trim()===''){
+    feedback.textContent='Isi dulu jawabannya ya!';
+    input?.focus();
+    return;
+  }
+
+  const userAnswer=Number(input.value);
+  locked=true;
+  input.disabled=true;
+
+  if(userAnswer===q.result){
+    score++;
+    scoreCountEl.textContent=score;
+    input.classList.add('correct');
+    feedback.textContent='✅ Benar! Hebat sekali!';
+    feedback.className='feedback benar';
+    problemCard.classList.add('pop');
+    playCorrect();
+  }else{
+    input.classList.add('wrong');
+    feedback.textContent=`❌ Belum tepat. Jawabannya ${q.result}`;
+    feedback.className='feedback salah';
+    problemCard.classList.add('shake');
+    playWrong();
+  }
+
+  checkBtn.disabled=true;
+  skipBtn.disabled=true;
+  setTimeout(()=>{
+    problemCard.classList.remove('pop','shake');
+    nextQuestion();
+  },1200);
+}
+
+function skipQuestion(){
+  if(locked)return;
+  const q=questions[current];
+  if(q.type==='match'){
+    matchState=null;
+    feedback.textContent='Soal dilewati.';
+  }else{
+    feedback.textContent=`Jawabannya ${q.result}`;
+  }
+  locked=true;
+  checkBtn.disabled=true;
+  skipBtn.disabled=true;
+  setTimeout(nextQuestion,900);
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length)showResult();
+  else renderQuestion();
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width='100%';
+  const pct=score/questions.length;
+  finalScore.textContent=Math.round(pct*100);
+  document.getElementById('finalRatio').textContent=`${score} / ${questions.length}`;
+  if(pct===1)finalMsg.textContent='Sempurna! Kamu jagoan perkalian! 🌟';
+  else if(pct>=.8)finalMsg.textContent='Hebat sekali! Hampir sempurna! 🎈';
+  else if(pct>=.5)finalMsg.textContent='Bagus, terus berlatih ya! 💪';
+  else finalMsg.textContent='Ayo coba lagi, pasti bisa lebih baik! 📚';
+}
+
+function restart(){
+  questions=generateQuestions();
+  current=0;
+  score=0;
+  scoreCountEl.textContent='0';
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+}
+
+function showHelp(){
+  const modal=document.getElementById('helpModal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+}
+function closeHelp(){
+  const modal=document.getElementById('helpModal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+}
+document.getElementById('helpModal').addEventListener('click',e=>{
+  if(e.target.id==='helpModal')closeHelp();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeHelp();
+});
+
+/* Sound */
+let audioCtx=null;
+function getCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freqStart,freqEnd,duration,type,volume){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended')ctx.resume();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=type;
+    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+function playCorrect(){
+  playTone(880,1760,.18,'sine',.22);
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+}
+const wrongSound=new Audio('../../sound/akh.mp3');
+wrongSound.preload='auto';
+function playWrong(){
+  try{
+    wrongSound.currentTime=0;
+    const p=wrongSound.play();
+    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+  }catch(e){playTone(220,110,.30,'sawtooth',.16)}
+}
+
+checkBtn.addEventListener('click',checkAnswer);
+skipBtn.addEventListener('click',skipQuestion);
+restartBtn.addEventListener('click',restart);
+
+questions=generateQuestions();
+renderQuestion();
+</script>
+
+<audio id="bgMusic" src="../../sound/mariowanderingtheplains.mp3" autoplay loop preload="auto"></audio>
+<script>
+const bgMusic=document.getElementById('bgMusic');
+const musicToggle=document.getElementById('musicToggle');
+bgMusic.volume=1.0;
+bgMusic.muted=false;
+bgMusic.play().catch(()=>{});
+
+function updateMusicButton(){
+  const isOn=!bgMusic.paused;
+  musicToggle.textContent='♪';
+  musicToggle.setAttribute('aria-label',isOn?'Matikan musik':'Nyalakan musik');
+  musicToggle.setAttribute('aria-pressed',isOn?'true':'false');
+  musicToggle.classList.toggle('off',!isOn);
+}
+function startBackgroundMusic(){
+  bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+}
+musicToggle.addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  if(bgMusic.paused)bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+  else{bgMusic.pause();updateMusicButton();}
+});
+window.addEventListener('load',()=>{bgMusic.play().then(updateMusicButton).catch(updateMusicButton)});
+document.addEventListener('click',startBackgroundMusic,{once:true});
+document.addEventListener('touchstart',startBackgroundMusic,{once:true});
+document.addEventListener('keydown',startBackgroundMusic,{once:true});
+bgMusic.addEventListener('play',updateMusicButton);
+bgMusic.addEventListener('pause',updateMusicButton);
+</script>
+</body>
+</html>
