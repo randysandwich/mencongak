@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Quotient and Remainder</title>
+<title>Practice 1 - Type 3 - Quotient and Remainder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
@@ -128,6 +128,35 @@ button.action:disabled{opacity:.55;cursor:default}
 @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
 
+
+/* ===== MIXED 3-TYPE QUESTION LAYOUT ===== */
+.question-wrap{width:100%}
+.type1-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.type1-main{font-size:clamp(1.65rem,7vw,2.25rem);font-weight:900;color:var(--coral);display:flex;align-items:center;justify-content:center;gap:8px}
+.type1-main .mini-input{width:52px;height:46px}
+.mini-input,.answer-input,.type2-input{border:2px solid #293f4d;border-radius:7px;background:#fff;text-align:center;font-size:1.35rem;font-weight:900;outline:none;color:var(--teal);padding:0;box-sizing:border-box}
+.mini-input:focus,.answer-input:focus,.type2-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.mini-input.correct,.answer-input.correct,.type2-input.correct{border-color:var(--green);background:#eef9f1}
+.mini-input.wrong,.answer-input.wrong,.type2-input.wrong{border-color:var(--coral);background:#fff1ed}
+.mini-input::-webkit-outer-spin-button,.mini-input::-webkit-inner-spin-button,
+.answer-input::-webkit-outer-spin-button,.answer-input::-webkit-inner-spin-button,
+.type2-input::-webkit-outer-spin-button,.type2-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0}
+.mini-input[type=number],.answer-input[type=number],.type2-input[type=number]{-moz-appearance:textfield}
+.type1-rule{width:100%;border-top:2px solid #333;margin:0}
+.type1-answers{width:100%;display:flex;flex-direction:column;align-items:flex-end;gap:10px;padding-right:clamp(10px,7vw,28px)}
+.type1-answers .result-row{font-size:clamp(1.05rem,4.8vw,1.35rem)}
+.type2-wrap{display:flex;justify-content:center;align-items:center;height:230px}
+.type2-division{position:relative;width:220px;height:205px;font-weight:900;font-size:clamp(1.7rem,7.5vw,2.3rem);color:var(--ink)}
+.type2-division .qbox{position:absolute;top:0;left:98px}
+.type2-division .top-line{position:absolute;left:72px;right:0;top:48px;border-top:3px solid var(--line)}
+.type2-division .vert-line{position:absolute;left:72px;top:48px;height:58px;border-left:3px solid var(--line);border-top-left-radius:30px}
+.type2-division .divisor{position:absolute;left:12px;top:62px;color:var(--coral);font-size:1.22em}
+.type2-division .dividend{position:absolute;left:87px;top:62px;color:var(--coral);font-size:1.22em}
+.type2-input{width:56px;height:44px;font-size:1.5rem}
+.type3-wrap{display:flex;flex-direction:column;align-items:center}
+.type3-wrap .long-division{margin:0 auto}
+.type3-divider{width:100%;border-top:3px solid #000;margin:8px 0 12px}.type3-wrap .type3-answer{margin-top:4px}
+
 @media(max-height:620px){
  .header{height:68px;grid-template-columns:62px 1fr 62px 62px;gap:8px;margin-bottom:12px}
  .brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
@@ -139,6 +168,30 @@ button.action:disabled{opacity:.55;cursor:default}
  button.action{min-height:52px;font-size:.72rem;border-radius:18px}
  .footer-note{display:none}
 }
+
+
+/* TYPE 3 — worked quotient and remainder */
+.worked-wrap{width:min(92vw,330px);display:flex;flex-direction:column;align-items:center;gap:13px}
+
+
+.long-division{position:relative;width:190px;height:210px;font-weight:900;font-size:clamp(1.55rem,7vw,2.1rem);color:var(--ink)}
+.long-division .quotient{position:absolute;top:0;left:91px;font-size:1.05em;color:var(--ink)}
+.long-division .divisor{position:absolute;left:10px;top:50px;color:var(--coral);font-size:1.22em}
+.long-division .dividend{position:absolute;left:76px;top:50px;color:var(--coral);font-size:1.22em}
+.long-division .top-line{position:absolute;left:61px;right:0;top:40px;border-top:3px solid var(--line)}
+.long-division .vert-line{position:absolute;left:61px;top:40px;height:42px;border-left:3px solid var(--line);border-top-left-radius:30px}
+.long-division .product{position:absolute;left:78px;top:104px}
+.long-division .sub-line{position:absolute;left:70px;right:16px;top:146px;border-top:2px solid #000}
+.long-division .remainder{position:absolute;left:78px;top:150px}
+.division-input{width:52px;height:38px;border:2px solid #293f4d;border-radius:5px;background:#fff;text-align:center;font-size:1.35rem;font-weight:900;outline:none;color:var(--teal);padding:0;box-sizing:border-box}
+.division-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.division-input.correct{border-color:var(--green);background:#eef9f1}
+.division-input.wrong{border-color:var(--coral);background:#fff1ed}
+.division-input::-webkit-outer-spin-button,.division-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.division-input[type=number]{-moz-appearance:textfield}
+.type3-answer{width:100%;display:flex;flex-direction:column;align-items:flex-end;gap:12px;padding-right:clamp(8px,5vw,22px)}
+.type3-answer .result-row{font-size:clamp(1.05rem,4.8vw,1.4rem)}
+@media(max-height:620px){.worked-wrap{gap:6px}.long-division{height:164px;transform:scale(.88);transform-origin:top center;margin-bottom:-6px}.worked-result{font-size:2rem}.type3-answer{gap:7px}.problem-card{padding-top:8px;padding-bottom:8px}}
 </style>
 </head>
 <body>
@@ -157,11 +210,11 @@ button.action:disabled{opacity:.55;cursor:default}
 <div id="helpModal" class="help-modal" aria-hidden="true">
   <div class="help-dialog">
     <div class="help-title-row">
-      <h2 id="helpTitle">PRACTICE 1</h2>
+      <h2 id="helpTitle">PRACTICE 1 — TYPE 3</h2>
       <button class="help-close" onclick="closeHelp()">×</button>
     </div>
     <div class="help-content">
-      <p>Find the <b>quotient</b> and <b>remainder</b> for each division problem.</p>
+      <p>Use the worked division to identify the <b>quotient</b> and <b>remainder</b>.</p>
       <p>Remember: <b>Dividend = Divisor × Quotient + Remainder</b>.</p>
     </div>
   </div>
@@ -172,34 +225,13 @@ button.action:disabled{opacity:.55;cursor:default}
 
 <div id="quizScreen">
   <div class="score-row">
-    <span>Soal <span id="qNum">1</span> / <span id="qTotal">10</span></span>
+    <span>Soal <span id="qNum">1</span> / <span id="qTotal">50</span></span>
     <span>Skor <span class="count" id="scoreCount">0</span></span>
   </div>
   <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
   <div class="problem-card" id="problemCard">
-    <div class="question-wrap">
-      <div class="division-expression">
-        <span id="dividendText"></span> ones ÷ <span id="divisorText"></span> =
-        <input class="inline-input" id="quotientTopInput" type="number" inputmode="numeric" autocomplete="off" aria-label="Quotient in division">
-        <span class="r-label">R</span>
-        <input class="inline-input" id="remainderTopInput" type="number" inputmode="numeric" autocomplete="off" aria-label="Remainder in division">
-      </div>
-      <div class="division-rule"></div>
-
-      <div class="result-rows">
-        <div class="result-row">
-          <span>Quotient =</span>
-          <input class="answer-input" id="quotientInput" type="number" inputmode="numeric" autocomplete="off" aria-label="Quotient">
-          <span>ones</span>
-        </div>
-        <div class="result-row">
-          <span>Remainder =</span>
-          <input class="answer-input" id="remainderInput" type="number" inputmode="numeric" autocomplete="off" aria-label="Remainder">
-          <span>ones</span>
-        </div>
-      </div>
-    </div>
+    <div class="question-wrap" id="questionWrap"></div>
   </div>
 
   <div class="feedback" id="feedback"></div>
@@ -213,7 +245,7 @@ button.action:disabled{opacity:.55;cursor:default}
 <div id="resultScreen" class="result-screen hidden">
   <div class="score-title">NILAI KAMU</div>
   <div class="big-score" id="finalScore">0</div>
-  <div class="score-ratio" id="finalRatio">0 / 10</div>
+  <div class="score-ratio" id="finalRatio">0 / 50</div>
   <p id="finalMsg">Kerja bagus!</p>
   <button id="restartBtn">↻ Main Lagi</button>
 </div>
@@ -221,17 +253,30 @@ button.action:disabled{opacity:.55;cursor:default}
 </div></div>
 
 <script>
-const questionPool = [
-  {a:31,b:4,q:7,r:3},
-  {a:24,b:3,q:8,r:0},
-  {a:37,b:5,q:7,r:2},
-  {a:46,b:6,q:7,r:4},
-  {a:29,b:4,q:7,r:1},
-  {a:53,b:7,q:7,r:4},
-  {a:42,b:5,q:8,r:2},
-  {a:67,b:8,q:8,r:3},
-  {a:35,b:6,q:5,r:5},
-  {a:58,b:9,q:6,r:4}
+const type1Pool = [
+  {a:23,b:3,q:7,r:2},{a:34,b:5,q:6,r:4},{a:47,b:6,q:7,r:5},
+  {a:29,b:4,q:7,r:1},{a:41,b:6,q:6,r:5},{a:53,b:7,q:7,r:4},
+  {a:68,b:9,q:7,r:5},{a:77,b:8,q:9,r:5},{a:35,b:4,q:8,r:3},
+  {a:46,b:5,q:9,r:1},{a:58,b:7,q:8,r:2},{a:62,b:9,q:6,r:8},
+  {a:73,b:8,q:9,r:1},{a:86,b:10,q:8,r:6},{a:95,b:9,q:10,r:5}
+];
+
+const type2Pool = [
+  {a:24,b:6,q:4,r:0},{a:56,b:7,q:8,r:0},{a:72,b:8,q:9,r:0},
+  {a:18,b:3,q:6,r:0},{a:35,b:5,q:7,r:0},{a:42,b:6,q:7,r:0},
+  {a:48,b:8,q:6,r:0},{a:54,b:9,q:6,r:0},{a:63,b:7,q:9,r:0},
+  {a:64,b:8,q:8,r:0},{a:70,b:10,q:7,r:0},{a:81,b:9,q:9,r:0},
+  {a:90,b:10,q:9,r:0},{a:96,b:8,q:12,r:0},{a:100,b:10,q:10,r:0}
+];
+
+const type3Pool = [
+  {a:38,b:5,q:7,r:3},{a:61,b:8,q:7,r:5},{a:74,b:9,q:8,r:2},
+  {a:43,b:6,q:7,r:1},{a:52,b:7,q:7,r:3},{a:67,b:8,q:8,r:3},
+  {a:79,b:9,q:8,r:7},{a:85,b:10,q:8,r:5},{a:31,b:4,q:7,r:3},
+  {a:49,b:6,q:8,r:1},{a:57,b:7,q:8,r:1},{a:69,b:8,q:8,r:5},
+  {a:76,b:9,q:8,r:4},{a:88,b:10,q:8,r:8},{a:94,b:9,q:10,r:4},
+  {a:27,b:5,q:5,r:2},{a:33,b:4,q:8,r:1},{a:45,b:7,q:6,r:3},
+  {a:71,b:8,q:8,r:7},{a:98,b:9,q:10,r:8}
 ];
 
 let questions = [];
@@ -242,13 +287,7 @@ let locked = false;
 const qNumEl = document.getElementById('qNum');
 const scoreCountEl = document.getElementById('scoreCount');
 const progressFill = document.getElementById('progressFill');
-const expression = document.getElementById('expression');
-const quotientTopInput = document.getElementById('quotientTopInput');
-const remainderTopInput = document.getElementById('remainderTopInput');
-const quotientInput = document.getElementById('quotientInput');
-const remainderInput = document.getElementById('remainderInput');
-const dividendText = document.getElementById('dividendText');
-const divisorText = document.getElementById('divisorText');
+const questionWrap = document.getElementById('questionWrap');
 const feedback = document.getElementById('feedback');
 const problemCard = document.getElementById('problemCard');
 const checkBtn = document.getElementById('checkBtn');
@@ -268,41 +307,87 @@ function shuffle(arr){
   return a;
 }
 
+function inputClass(type){
+  return type==='type2' ? 'type2-input' : (type==='type3' ? 'division-input' : 'answer-input');
+}
+
+function renderType1(q){
+  questionWrap.innerHTML = `
+    <div class="type1-wrap">
+      <div class="type1-main">
+        <span>${q.a} ones ÷ ${q.b} =</span>
+        <input class="mini-input" id="t1q" type="number" inputmode="numeric" autocomplete="off">
+        <span>R</span>
+        <input class="mini-input" id="t1r" type="number" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="type1-rule"></div>
+      <div class="type1-answers">
+        <div class="result-row"><span>Quotient =</span> <input class="answer-input" id="t1q2" type="number" inputmode="numeric" autocomplete="off"> <span>ones</span></div>
+        <div class="result-row"><span>Remainder =</span> <input class="answer-input" id="t1r2" type="number" inputmode="numeric" autocomplete="off"> <span>ones</span></div>
+      </div>
+    </div>`;
+}
+
+function renderType2(q){
+  questionWrap.innerHTML = `
+    <div class="type2-wrap">
+      <div class="type2-division">
+        <input class="type2-input qbox" id="t2q" type="number" inputmode="numeric" autocomplete="off" aria-label="Quotient">
+        <div class="top-line"></div>
+        <div class="vert-line"></div>
+        <div class="divisor">${q.b}</div>
+        <div class="dividend">${q.a}</div>
+      </div>
+    </div>`;
+}
+
+function renderType3(q){
+  questionWrap.innerHTML = `
+    <div class="type3-wrap">
+      <div class="long-division">
+        <div class="top-line"></div>
+        <div class="vert-line"></div>
+        <div class="divisor">${q.b}</div>
+        <div class="dividend">${q.a}</div>
+        <input class="division-input product" id="t3product" type="number" inputmode="numeric" autocomplete="off">
+        <div class="sub-line"></div>
+        <input class="division-input remainder" id="t3r" type="number" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="type3-divider"></div>
+      <div class="type3-answer">
+        <div class="result-row"><span>Quotient =</span> <input class="answer-input" id="t3q2" type="number" inputmode="numeric" autocomplete="off"> <span>ones</span></div>
+        <div class="result-row"><span>Remainder =</span> <input class="answer-input" id="t3r2" type="number" inputmode="numeric" autocomplete="off"> <span>ones</span></div>
+      </div>
+    </div>`;
+}
+
 function renderQuestion(){
   locked=false;
   const q=questions[current];
-
   qNumEl.textContent=current+1;
   progressFill.style.width=(current/questions.length*100)+'%';
-  dividendText.textContent=q.a;
-  divisorText.textContent=q.b;
 
-  quotientTopInput.value='';
-  remainderTopInput.value='';
-  quotientInput.value='';
-  remainderInput.value='';
-  quotientTopInput.disabled=false;
-  remainderTopInput.disabled=false;
-  quotientInput.disabled=false;
-  remainderInput.disabled=false;
-  quotientTopInput.className='inline-input';
-  remainderTopInput.className='inline-input';
-  quotientInput.className='answer-input';
-  remainderInput.className='answer-input';
+  if(q.type==='type1') renderType1(q);
+  else if(q.type==='type2') renderType2(q);
+  else renderType3(q);
 
   feedback.textContent='';
   feedback.className='feedback';
   checkBtn.disabled=false;
   skipBtn.disabled=false;
 
-  quotientTopInput.focus();
+  const first=questionWrap.querySelector('input');
+  if(first) first.focus();
+}
+
+function getInputs(){
+  return Array.from(questionWrap.querySelectorAll('input'));
 }
 
 function checkAnswer(){
   if(locked)return;
-
   const q=questions[current];
-  const inputs=[quotientTopInput,remainderTopInput,quotientInput,remainderInput];
+  const inputs=getInputs();
 
   if(inputs.some(input=>input.value.trim()==='')){
     feedback.textContent='Isi semua kotaknya ya!';
@@ -311,30 +396,43 @@ function checkAnswer(){
     return;
   }
 
-  const userQT=Number(quotientTopInput.value);
-  const userRT=Number(remainderTopInput.value);
-  const userQ=Number(quotientInput.value);
-  const userR=Number(remainderInput.value);
-
-  const checks=[
-    userQT===q.q,
-    userRT===q.r,
-    userQ===q.q,
-    userR===q.r
-  ];
+  let checks=[];
+  if(q.type==='type1'){
+    checks=[
+      Number(document.getElementById('t1q').value)===q.q,
+      Number(document.getElementById('t1r').value)===q.r,
+      Number(document.getElementById('t1q2').value)===q.q,
+      Number(document.getElementById('t1r2').value)===q.r
+    ];
+  }else if(q.type==='type2'){
+    checks=[Number(document.getElementById('t2q').value)===q.q];
+  }else{
+    checks=[
+      Number(document.getElementById('t3product').value)===q.q*q.b,
+      Number(document.getElementById('t3r').value)===q.r,
+      Number(document.getElementById('t3q2').value)===q.q,
+      Number(document.getElementById('t3r2').value)===q.r
+    ];
+  }
 
   locked=true;
-  inputs.forEach(input=>input.disabled=true);
-  inputs.forEach((input,i)=>input.classList.add(checks[i]?'correct':'wrong'));
+  inputs.forEach((input,i)=>{
+    input.disabled=true;
+    input.classList.add(checks[i]?'correct':'wrong');
+  });
 
   if(checks.every(Boolean)){
     score++;
     scoreCountEl.textContent=score;
+    playCorrect();
     feedback.textContent='✅ Benar! Hebat sekali!';
     feedback.className='feedback correct';
     problemCard.classList.add('pop');
   }else{
-    feedback.textContent=`❌ Belum tepat. Quotient ${q.q}, Remainder ${q.r}`;
+    playWrong();
+    feedback.textContent = q.type==='type2'
+      ? `❌ Belum tepat. Quotient ${q.q}`
+      : `❌ Belum tepat. Quotient ${q.q}, Remainder ${q.r}`;
     feedback.className='feedback wrong';
     problemCard.classList.add('shake');
   }
@@ -343,15 +441,15 @@ function checkAnswer(){
   skipBtn.disabled=true;
   setTimeout(nextQuestion,1200);
 }
+
 function skipQuestion(){
   if(locked)return;
   const q=questions[current];
   locked=true;
-  quotientTopInput.disabled=true;
-  remainderTopInput.disabled=true;
-  quotientInput.disabled=true;
-  remainderInput.disabled=true;
-  feedback.textContent=`Jawaban: Quotient ${q.q}, Remainder ${q.r}`;
+  getInputs().forEach(input=>input.disabled=true);
+  feedback.textContent = q.type==='type2'
+    ? `Jawaban: Quotient ${q.q}`
+    : `Jawaban: Quotient ${q.q}, Remainder ${q.r}`;
   feedback.className='feedback wrong';
   checkBtn.disabled=true;
   skipBtn.disabled=true;
@@ -383,8 +481,15 @@ function showResult(){
   else finalMsg.textContent='Try again. You can do better! 📚';
 }
 
+function buildQuestions(){
+  const t1=shuffle(type1Pool).slice(0,15).map(q=>({...q,type:'type1'}));
+  const t2=shuffle(type2Pool).slice(0,15).map(q=>({...q,type:'type2'}));
+  const t3=shuffle(type3Pool).slice(0,20).map(q=>({...q,type:'type3'}));
+  return shuffle([...t1,...t2,...t3]);
+}
+
 function restart(){
-  questions=shuffle(questionPool);
+  questions=buildQuestions();
   current=0;
   score=0;
   scoreCountEl.textContent='0';
@@ -410,8 +515,8 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape')closeHelp();
   if(e.key==='Enter' && !locked) checkAnswer();
 });
-[quotientTopInput,remainderTopInput,quotientInput,remainderInput].forEach(input=>{
-  input.addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown')e.preventDefault();});
+document.addEventListener('keydown',e=>{
+  if((e.target instanceof HTMLInputElement) && (e.key==='ArrowUp'||e.key==='ArrowDown')) e.preventDefault();
 });
 
 checkBtn.addEventListener('click',checkAnswer);
@@ -438,6 +543,20 @@ function playTone(freqStart,freqEnd,duration,type,volume){
   }catch(e){}
 }
 
+function playCorrect(){
+  playTone(880,1760,.18,'sine',.22);
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+}
+const wrongSound=new Audio('../../sound/akh.mp3');
+wrongSound.preload='auto';
+function playWrong(){
+  try{
+    wrongSound.currentTime=0;
+    const p=wrongSound.play();
+    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+  }catch(e){playTone(220,110,.30,'sawtooth',.16)}
+}
+
 const bgMusic=new Audio('../../sound/mariowanderingtheplains.mp3');
 bgMusic.loop=true;
 bgMusic.volume=1.0;
@@ -456,7 +575,7 @@ musicToggle.addEventListener('click',()=>{
   else {bgMusic.pause();updateMusicButton();}
 });
 
-questions=shuffle(questionPool);
+questions=buildQuestions();
 renderQuestion();
 </script>
 </body>
