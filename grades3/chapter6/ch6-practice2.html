@@ -1,1 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Odd and Even Numbers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f0e4;--surface:#fffdf7;--ink:#242735;--muted:#657a70;
+  --line:#30332f;--pink:#ef8fa8;--green:#b9d1c1;--teal:#438f8b;
+  --coral:#e98a73;--yellow:#f8d36a;--yellow-dark:#d6aa2c;
+  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0;margin:0 auto}
+.board{
+ width:100%;height:100%;min-height:0;overflow:hidden;
+ background:
+ radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+ radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+ padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+ max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+ display:flex;flex-direction:column;
+}
+.header{
+ flex:0 0 auto;height:82px;display:grid;
+ grid-template-columns:62px 1fr 62px 62px;align-items:center;gap:8px;
+ margin:0 1px 20px;
+}
+.icon-btn,.music-btn,.help-btn{
+ width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;
+ border-radius:20px;box-shadow:var(--shadow);display:flex;align-items:center;
+ justify-content:center;font-weight:900;
+}
+.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.brand-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.brand{text-align:center;font-weight:900;font-size:42px;line-height:1;letter-spacing:-3px}
+.brand sup{color:var(--pink);font-size:.48em;vertical-align:top;position:relative;top:-7px;margin-left:2px}
+.brand-subtitle{margin-top:4px;font-size:9px;line-height:1;font-weight:900;letter-spacing:5px;color:var(--coral)}
+.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink);transition:transform .12s ease}
+.music-btn.off{background:#eee4cf}
+.music-btn:active,.help-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
 
+.help-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,39,53,.42)}
+.help-modal.show{display:flex}
+.help-dialog{width:min(92vw,520px);max-height:80vh;overflow:auto;background:var(--surface);border:3px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}
+.help-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.help-title-row h2{margin:0;font-size:1.25rem;font-weight:900}
+.help-close{width:44px;height:44px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;box-shadow:0 3px 0 var(--line);font-size:28px;font-weight:900;cursor:pointer}
+.help-content{color:var(--ink);font-size:.95rem;line-height:1.6}
+.help-content p{margin:0 0 10px}
+
+.mode-pill{flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill strong{color:var(--teal)}
+.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--teal)} .chapter-label{color:#4f8277}
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+
+.problem-card{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:18px 14px;margin:0 1px 7px;
+ box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);position:relative;overflow:hidden
+}
+.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
+
+.question-wrap{position:relative;z-index:1;width:min(94vw,430px);display:flex;flex-direction:column;align-items:center}
+.question-title{font-size:clamp(1.35rem,5.8vw,1.9rem);font-weight:900;color:var(--coral);text-align:center;margin-bottom:22px;line-height:1.25}
+.choice-row{display:flex;justify-content:center;gap:14px;margin-bottom:28px}
+.choice-btn{
+ min-width:92px;height:55px;border:3px solid var(--line);border-radius:16px;
+ background:#fffdf7;box-shadow:0 4px 0 var(--line);font-size:1.15rem;font-weight:900;
+ cursor:pointer;color:var(--ink);transition:transform .12s ease,background .12s ease;
+}
+.choice-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.choice-btn.selected{background:var(--green);border-color:var(--line)}
+.choice-btn.correct{background:#eef9f1;border-color:var(--green)}
+.choice-btn.wrong{background:#fff1ed;border-color:var(--coral)}
+
+.why-text{font-size:clamp(1rem,4.5vw,1.25rem);font-weight:800;text-align:center;line-height:1.5;margin-bottom:12px}
+.reason-row{display:flex;justify-content:center;gap:12px}
+.reason-btn{
+ min-width:82px;height:50px;border:2px solid var(--line);border-radius:10px;
+ background:#fff;box-shadow:0 3px 0 var(--line);font-size:clamp(1rem,4.5vw,1.25rem);
+ font-weight:800;color:#000;cursor:pointer;
+}
+.remainder-word{
+ display:flex;align-items:center;height:50px;font-size:clamp(1rem,4.5vw,1.25rem);
+ font-weight:800;color:#000;white-space:nowrap;
+}
+.reason-btn.selected{background:var(--green)}
+.reason-btn.correct{background:#eef9f1;border-color:var(--green)}
+.reason-btn.wrong{background:#fff1ed;border-color:var(--coral)}
+
+.feedback{flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.correct{color:var(--teal)} .feedback.wrong{color:var(--coral)}
+.buttons{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{
+ min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
+ box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease
+}
+button.action:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+button.action:disabled{opacity:.55;cursor:default}
+#checkBtn{background:var(--green)} #skipBtn{background:#fffdf7;color:var(--muted)}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+
+.result-screen{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.score-title{font-size:1rem;font-weight:900}.big-score{color:var(--coral);font-size:clamp(5.5rem,22vw,9rem);line-height:.9;font-weight:900;letter-spacing:-5px;margin:4px 0}
+.score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
+.hidden{display:none!important}
+.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+
+@media(max-height:620px){
+ .remainder-word{font-size:clamp(1rem,4.5vw,1.25rem)}
+ .reason-btn{font-size:clamp(1rem,4.5vw,1.25rem);color:#000}
+ .header{height:68px;grid-template-columns:62px 1fr 62px 62px;gap:8px;margin-bottom:12px}
+ .brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
+ .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+ .theme{font-size:.51rem;margin-bottom:2px}.theme strong{font-size:.56rem}
+ .progress-track{margin-bottom:4px}.problem-card{margin-bottom:4px;border-radius:18px;padding-top:10px;padding-bottom:10px}
+ .question-title{margin-bottom:12px}
+ .choice-row{margin-bottom:14px}
+ .why-text{margin-bottom:7px}
+ .reason-btn{height:42px}
+ button.action{min-height:52px;font-size:.72rem;border-radius:18px}
+ .footer-note{display:none}
+}
+</style>
+
+<style>
+/* Unified four-type quiz */
+.question-title{color:var(--ink)!important}
+.target-word{font-weight:900;color:var(--coral)}
+.type-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin:0 auto 8px;padding:4px 10px;border-radius:999px;
+  background:var(--green);color:var(--ink);font-size:.62rem;font-weight:900;
+}
+.choice-row{display:flex;justify-content:center;gap:14px;margin-bottom:28px}
+.choice-btn{
+ min-width:92px;height:55px;border:3px solid var(--line);border-radius:16px;
+ background:#fffdf7;box-shadow:0 4px 0 var(--line);font-size:1.15rem;font-weight:900;
+ cursor:pointer;color:#000;transition:transform .12s ease,background .12s ease;
+}
+.choice-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.choice-btn.selected{background:var(--green);color:#000}
+.choice-btn.correct{background:#eef9f1;border-color:var(--green);color:#000}
+.choice-btn.wrong{background:#fff1ed;border-color:var(--coral);color:#000}
+.why-text{font-size:clamp(1rem,4.5vw,1.25rem);font-weight:800;text-align:center;line-height:1.5;margin-bottom:12px}
+.reason-row{display:flex;justify-content:center;gap:12px;align-items:center}
+.reason-btn{
+ min-width:82px;height:50px;border:2px solid var(--line);border-radius:10px;
+ background:#fff;box-shadow:0 3px 0 var(--line);font-size:clamp(1rem,4.5vw,1.25rem);
+ font-weight:800;color:#000;cursor:pointer;
+}
+.remainder-word{display:flex;align-items:center;height:50px;font-size:clamp(1rem,4.5vw,1.25rem);font-weight:800;color:#000;white-space:nowrap}
+.reason-btn.selected{background:var(--green)}
+.reason-btn.correct{background:#eef9f1;border-color:var(--green)}
+.reason-btn.wrong{background:#fff1ed;border-color:var(--coral)}
+
+.number-grid{
+ width:min(96%,420px);display:grid;grid-template-columns:repeat(4,1fr);
+ gap:10px;padding:14px;border:2px solid #e2e1d8;border-radius:18px;
+ background:var(--surface);box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
+}
+.number-card{
+ width:100%;aspect-ratio:1.35;min-height:58px;border:3px solid var(--line);
+ border-radius:13px;background:#fffdf7;color:#000;box-shadow:0 4px 0 var(--line);
+ font-size:clamp(1.15rem,5vw,1.55rem);font-weight:900;cursor:pointer;
+ display:flex;align-items:center;justify-content:center;
+ transition:transform .1s ease,background .12s ease,box-shadow .1s ease;
+}
+.number-card:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.number-card.selected{background:var(--green);border-color:var(--teal);color:#000}
+.number-card.correct{background:#eef9f1;border-color:var(--green);color:#000}
+.number-card.wrong{background:#fff1ed;border-color:var(--coral);color:#000}
+.number-card:disabled{cursor:default}
+
+.digits-row{display:flex;justify-content:center;gap:10px;margin-bottom:25px;flex-wrap:wrap}
+.digit-card{
+ min-width:58px;height:56px;padding:0 10px;display:flex;align-items:center;justify-content:center;
+ border:3px solid var(--line);border-radius:13px;background:#fffdf7;box-shadow:0 4px 0 var(--line);
+ font-size:1.35rem;font-weight:900;color:var(--ink);
+}
+.answer-label{font-size:.78rem;color:var(--muted);font-weight:800;margin-bottom:9px}
+.answer-row{display:flex;justify-content:center;gap:7px}
+.answer-input{
+ width:220px;height:56px;border:2px solid #293f4d;border-radius:8px;background:#fff;
+ text-align:center;font-size:1.45rem;font-weight:900;outline:none;color:var(--teal);padding:0;
+}
+.answer-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.answer-input.correct{border-color:var(--green);background:#eef9f1}
+.answer-input.wrong{border-color:var(--coral);background:#fff1ed}
+
+.division-wrap{display:flex;align-items:flex-start;justify-content:center;margin:4px 0 8px;min-height:235px}
+.long-division{position:relative;width:205px;height:225px;font-weight:900;font-size:clamp(1.55rem,7vw,2.1rem);color:var(--ink)}
+.long-division .quotient{position:absolute;top:0;left:78px}
+.long-division .divisor{position:absolute;left:10px;top:58px;color:var(--coral)}
+.long-division .dividend{position:absolute;left:78px;top:58px;color:var(--coral)}
+.long-division .top-line{position:absolute;left:62px;right:0;top:48px;border-top:3px solid var(--line)}
+.long-division .vert-line{position:absolute;left:62px;top:48px;height:45px;border-left:3px solid var(--line);border-top-left-radius:30px}
+.division-input{
+ width:58px;height:42px;border:2px solid #293f4d;border-radius:5px;background:#fff;
+ text-align:center;font-size:1.3rem;font-weight:900;outline:none;color:var(--teal);padding:0;box-sizing:border-box;
+}
+.division-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.division-input.correct{border-color:var(--green);background:#eef9f1}
+.division-input.wrong{border-color:var(--coral);background:#fff1ed}
+.long-division .product{position:absolute;left:78px;top:112px}
+.long-division .sub-line{position:absolute;left:70px;right:16px;top:157px;border-top:2px solid #000}
+.long-division .remainder{position:absolute;left:78px;top:166px}
+.classification{
+ display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;
+ margin:0 0 8px;font-size:clamp(1rem,4.6vw,1.3rem);font-weight:800;color:var(--ink);
+}
+.class-number{font-weight:900}
+.class-choice{
+ min-width:62px;height:40px;padding:0 10px;border:2px solid var(--line);border-radius:9px;
+ background:#fff;color:#000;font-weight:900;cursor:pointer;box-shadow:0 3px 0 var(--line);
+}
+.class-choice.selected{background:var(--green);color:var(--ink);border-color:var(--line);box-shadow:0 4px 0 var(--line);transform:translateY(2px)}
+.class-choice.correct{background:var(--green);color:#000;border-color:var(--teal)}
+.class-choice.wrong{background:#fff1ed;color:#000;border-color:var(--coral)}
+.class-choice:disabled{cursor:default}
+
+@media(max-width:420px){
+ .number-grid{gap:7px;padding:10px}
+ .number-card{min-height:52px}
+}
+</style>
+</head><body>
+<div class="frame"><div class="board">
+<header class="header">
+  <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+  <div class="brand-wrap">
+    <div class="brand">taci<sup>2</sup></div>
+    <div class="brand-subtitle">MENCONGAK GAMES</div>
+  </div>
+  <button class="help-btn" type="button" id="helpBtn">?</button>
+  <button id="musicToggle" class="music-btn" type="button">♪</button>
+</header>
+
+<div id="helpModal" class="help-modal" aria-hidden="true">
+  <div class="help-dialog">
+    <div class="help-title-row">
+      <h2>CHAPTER 6 — PRACTICE 2</h2>
+      <button class="help-close" type="button" id="helpClose">×</button>
+    </div>
+    <div class="help-content">
+      <p>This practice has <b>4 types of questions</b>.</p>
+      <p>Odd numbers have a remainder of <b>1</b> when divided by 2. Even numbers have a remainder of <b>0</b>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="mode-pill">➗ <strong>PRACTICE 2</strong> - Odd and Even Numbers</div>
+<div class="theme">GRADES 3 • <span class="chapter-label">CHAPTER 6</span> • <strong>DIVISION</strong></div>
+
+<div id="quizScreen">
+  <div class="score-row">
+    <span>Soal <span id="qNum">1</span> / <span id="qTotal">50</span></span>
+    <span>Skor <span class="count" id="scoreCount">0</span></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="problem-card" id="problemCard">
+    <div class="question-wrap" id="questionWrap"></div>
+  </div>
+  <div class="feedback" id="feedback"></div>
+  <div class="buttons">
+    <button class="action" id="checkBtn" type="button">✓ Cek Jawaban</button>
+    <button class="action" id="skipBtn" type="button">→ Lewati</button>
+  </div>
+  <div class="footer-note">copyright © 2026</div>
+</div>
+
+<div id="resultScreen" class="result-screen hidden">
+  <div class="score-title">NILAI KAMU</div>
+  <div class="big-score" id="finalScore">0</div>
+  <div class="score-ratio" id="finalRatio">0 / 12</div>
+  <p id="finalMsg">Kerja bagus!</p>
+  <button id="restartBtn" type="button">↻ Main Lagi</button>
+</div>
+</div></div>
+
+<script>
+const questionPool = [
+  // TYPE 1 — 12 SOAL
+  {type:1,n:12,target:'even',answer:'Yes',reason:'no'},
+  {type:1,n:17,target:'even',answer:'No',reason:'a'},
+  {type:1,n:24,target:'odd',answer:'No',reason:'no'},
+  {type:1,n:31,target:'odd',answer:'Yes',reason:'a'},
+  {type:1,n:46,target:'even',answer:'Yes',reason:'no'},
+  {type:1,n:53,target:'even',answer:'No',reason:'a'},
+  {type:1,n:68,target:'odd',answer:'No',reason:'no'},
+  {type:1,n:75,target:'odd',answer:'Yes',reason:'a'},
+  {type:1,n:82,target:'even',answer:'Yes',reason:'no'},
+  {type:1,n:91,target:'even',answer:'No',reason:'a'},
+  {type:1,n:36,target:'odd',answer:'No',reason:'no'},
+  {type:1,n:47,target:'odd',answer:'Yes',reason:'a'},
+
+  // TYPE 2 — 12 SOAL
+  {type:2,target:'even',numbers:[13,28,45,62,71,84,39,50,67,76,91,34]},
+  {type:2,target:'odd',numbers:[16,23,40,57,68,75,82,31,44,89,52,97]},
+  {type:2,target:'even',numbers:[19,26,33,48,55,64,72,81,90,37,42,61]},
+  {type:2,target:'odd',numbers:[12,27,34,41,58,63,70,85,96,53,24,79]},
+  {type:2,target:'even',numbers:[15,22,47,56,69,74,83,88,93,30,41,62]},
+  {type:2,target:'odd',numbers:[18,25,32,49,54,67,76,81,90,35,42,73]},
+  {type:2,target:'even',numbers:[11,20,29,36,43,52,65,78,87,94,55,68]},
+  {type:2,target:'odd',numbers:[14,21,38,45,60,71,82,93,26,57,64,99]},
+  {type:2,target:'even',numbers:[17,24,31,46,59,66,73,80,95,28,51,84]},
+  {type:2,target:'odd',numbers:[10,19,26,33,48,55,62,77,86,91,40,69]},
+  {type:2,target:'even',numbers:[21,30,35,44,53,68,75,82,91,96,47,60]},
+  {type:2,target:'odd',numbers:[22,29,36,43,50,61,74,83,88,95,14,67]},
+
+  // TYPE 3 — 13 SOAL
+  {type:3,digits:[4,5,2,9],target:'odd',answer:'9425'},
+  {type:3,digits:[3,8,1,6],target:'even',answer:'8316'},
+  {type:3,digits:[7,2,5,4],target:'odd',answer:'7425'},
+  {type:3,digits:[6,1,8,3],target:'even',answer:'8316'},
+  {type:3,digits:[9,4,2,6],target:'even',answer:'9642'},
+  {type:3,digits:[5,7,1,8],target:'odd',answer:'8751'},
+  {type:3,digits:[8,3,6,1],target:'even',answer:'8316'},
+  {type:3,digits:[2,9,4,7],target:'odd',answer:'9427'},
+  {type:3,digits:[6,5,2,8],target:'even',answer:'8652'},
+  {type:3,digits:[7,4,1,9],target:'odd',answer:'9741'},
+  {type:3,digits:[8,2,5,3],target:'odd',answer:'8523'},
+  {type:3,digits:[9,6,4,1],target:'even',answer:'9614'},
+  {type:3,digits:[5,3,8,2],target:'even',answer:'8532'},
+
+  // TYPE 4 — 13 SOAL
+  {type:4,divisor:2,dividend:47,quotient:23,remainder:1},
+  {type:4,divisor:2,dividend:58,quotient:29,remainder:0},
+  {type:4,divisor:2,dividend:63,quotient:31,remainder:1},
+  {type:4,divisor:2,dividend:74,quotient:37,remainder:0},
+  {type:4,divisor:2,dividend:85,quotient:42,remainder:1},
+  {type:4,divisor:2,dividend:96,quotient:48,remainder:0},
+  {type:4,divisor:2,dividend:39,quotient:19,remainder:1},
+  {type:4,divisor:2,dividend:52,quotient:26,remainder:0},
+  {type:4,divisor:2,dividend:71,quotient:35,remainder:1},
+  {type:4,divisor:2,dividend:88,quotient:44,remainder:0},
+  {type:4,divisor:2,dividend:57,quotient:28,remainder:1},
+  {type:4,divisor:2,dividend:92,quotient:46,remainder:0},
+  {type:4,divisor:2,dividend:69,quotient:34,remainder:1}
+];
+
+let questions=[], current=0, score=0, correctAnswers=0, locked=false, selectedReason='', selectedClass='';
+
+const qNumEl=document.getElementById('qNum');
+const scoreCountEl=document.getElementById('scoreCount');
+const progressFill=document.getElementById('progressFill');
+const questionWrap=document.getElementById('questionWrap');
+const feedback=document.getElementById('feedback');
+const problemCard=document.getElementById('problemCard');
+const checkBtn=document.getElementById('checkBtn');
+const skipBtn=document.getElementById('skipBtn');
+const quizScreen=document.getElementById('quizScreen');
+const resultScreen=document.getElementById('resultScreen');
+const finalScore=document.getElementById('finalScore');
+const finalRatio=document.getElementById('finalRatio');
+const finalMsg=document.getElementById('finalMsg');
+
+function typeName(t){
+  return ['','TYPE 1','TYPE 2','TYPE 3','TYPE 4'][t];
+}
+
+
+function shuffleQuestions(arr){
+  const copy = arr.slice();
+  for(let i=copy.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]]=[copy[j],copy[i]];
+  }
+  return copy;
+}
+
+function buildQuestions(){
+  questions = shuffleQuestions(questionPool);
+}
+
+function renderQuestion(){
+  locked=false; selectedReason=''; selectedClass='';
+  const q=questions[current];
+  qNumEl.textContent=current+1;
+  progressFill.style.width=(current/questions.length*100)+'%';
+
+  let content='';
+  if(q.type===1){
+    content=`
+      <div class="question-title">Is ${q.n} an ${q.target} number?</div>
+      <div class="choice-row">
+        <button class="choice-btn" data-value="Yes">Yes</button>
+        <button class="choice-btn" data-value="No">No</button>
+      </div>
+      <div class="why-text">Why? When ${q.n} is divided by 2, it has</div>
+      <div class="reason-row">
+        <button class="reason-btn" data-value="a">a</button>
+        <button class="reason-btn" data-value="no">no</button>
+        <span class="remainder-word">remainder.</span>
+      </div>`;
+  }
+  if(q.type===2){
+    content=`
+      <div class="question-title">Tap all the <span class="target-word">${q.target}</span> numbers.</div>
+      <div class="number-grid">
+        ${q.numbers.map(n=>`<button type="button" class="number-card" data-number="${n}">${n}</button>`).join('')}
+      </div>`;
+  }
+  if(q.type===3){
+    content=`
+      <div class="question-title">Use the digits below to form the <span class="target-word">greatest 4-digit ${q.target}</span> number.</div>
+      <div class="digits-row">${q.digits.map(d=>`<div class="digit-card">${d}</div>`).join('')}</div>
+      <div class="answer-label">Write your answer:</div>
+      <div class="answer-row">
+        <input class="answer-input" id="answer" type="text" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Your 4-digit answer">
+      </div>`;
+  }
+  if(q.type===4){
+    const digits=String(q.dividend).split('');
+    content=`
+      <div class="question-title">Complete the division.</div>
+      <div class="division-wrap">
+        <div class="long-division">
+          <input class="division-input quotient" id="quotient" type="text" inputmode="numeric" maxlength="2" autocomplete="off">
+          <div class="top-line"></div><div class="vert-line"></div>
+          <div class="divisor">${q.divisor}</div><div class="dividend">${q.dividend}</div>
+          <input class="division-input product" id="product" type="text" inputmode="numeric" maxlength="2" autocomplete="off">
+          <div class="sub-line"></div>
+          <input class="division-input remainder" id="remainder" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+        </div>
+      </div>
+      <div class="classification">
+        <span class="class-number">${q.dividend}</span> is
+        <button type="button" class="class-choice" data-value="odd">odd</button>
+        <button type="button" class="class-choice" data-value="even">even</button>
+        <span>number.</span>
+      </div>`;
+  }
+
+  questionWrap.innerHTML=content;
+
+  if(q.type===1){
+    questionWrap.querySelectorAll('.choice-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        if(locked)return;
+        questionWrap.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+    questionWrap.querySelectorAll('.reason-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        if(locked)return;
+        questionWrap.querySelectorAll('.reason-btn').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected'); selectedReason=btn.dataset.value;
+      });
+    });
+  }
+
+  if(q.type===2){
+    questionWrap.querySelectorAll('.number-card').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        if(locked)return;
+        btn.classList.toggle('selected');
+      });
+    });
+  }
+
+  if(q.type===3){
+    const input=document.getElementById('answer');
+    input.addEventListener('input',()=>input.value=input.value.replace(/[^0-9]/g,'').slice(0,4));
+    input.focus();
+  }
+
+  if(q.type===4){
+    questionWrap.querySelectorAll('.division-input').forEach(input=>{
+      input.addEventListener('input',()=>{
+        input.value=input.value.replace(/[^0-9]/g,'').slice(0,input.maxLength);
+      });
+    });
+    questionWrap.querySelectorAll('.class-choice').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        if(locked)return;
+        questionWrap.querySelectorAll('.class-choice').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected'); selectedClass=btn.dataset.value;
+      });
+    });
+    document.getElementById('quotient').focus();
+  }
+
+  feedback.textContent=''; feedback.className='feedback';
+  checkBtn.disabled=false; skipBtn.disabled=false;
+}
+
+
+let audioCtx=null;
+function getCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freqStart,freqEnd,duration,type,volume){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended')ctx.resume();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=type;
+    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+
+function playCorrect(){
+  playTone(880,1760,.18,'sine',.22);
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+}
+
+const wrongSound=new Audio('../../sound/akh.mp3');
+wrongSound.preload='auto';
+function playWrong(){
+  try{
+    wrongSound.currentTime=0;
+    const p=wrongSound.play();
+    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+  }catch(e){playTone(220,110,.30,'sawtooth',.16)}
+}
+
+const bgMusic=new Audio('../../sound/mariowanderingtheplains.mp3');
+bgMusic.loop=true;
+bgMusic.volume=1.0;
+bgMusic.preload='auto';
+
+const musicToggle=document.getElementById('musicToggle');
+
+function updateMusicButton(){
+  const isOn=!bgMusic.paused;
+  musicToggle.textContent='♪';
+  musicToggle.setAttribute('aria-label',isOn?'Matikan musik':'Nyalakan musik');
+  musicToggle.setAttribute('aria-pressed',isOn?'true':'false');
+  musicToggle.classList.toggle('off',!isOn);
+}
+
+function startBackgroundMusic(){
+  bgMusic.volume=1.0;
+  const p=bgMusic.play();
+  if(p!==undefined){
+    p.then(updateMusicButton).catch(updateMusicButton);
+  }else{
+    updateMusicButton();
+  }
+}
+
+window.addEventListener('load',startBackgroundMusic);
+
+['click','pointerdown','touchstart','keydown'].forEach(eventName=>{
+  document.addEventListener(eventName,startBackgroundMusic,{once:true,passive:true});
+});
+
+musicToggle.addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  if(bgMusic.paused){
+    bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+  }else{
+    bgMusic.pause();
+    updateMusicButton();
+  }
+});
+
+bgMusic.addEventListener('play',updateMusicButton);
+bgMusic.addEventListener('pause',updateMusicButton);
+
+function checkAnswer(){
+  if(locked)return;
+  const q=questions[current];
+  let correct=false;
+
+  if(q.type===1){
+    const a=questionWrap.querySelector('.choice-btn.selected');
+    const r=questionWrap.querySelector('.reason-btn.selected');
+    if(!a || !r){
+      feedback.textContent='Pilih semua jawabannya ya!';
+      feedback.className='feedback wrong'; return;
+    }
+    const ac=a.dataset.value===q.answer, rc=r.dataset.value===q.reason;
+    locked=true;
+    a.classList.add(ac?'correct':'wrong'); r.classList.add(rc?'correct':'wrong');
+    questionWrap.querySelectorAll('button').forEach(b=>b.disabled=true);
+    correct=ac&&rc;
+  }
+
+  if(q.type===2){
+    const cards=[...questionWrap.querySelectorAll('.number-card')];
+    const selected=cards.filter(c=>c.classList.contains('selected')).map(c=>Number(c.dataset.number));
+    const target=new Set(q.numbers.filter(n=>q.target==='even'?n%2===0:n%2!==0));
+    if(!selected.length){feedback.textContent='Tap the numbers first!';feedback.className='feedback wrong';return}
+    correct=selected.length===target.size && selected.every(n=>target.has(n));
+    locked=true;
+    cards.forEach(c=>{
+      const n=Number(c.dataset.number); c.disabled=true;
+      if(target.has(n))c.classList.add('correct');
+      if(c.classList.contains('selected')&&!target.has(n))c.classList.add('wrong');
+    });
+  }
+
+  if(q.type===3){
+    const input=document.getElementById('answer');
+    const answer=input.value.replace(/[^0-9]/g,'');
+    if(answer.length!==4){feedback.textContent='Enter a 4-digit answer first!';feedback.className='feedback wrong';input.focus();return}
+    correct=answer===q.answer; locked=true; input.disabled=true; input.classList.add(correct?'correct':'wrong');
+  }
+
+  if(q.type===4){
+    const quotient=document.getElementById('quotient'), product=document.getElementById('product'), remainder=document.getElementById('remainder');
+    if(!quotient.value||!product.value||!remainder.value||!selectedClass){
+      feedback.textContent=!selectedClass?'Pilih odd atau even terlebih dahulu!':'Isi semua kotaknya ya!';
+      feedback.className='feedback wrong'; return;
+    }
+    const actual=q.remainder===0?'even':'odd';
+    const checks=[
+      Number(quotient.value)===q.quotient,
+      Number(product.value)===q.quotient*q.divisor,
+      Number(remainder.value)===q.remainder,
+      selectedClass===actual
+    ];
+    correct=checks.every(Boolean); locked=true;
+    [quotient,product,remainder].forEach((el,i)=>{el.disabled=true;el.classList.add(checks[i]?'correct':'wrong')});
+    questionWrap.querySelectorAll('.class-choice').forEach(b=>{
+      b.disabled=true;
+      if(b.dataset.value===actual)b.classList.add('correct');
+      if(b.dataset.value===selectedClass&&selectedClass!==actual)b.classList.add('wrong');
+    });
+  }
+
+  if(correct){
+    correctAnswers += 1;
+    score = correctAnswers;
+    scoreCountEl.textContent = String(correctAnswers);
+    playCorrect();
+    feedback.textContent='✅ Correct! Great job!';
+    feedback.className='feedback correct';
+    problemCard.classList.add('pop');
+  }else{
+    score = correctAnswers;
+    scoreCountEl.textContent = String(correctAnswers);
+    playWrong();
+    feedback.className='feedback wrong';
+    problemCard.classList.add('shake');
+    if(q.type===1) feedback.textContent=`❌ Not quite. ${q.n} is ${q.target}.`;
+    if(q.type===2) feedback.textContent=`❌ Not quite. Tap all the ${q.target} numbers.`;
+    if(q.type===3) feedback.textContent=`❌ Not quite. The answer is ${q.answer}.`;
+    if(q.type===4) feedback.textContent=`❌ Not quite. ${q.dividend} has remainder ${q.remainder}, so it is ${q.remainder===0?'even':'odd'}.`;
+  }
+
+  checkBtn.disabled=true; skipBtn.disabled=true;
+  setTimeout(nextQuestion,1200);
+}
+
+function skipQuestion(){
+  if(locked)return;
+  const q=questions[current]; locked=true;
+  if(q.type===1){
+    questionWrap.querySelectorAll('button').forEach(b=>b.disabled=true);
+    feedback.textContent=`Answer: ${q.answer}; ${q.reason} remainder.`;
+  }else if(q.type===2){
+    const target=new Set(q.numbers.filter(n=>q.target==='even'?n%2===0:n%2!==0));
+    questionWrap.querySelectorAll('.number-card').forEach(c=>{c.disabled=true;if(target.has(Number(c.dataset.number)))c.classList.add('correct')});
+    feedback.textContent=`Answer: tap all the ${q.target} numbers.`;
+  }else if(q.type===3){
+    const input=document.getElementById('answer');input.disabled=true;feedback.textContent=`Answer: ${q.answer}`;
+  }else{
+    questionWrap.querySelectorAll('.division-input').forEach(i=>i.disabled=true);
+    questionWrap.querySelectorAll('.class-choice').forEach(b=>b.disabled=true);
+    feedback.textContent=`Answer: ${q.quotient}, ${q.quotient*q.divisor}, ${q.remainder} — ${q.dividend} is ${q.remainder===0?'even':'odd'}.`;
+  }
+  feedback.className='feedback wrong';checkBtn.disabled=true;skipBtn.disabled=true;
+  setTimeout(nextQuestion,900);
+}
+
+function nextQuestion(){
+  problemCard.classList.remove('pop','shake'); current++;
+  if(current>=questions.length)showResult(); else renderQuestion();
+}
+function showResult(){
+  quizScreen.classList.add('hidden'); resultScreen.classList.remove('hidden'); progressFill.style.width='100%';
+  const pct=Math.round((correctAnswers / questions.length) * 100); finalScore.textContent=String(pct); finalRatio.textContent=`${correctAnswers} / ${questions.length}`;
+  finalMsg.textContent=correctAnswers===questions.length?'Perfect! You mastered odd and even numbers! 🌟':correctAnswers>=9?'Great job! Keep practicing! 🎈':correctAnswers>=7?'Good work! Keep practicing! 💪':'Try again. You can do better! 📚';
+}
+function restart(){
+  current=0;
+  score=0;
+  correctAnswers=0;
+  locked=false;
+  scoreCountEl.textContent='0';
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  buildQuestions();
+  renderQuestion();
+}
+
+function showHelp(){const m=document.getElementById('helpModal');m.classList.add('show');m.setAttribute('aria-hidden','false')}
+function closeHelp(){const m=document.getElementById('helpModal');m.classList.remove('show');m.setAttribute('aria-hidden','true')}
+document.getElementById('helpBtn').addEventListener('click',showHelp);
+document.getElementById('helpClose').addEventListener('click',closeHelp);
+document.getElementById('helpModal').addEventListener('click',e=>{if(e.target.id==='helpModal')closeHelp()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHelp();if(e.key==='Enter'&&!locked)checkAnswer()});
+checkBtn.addEventListener('click',checkAnswer);
+skipBtn.addEventListener('click',skipQuestion);
+document.getElementById('restartBtn').addEventListener('click',restart);
+
+buildQuestions();
+renderQuestion();
+</script>
+
+</body></html>
