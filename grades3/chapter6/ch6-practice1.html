@@ -563,6 +563,7 @@ bgMusic.volume=1.0;
 bgMusic.preload='auto';
 
 const musicToggle=document.getElementById('musicToggle');
+
 function updateMusicButton(){
   const isOn=!bgMusic.paused;
   musicToggle.textContent='♪';
@@ -570,10 +571,39 @@ function updateMusicButton(){
   musicToggle.setAttribute('aria-pressed',isOn?'true':'false');
   musicToggle.classList.toggle('off',!isOn);
 }
-musicToggle.addEventListener('click',()=>{
-  if(bgMusic.paused) bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
-  else {bgMusic.pause();updateMusicButton();}
+
+function startBackgroundMusic(){
+  bgMusic.volume=1.0;
+  const p=bgMusic.play();
+  if(p!==undefined){
+    p.then(updateMusicButton).catch(updateMusicButton);
+  }else{
+    updateMusicButton();
+  }
+}
+
+/* Coba autoplay segera saat file HTML dibuka. */
+window.addEventListener('load',startBackgroundMusic);
+
+/* Jika browser memblokir autoplay bersuara,
+   interaksi pertama pengguna akan langsung menyalakan musik. */
+['click','pointerdown','touchstart','keydown'].forEach(eventName=>{
+  document.addEventListener(eventName,startBackgroundMusic,{once:true,passive:true});
 });
+
+musicToggle.addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  if(bgMusic.paused){
+    bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+  }else{
+    bgMusic.pause();
+    updateMusicButton();
+  }
+});
+
+bgMusic.addEventListener('play',updateMusicButton);
+bgMusic.addEventListener('pause',updateMusicButton);
 
 questions=buildQuestions();
 renderQuestion();
