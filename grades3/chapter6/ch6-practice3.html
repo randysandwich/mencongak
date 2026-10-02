@@ -1,1 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Chapter 6 - Practice 3</title>
+<style>
+:root{
+  --bg:#f7f0e4;--surface:#fffdf7;--ink:#242735;--muted:#657a70;
+  --line:#30332f;--green:#b9d1c1;--teal:#438f8b;--coral:#e98a73;
+  --yellow:#f8d36a;--yellow-dark:#d6aa2c;
+  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button,input{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh}
+.board{
+ width:100%;height:100%;overflow:hidden;background:
+ radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+ radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+ padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+ max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+ display:flex;flex-direction:column;
+}
+.header{
+ flex:0 0 auto;height:82px;display:grid;
+ grid-template-columns:62px 1fr 62px 62px;align-items:center;gap:8px;
+ margin:0 1px 20px;
+}
+.icon-btn,.music-btn,.help-btn{
+ width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;
+ border-radius:20px;box-shadow:var(--shadow);display:flex;align-items:center;
+ justify-content:center;font-weight:900;
+}
+.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.brand-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.brand{text-align:center;font-weight:900;font-size:42px;line-height:1;letter-spacing:-3px}
+.brand sup{color:#ef8fa8;font-size:.48em;vertical-align:top;position:relative;top:-7px;margin-left:2px}
+.brand-subtitle{margin-top:4px;font-size:9px;line-height:1;font-weight:900;letter-spacing:5px;color:var(--coral)}
+.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink)}
+.music-btn.off{background:#eee4cf}
+.music-btn:active,.help-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
 
+.mode-pill{flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill strong{color:var(--teal)}
+.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--teal)}
+.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.problem-card{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:18px 14px;margin:0 1px 7px;
+ box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);position:relative;overflow:hidden;
+}
+.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
+.question-wrap{position:relative;z-index:1;width:min(94vw,430px);display:flex;flex-direction:column;align-items:center}
+.type-badge{display:inline-flex;align-items:center;justify-content:center;margin:0 auto 12px;padding:5px 12px;border-radius:999px;background:var(--green);font-size:.65rem;font-weight:900}
+.question-title{font-size:clamp(1.25rem,5.4vw,1.75rem);font-weight:900;text-align:center;line-height:1.3;margin-bottom:26px;color:var(--coral)}
+.exercise-box{
+ width:min(96%,430px);border:2px solid #e2e1d8;border-radius:18px;background:#fffdf7;
+ padding:22px 15px;box-shadow:0 4px 0 rgba(58,65,61,.07);
+ display:flex;align-items:center;justify-content:center;
+}
+.expression{font-size:clamp(1.45rem,6vw,2rem);font-weight:900;line-height:1.6;text-align:center;color:var(--ink)}
+.unit-label{color:#000}
+.blank{
+ width:78px;height:48px;border:2px solid #293f4d;border-radius:8px;background:#fff;
+ text-align:center;font-size:1.45rem;font-weight:900;color:var(--teal);outline:none;
+ margin:0 5px;padding:0;
+}
+.blank.small{width:68px}
+.blank:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.blank.correct{border-color:var(--green);background:#eef9f1}
+.blank.wrong{border-color:var(--coral);background:#fff1ed}
+.feedback{flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.correct{color:var(--teal)} .feedback.wrong{color:var(--coral)}
+.buttons{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{
+ min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
+ box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer;
+}
+button.action:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+button.action:disabled{opacity:.55;cursor:default}
+#checkBtn{background:var(--green)} #skipBtn{background:#fffdf7;color:var(--muted)}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+.result-screen{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;
+}
+.big-score{color:var(--coral);font-size:clamp(5.5rem,22vw,9rem);line-height:.9;font-weight:900;letter-spacing:-5px;margin:4px 0}
+.score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
+.hidden{display:none!important}
+.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+@media(max-height:620px){
+ .header{height:68px;margin-bottom:12px}
+ .brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
+ .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+ .theme{font-size:.51rem;margin-bottom:2px}
+ .progress-track{margin-bottom:4px}.problem-card{margin-bottom:4px;border-radius:18px;padding-top:10px;padding-bottom:10px}
+ .question-title{margin-bottom:12px}.exercise-box{padding:14px 8px}
+ button.action{min-height:52px;font-size:.72rem;border-radius:18px}.footer-note{display:none}
+}
+</style>
+</head>
+<body>
+<div class="frame"><div class="board">
+<header class="header">
+  <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+  <div class="brand-wrap">
+    <div class="brand">taci<sup>2</sup></div>
+    <div class="brand-subtitle">MENCONGAK GAMES</div>
+  </div>
+  <button class="help-btn" type="button" id="helpBtn">?</button>
+  <button id="musicToggle" class="music-btn" type="button">♪</button>
+</header>
+
+<div class="mode-pill">➗ <strong>PRACTICE 3</strong> - Division Without Remainder and Regrouping</div>
+<div class="theme">GRADES 3 • <span>CHAPTER 6</span> • <strong>DIVISION</strong></div>
+
+<div id="quizScreen">
+  <div class="score-row">
+    <span>Soal <span id="qNum">1</span> / <span id="qTotal">5</span></span>
+    <span>Skor <span class="count" id="scoreCount">0</span></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="problem-card" id="problemCard">
+    <div class="question-wrap" id="questionWrap"></div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="buttons">
+    <button class="action" id="checkBtn" type="button">✓ Cek Jawaban</button>
+    <button class="action" id="skipBtn" type="button">→ Lewati</button>
+  </div>
+  <div class="footer-note">copyright © 2026</div>
+</div>
+
+<div id="resultScreen" class="result-screen hidden">
+  <div style="font-size:1rem;font-weight:900">NILAI KAMU</div>
+  <div class="big-score" id="finalScore">0</div>
+  <div class="score-ratio" id="finalRatio">0 / 5</div>
+  <p id="finalMsg">Kerja bagus!</p>
+  <button id="restartBtn" type="button">↻ Main Lagi</button>
+</div>
+</div></div>
+
+<script>
+const questionPool=[
+  {kind:'tensones', total:44, divisor:4, answer1:'1', unit1:'ten', answer2:'1', unit2:'one'},
+  {kind:'tensones', total:69, divisor:3, answer1:'2', unit1:'tens', answer2:'3', unit2:'ones'},
+  {kind:'tensones', total:84, divisor:4, answer1:'2', unit1:'tens', answer2:'1', unit2:'one'},
+  {kind:'tensones', total:32, divisor:2, answer1:'1', unit1:'ten', answer2:'6', unit2:'ones'},
+  {kind:'tensones', total:96, divisor:3, answer1:'3', unit1:'tens', answer2:'2', unit2:'ones'}
+];
+
+let questions=[],current=0,correctAnswers=0,locked=false;
+
+const qNumEl=document.getElementById('qNum');
+const scoreCountEl=document.getElementById('scoreCount');
+const progressFill=document.getElementById('progressFill');
+const questionWrap=document.getElementById('questionWrap');
+const feedback=document.getElementById('feedback');
+const problemCard=document.getElementById('problemCard');
+const checkBtn=document.getElementById('checkBtn');
+const skipBtn=document.getElementById('skipBtn');
+const quizScreen=document.getElementById('quizScreen');
+const resultScreen=document.getElementById('resultScreen');
+const finalScore=document.getElementById('finalScore');
+const finalRatio=document.getElementById('finalRatio');
+const finalMsg=document.getElementById('finalMsg');
+
+function shuffle(arr){
+  const copy=arr.slice();
+  for(let i=copy.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]]=[copy[j],copy[i]];
+  }
+  return copy;
+}
+function buildQuestions(){questions=shuffle(questionPool)}
+function renderQuestion(){
+  locked=false;
+  const q=questions[current];
+  qNumEl.textContent=current+1;
+  progressFill.style.width=(current/questions.length*100)+'%';
+
+  let content=`
+    <div class="question-title">${q.total} ones ÷ ${q.divisor} =</div>
+    <div class="exercise-box"><div class="expression">
+      <input class="blank small" id="a1" inputmode="numeric" maxlength="2" autocomplete="off">
+      <span class="unit-label" id="unit1"></span>
+      <input class="blank small" id="a2" inputmode="numeric" maxlength="2" autocomplete="off">
+      <span class="unit-label" id="unit2"></span>
+    </div></div>`;
+  questionWrap.innerHTML=content;
+
+  // Use singular only for 1; plural for all other quantities.
+  document.getElementById('unit1').textContent = q.answer1 === '1' ? 'ten' : 'tens';
+  document.getElementById('unit2').textContent = q.answer2 === '1' ? 'one' : 'ones';
+
+  const inputs=[...questionWrap.querySelectorAll('.blank')];
+  inputs.forEach((input,i)=>{
+    input.addEventListener('input',()=>{
+      input.value=input.value.replace(/[^0-9]/g,'').slice(0,input.maxLength);
+      if(input.value && inputs[i+1]) inputs[i+1].focus();
+    });
+  });
+  inputs[0].focus();
+  feedback.textContent='';feedback.className='feedback';
+  checkBtn.disabled=false;skipBtn.disabled=false;
+}
+
+let audioCtx=null;
+function getCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freqStart,freqEnd,duration,type,volume){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended')ctx.resume();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=type;
+    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+function playCorrect(){
+  playTone(880,1760,.18,'sine',.22);
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+}
+const wrongSound=new Audio('../../sound/akh.mp3');
+wrongSound.preload='auto';
+function playWrong(){
+  try{
+    wrongSound.currentTime=0;
+    const p=wrongSound.play();
+    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+  }catch(e){playTone(220,110,.30,'sawtooth',.16)}
+}
+
+const bgMusic=new Audio('../../sound/mariowanderingtheplains.mp3');
+bgMusic.loop=true;
+bgMusic.volume=1.0;
+bgMusic.preload='auto';
+const musicToggle=document.getElementById('musicToggle');
+function updateMusicButton(){
+  const isOn=!bgMusic.paused;
+  musicToggle.textContent='♪';
+  musicToggle.setAttribute('aria-label',isOn?'Matikan musik':'Nyalakan musik');
+  musicToggle.setAttribute('aria-pressed',isOn?'true':'false');
+  musicToggle.classList.toggle('off',!isOn);
+}
+function startBackgroundMusic(){
+  bgMusic.volume=1.0;
+  const p=bgMusic.play();
+  if(p!==undefined)p.then(updateMusicButton).catch(updateMusicButton);
+  else updateMusicButton();
+}
+window.addEventListener('load',startBackgroundMusic);
+['click','pointerdown','touchstart','keydown'].forEach(eventName=>{
+  document.addEventListener(eventName,startBackgroundMusic,{once:true,passive:true});
+});
+musicToggle.addEventListener('click',event=>{
+  event.preventDefault();event.stopPropagation();
+  if(bgMusic.paused)bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+  else{bgMusic.pause();updateMusicButton();}
+});
+
+function checkAnswer(){
+  if(locked)return;
+  const q=questions[current];
+  const a1=document.getElementById('a1');
+  const a2=document.getElementById('a2');
+  if(!a1.value || !a2.value){
+    feedback.textContent='Isi semua kotaknya ya!';
+    feedback.className='feedback wrong';
+    return;
+  }
+  const correct=a1.value===q.answer1 && a2.value===q.answer2;
+  locked=true;
+  [a1,a2].forEach((el,i)=>{
+    el.disabled=true;
+    el.classList.add((i===0?a1.value===q.answer1:a2.value===q.answer2)?'correct':'wrong');
+  });
+
+  if(correct){
+    correctAnswers++;
+    scoreCountEl.textContent=String(correctAnswers);
+    playCorrect();
+    feedback.textContent='✅ Correct! Great job!';
+    feedback.className='feedback correct';
+    problemCard.classList.add('pop');
+  }else{
+    playWrong();
+    feedback.textContent=`❌ Not quite. The answer is ${q.answer1} ${q.unit1} ${q.answer2} ${q.unit2}.`;
+    feedback.className='feedback wrong';
+    problemCard.classList.add('shake');
+  }
+  checkBtn.disabled=true;skipBtn.disabled=true;
+  setTimeout(nextQuestion,1200);
+}
+
+function skipQuestion(){
+  if(locked)return;
+  const q=questions[current];
+  locked=true;
+  const a1=document.getElementById('a1'),a2=document.getElementById('a2');
+  a1.disabled=true;
+  a2.disabled=true;
+  a1.value=q.answer1;
+  a2.value=q.answer2;
+  a1.classList.add('correct');
+  a2.classList.add('correct');
+  feedback.textContent=`Answer: ${q.answer1} ${q.unit1} ${q.answer2} ${q.unit2}.`;
+  feedback.className='feedback wrong';
+  checkBtn.disabled=true;skipBtn.disabled=true;
+  setTimeout(nextQuestion,900);
+}
+function nextQuestion(){
+  problemCard.classList.remove('pop','shake');
+  current++;
+  if(current>=questions.length)showResult();
+  else renderQuestion();
+}
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width='100%';
+  const pct=Math.round(correctAnswers/questions.length*100);
+  finalScore.textContent=String(pct);
+  finalRatio.textContent=`${correctAnswers} / ${questions.length}`;
+  finalMsg.textContent=correctAnswers===questions.length?'Perfect! 🌟':'Great job! Keep practicing! 🎈';
+}
+function restart(){
+  current=0;correctAnswers=0;locked=false;
+  scoreCountEl.textContent='0';
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  buildQuestions();renderQuestion();
+}
+checkBtn.addEventListener('click',checkAnswer);
+skipBtn.addEventListener('click',skipQuestion);
+document.getElementById('restartBtn').addEventListener('click',restart);
+document.getElementById('helpBtn').addEventListener('click',()=>{
+  alert('Type 1: Divide the ones and write the answer as ones, tens, and ones.');
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!locked)checkAnswer();
+});
+buildQuestions();renderQuestion();
+</script>
+</body>
+</html>
