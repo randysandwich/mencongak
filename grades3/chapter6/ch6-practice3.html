@@ -1,40 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Chapter 6 - Practice 3</title>
+<title>Chapter 6 - Practice 3 - Combined</title>
 <style>
 :root{
-  --bg:#f7f0e4;--surface:#fffdf7;--ink:#242735;--muted:#657a70;
-  --line:#30332f;--green:#b9d1c1;--teal:#438f8b;--coral:#e98a73;
-  --yellow:#f8d36a;--yellow-dark:#d6aa2c;
-  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
-  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+ --bg:#f7f0e4;--surface:#fffdf7;--ink:#242735;--muted:#657a70;
+ --line:#30332f;--green:#b9d1c1;--teal:#438f8b;--coral:#e98a73;
+ --yellow:#f8d36a;--yellow-dark:#d6aa2c;
+ --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+ --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;width:100%;height:100%;background:var(--bg)}
 body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
 button,input{font:inherit}
 .frame{width:100%;max-width:520px;height:100dvh}
-.board{
- width:100%;height:100%;overflow:hidden;background:
+.board{width:100%;height:100%;overflow:hidden;background:
  radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
  radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
  padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
  max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
- display:flex;flex-direction:column;
-}
-.header{
- flex:0 0 auto;height:82px;display:grid;
- grid-template-columns:62px 1fr 62px 62px;align-items:center;gap:8px;
- margin:0 1px 20px;
-}
-.icon-btn,.music-btn,.help-btn{
- width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;
- border-radius:20px;box-shadow:var(--shadow);display:flex;align-items:center;
- justify-content:center;font-weight:900;
-}
+ display:flex;flex-direction:column}
+.header{flex:0 0 auto;height:82px;display:grid;grid-template-columns:62px 1fr 62px 62px;
+ align-items:center;gap:8px;margin:0 1px 20px}
+.icon-btn,.music-btn,.help-btn{width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;
+ border-radius:20px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-weight:900}
 .icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
 .brand-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center}
 .brand{text-align:center;font-weight:900;font-size:42px;line-height:1;letter-spacing:-3px}
@@ -43,328 +35,300 @@ button,input{font:inherit}
 .music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink)}
 .music-btn.off{background:#eee4cf}
 .music-btn:active,.help-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
-
-.mode-pill{flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill{flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);
+ border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800}
 .mode-pill strong{color:var(--teal)}
-.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;
+ letter-spacing:1px;color:var(--muted);text-transform:uppercase}
 .theme strong{color:var(--teal)}
-.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;
+ color:var(--muted);font-size:.67rem;font-weight:800}
 .score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
 .progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
 .progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+.problem-card{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:14px 10px;margin:0 1px 7px;
+ box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);position:relative;overflow:hidden}
+.problem-card:before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;
+ background:rgba(67,143,139,.06);top:-27px;right:-20px}
+.question-wrap{position:relative;z-index:1;width:min(96vw,430px);display:flex;flex-direction:column;align-items:center}
+.question-title{font-size:clamp(1.2rem,5vw,1.65rem);font-weight:900;color:var(--coral);
+ text-align:center;margin-bottom:12px;line-height:1.25}
+.exercise-box{width:min(96%,430px);border:2px solid #e2e1d8;border-radius:18px;background:#fffdf7;
+ padding:22px 15px;box-shadow:0 4px 0 rgba(58,65,61,.07);display:flex;align-items:center;justify-content:center}
+.expression{font-size:clamp(1.45rem,6vw,2rem);font-weight:900;line-height:1.7;text-align:center;color:var(--ink)}
+.blank{width:58px;height:46px;border:2px solid #293f4d;border-radius:8px;background:#fff;text-align:center;
+ font-size:1.35rem;font-weight:900;color:var(--teal);outline:none;margin:0 4px;padding:0}
+.blank.small{width:55px}.blank:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.blank.correct,.ld-input.correct{border-color:var(--green);background:#eef9f1}
+.blank.wrong,.ld-input.wrong{border-color:var(--coral);background:#fff1ed}
+.unit-label{color:#000;font-size:.9em}
 
-#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
-.problem-card{
- flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
- background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:18px 14px;margin:0 1px 7px;
- box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);position:relative;overflow:hidden;
-}
-.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
-.question-wrap{position:relative;z-index:1;width:min(94vw,430px);display:flex;flex-direction:column;align-items:center}
-.type-badge{display:inline-flex;align-items:center;justify-content:center;margin:0 auto 12px;padding:5px 12px;border-radius:999px;background:var(--green);font-size:.65rem;font-weight:900}
-.question-title{font-size:clamp(1.25rem,5.4vw,1.75rem);font-weight:900;text-align:center;line-height:1.3;margin-bottom:26px;color:var(--coral)}
-.exercise-box{
- width:min(96%,430px);border:2px solid #e2e1d8;border-radius:18px;background:#fffdf7;
- padding:22px 15px;box-shadow:0 4px 0 rgba(58,65,61,.07);
- display:flex;align-items:center;justify-content:center;
-}
-.expression{font-size:clamp(1.45rem,6vw,2rem);font-weight:900;line-height:1.6;text-align:center;color:var(--ink)}
-.unit-label{color:#000}
-.blank{
- width:78px;height:48px;border:2px solid #293f4d;border-radius:8px;background:#fff;
- text-align:center;font-size:1.45rem;font-weight:900;color:var(--teal);outline:none;
- margin:0 5px;padding:0;
-}
-.blank.small{width:68px}
-.blank:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
-.blank.correct{border-color:var(--green);background:#eef9f1}
-.blank.wrong{border-color:var(--coral);background:#fff1ed}
+.long-box{position:relative;width:270px;min-height:300px;display:flex;justify-content:center;align-items:flex-start}
+.long-division{position:relative;width:220px;min-height:295px;font-weight:900;font-size:clamp(1.55rem,7vw,2rem);color:var(--ink)}
+.quotient-row{position:absolute;top:0;left:76px;display:flex;gap:8px}
+.divisor{position:absolute;left:8px;top:59px;color:var(--ink);font-size:clamp(2rem,9vw,2.65rem)}
+.dividend{position:absolute;left:76px;top:54px;color:var(--coral);font-size:clamp(2.55rem,10.5vw,3.1rem);font-weight:900;white-space:nowrap;display:flex;gap:8px;line-height:43px}
+.dividend-digit{width:43px;height:43px;display:flex;align-items:center;justify-content:center}
+.top-line{position:absolute;left:62px;right:0;top:51px;border-top:3px solid var(--line)}
+.curve{position:absolute;left:61px;top:51px;width:19px;height:43px;border-left:3px solid var(--line);
+ border-top:3px solid var(--line);border-top-left-radius:24px}
+.ld-input{width:43px;height:43px;border:2px solid #293f4d;border-radius:6px;background:#fff;
+ text-align:center;font-size:1.35rem;font-weight:900;color:var(--teal);outline:none;padding:0}
+.ld-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.row{position:absolute;left:76px;display:flex;gap:8px;height:43px}
+.row.product-first{top:112px}.row.bring-down{top:165px}.row.product-second{top:218px}.row.final-rem{top:271px}
+.row.shift-one{left:126px}.row-line{position:absolute;left:66px;right:0;border-top:2px solid var(--line)}
+.line1{top:157px}.line2{top:262px}
+
+.match-wrap{width:min(96vw,420px);display:flex;flex-direction:column;align-items:center;gap:7px;position:relative;z-index:1;margin:0 auto}
+.match-title{font-size:clamp(1.25rem,5.8vw,1.8rem);font-weight:900;color:var(--ink);text-align:center}
+.match-subtitle{font-size:.68rem;font-weight:800;color:var(--muted);text-align:center}
+.match-board{position:relative;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:24px;background:var(--surface);
+ border-radius:18px;padding:10px}
+.match-lines{position:absolute;inset:0;pointer-events:none;z-index:3;overflow:hidden}
+.match-column{display:flex;flex-direction:column;gap:7px;position:relative;z-index:2}
+.match-card{min-height:54px;border:2px solid #293f4d;border-radius:12px;background:#fff;display:flex;align-items:center;
+ justify-content:center;gap:7px;padding:6px 7px;font-size:clamp(.9rem,4.1vw,1.12rem);font-weight:900;color:var(--ink);
+ cursor:pointer;transition:transform .12s ease,background .12s ease,border-color .12s ease;user-select:none}
+.match-card .match-icon{font-size:1.35rem;line-height:1}
+.match-card.selected{border-color:var(--coral);background:#fff1ed;transform:scale(1.02)}
+.match-card.matched{border-color:var(--green);background:#eef9f1;color:#2f706d;cursor:default}
+.match-card.wrong{border-color:var(--coral);background:#fff1ed}
+.match-progress{font-size:.68rem;color:var(--teal);font-weight:900}
 .feedback{flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
-.feedback.correct{color:var(--teal)} .feedback.wrong{color:var(--coral)}
+.feedback.correct{color:var(--teal)}.feedback.wrong{color:var(--coral)}
 .buttons{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
-button.action{
- min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
- box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer;
-}
+button.action{min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
+ box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer}
 button.action:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
 button.action:disabled{opacity:.55;cursor:default}
-#checkBtn{background:var(--green)} #skipBtn{background:#fffdf7;color:var(--muted)}
+#checkBtn{background:var(--green)}#skipBtn{background:#fffdf7;color:var(--muted)}
 .footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
-.result-screen{
- flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
- background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;
-}
-.big-score{color:var(--coral);font-size:clamp(5.5rem,22vw,9rem);line-height:.9;font-weight:900;letter-spacing:-5px;margin:4px 0}
+.result-screen{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px}
+.big-score{color:var(--coral);font-size:clamp(5.5rem,22vw,9rem);line-height:.9;font-weight:900;margin:4px 0}
 .score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}
-.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
-#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
-.hidden{display:none!important}
-.shake{animation:shake .35s}.pop{animation:pop .35s}
+.result-screen p{color:var(--muted);font-weight:700}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);
+ color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
+.hidden{display:none!important}.shake{animation:shake .35s}.pop{animation:pop .35s}
 @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
-@media(max-height:620px){
- .header{height:68px;margin-bottom:12px}
- .brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
- .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
- .theme{font-size:.51rem;margin-bottom:2px}
- .progress-track{margin-bottom:4px}.problem-card{margin-bottom:4px;border-radius:18px;padding-top:10px;padding-bottom:10px}
- .question-title{margin-bottom:12px}.exercise-box{padding:14px 8px}
- button.action{min-height:52px;font-size:.72rem;border-radius:18px}.footer-note{display:none}
+@media(max-height:650px){
+ .header{height:68px;margin-bottom:10px}.brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
+ .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}.theme{font-size:.51rem;margin-bottom:2px}
+ .problem-card{padding-top:8px;padding-bottom:8px}.question-title{margin-bottom:8px}
+ .long-box{transform:scale(.88);transform-origin:top center;min-height:275px;margin-bottom:-30px}
+ button.action{min-height:52px;font-size:.72rem}.footer-note{display:none}
+ .match-board{gap:12px;padding:7px}.match-column{gap:5px}.match-card{min-height:43px;padding:4px;font-size:.76rem}
 }
 </style>
 </head>
 <body>
 <div class="frame"><div class="board">
 <header class="header">
-  <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
-  <div class="brand-wrap">
-    <div class="brand">taci<sup>2</sup></div>
-    <div class="brand-subtitle">MENCONGAK GAMES</div>
-  </div>
-  <button class="help-btn" type="button" id="helpBtn">?</button>
-  <button id="musicToggle" class="music-btn" type="button">♪</button>
+<a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+<div class="brand-wrap"><div class="brand">taci<sup>2</sup></div><div class="brand-subtitle">MENCONGAK GAMES</div></div>
+<button class="help-btn" id="helpBtn" type="button">?</button>
+<button id="musicToggle" class="music-btn" type="button">♪</button>
 </header>
 
 <div class="mode-pill">➗ <strong>PRACTICE 3</strong> - Division Without Remainder and Regrouping</div>
 <div class="theme">GRADES 3 • <span>CHAPTER 6</span> • <strong>DIVISION</strong></div>
 
 <div id="quizScreen">
-  <div class="score-row">
-    <span>Soal <span id="qNum">1</span> / <span id="qTotal">5</span></span>
-    <span>Skor <span class="count" id="scoreCount">0</span></span>
-  </div>
-  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<div class="score-row"><span>Soal <span id="qNum">1</span> / <span id="qTotal">13</span></span>
+<span>Skor <span class="count" id="scoreCount">0</span></span></div>
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
-  <div class="problem-card" id="problemCard">
-    <div class="question-wrap" id="questionWrap"></div>
-  </div>
-
-  <div class="feedback" id="feedback"></div>
-  <div class="buttons">
-    <button class="action" id="checkBtn" type="button">✓ Cek Jawaban</button>
-    <button class="action" id="skipBtn" type="button">→ Lewati</button>
-  </div>
-  <div class="footer-note">copyright © 2026</div>
+<div class="problem-card" id="problemCard"><div class="question-wrap" id="questionWrap"></div></div>
+<div class="feedback" id="feedback"></div>
+<div class="buttons"><button class="action" id="checkBtn">✓ Cek Jawaban</button>
+<button class="action" id="skipBtn">→ Lewati</button></div>
+<div class="footer-note">copyright © 2026</div>
 </div>
 
 <div id="resultScreen" class="result-screen hidden">
-  <div style="font-size:1rem;font-weight:900">NILAI KAMU</div>
-  <div class="big-score" id="finalScore">0</div>
-  <div class="score-ratio" id="finalRatio">0 / 5</div>
-  <p id="finalMsg">Kerja bagus!</p>
-  <button id="restartBtn" type="button">↻ Main Lagi</button>
+<div style="font-weight:900">NILAI KAMU</div><div class="big-score" id="finalScore">0</div>
+<div class="score-ratio" id="finalRatio">0 / 13</div><p id="finalMsg">Great job! Keep practicing! 🎈</p>
+<button id="restartBtn">↻ Main Lagi</button>
 </div>
 </div></div>
 
 <script>
-const questionPool=[
-  {kind:'tensones', total:44, divisor:4, answer1:'1', unit1:'ten', answer2:'1', unit2:'one'},
-  {kind:'tensones', total:69, divisor:3, answer1:'2', unit1:'tens', answer2:'3', unit2:'ones'},
-  {kind:'tensones', total:84, divisor:4, answer1:'2', unit1:'tens', answer2:'1', unit2:'one'},
-  {kind:'tensones', total:32, divisor:2, answer1:'1', unit1:'ten', answer2:'6', unit2:'ones'},
-  {kind:'tensones', total:96, divisor:3, answer1:'3', unit1:'tens', answer2:'2', unit2:'ones'}
+/* One engine for all three source exercises. */
+let questions=[
+ {type:1,total:44,divisor:4,a1:'1',u1:'ten',a2:'1',u2:'one'},
+ {type:1,total:69,divisor:3,a1:'2',u1:'tens',a2:'3',u2:'ones'},
+ {type:1,total:84,divisor:4,a1:'2',u1:'tens',a2:'1',u2:'one'},
+ {type:1,total:32,divisor:2,a1:'1',u1:'ten',a2:'6',u2:'ones'},
+ {type:1,total:96,divisor:3,a1:'3',u1:'tens',a2:'2',u2:'ones'},
+
+ {type:2,divisor:3,dividend:36,quotient:['1','2'],product1:['3'],bring:['6'],product2:['6'],remainder:['0']},
+ {type:2,divisor:4,dividend:84,quotient:['2','1'],product1:['8'],bring:['4'],product2:['4'],remainder:['0']},
+ {type:2,divisor:5,dividend:95,quotient:['1','9'],product1:['5'],bring:['4','5'],product2:['4','5'],remainder:['0']},
+
+ {type:3,pairs:[{result:23,a:46,b:2},{result:32,a:96,b:3},{result:21,a:42,b:2},{result:21,a:84,b:4},{result:15,a:75,b:5}]},
+ {type:3,pairs:[{result:12,a:36,b:3},{result:21,a:84,b:4},{result:16,a:96,b:6},{result:18,a:72,b:4},{result:14,a:56,b:4}]},
+ {type:3,pairs:[{result:24,a:48,b:2},{result:22,a:66,b:3},{result:13,a:52,b:4},{result:24,a:96,b:4},{result:15,a:45,b:3}]},
+ {type:3,pairs:[{result:31,a:62,b:2},{result:27,a:81,b:3},{result:18,a:90,b:5},{result:14,a:70,b:5},{result:25,a:75,b:3}]},
+ {type:3,pairs:[{result:42,a:84,b:2},{result:33,a:99,b:3},{result:24,a:72,b:3},{result:16,a:64,b:4},{result:22,a:88,b:4}]}
 ];
 
-let questions=[],current=0,correctAnswers=0,locked=false;
+let current=0,score=0,locked=false,matchState=null;
+const qNumEl=document.getElementById('qNum'),scoreEl=document.getElementById('scoreCount');
+const progressFill=document.getElementById('progressFill'),wrap=document.getElementById('questionWrap');
+const feedback=document.getElementById('feedback'),card=document.getElementById('problemCard');
+const checkBtn=document.getElementById('checkBtn'),skipBtn=document.getElementById('skipBtn');
 
-const qNumEl=document.getElementById('qNum');
-const scoreCountEl=document.getElementById('scoreCount');
-const progressFill=document.getElementById('progressFill');
-const questionWrap=document.getElementById('questionWrap');
-const feedback=document.getElementById('feedback');
-const problemCard=document.getElementById('problemCard');
-const checkBtn=document.getElementById('checkBtn');
-const skipBtn=document.getElementById('skipBtn');
-const quizScreen=document.getElementById('quizScreen');
-const resultScreen=document.getElementById('resultScreen');
-const finalScore=document.getElementById('finalScore');
-const finalRatio=document.getElementById('finalRatio');
-const finalMsg=document.getElementById('finalMsg');
+function shuffle(a){const c=a.slice();for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]]}return c}
+function setCommon(){locked=false;matchState=null;feedback.textContent='';feedback.className='feedback';
+checkBtn.disabled=false;skipBtn.disabled=false;card.classList.remove('pop','shake');
+qNumEl.textContent=current+1;progressFill.style.width=(current/questions.length*100)+'%'}
 
-function shuffle(arr){
-  const copy=arr.slice();
-  for(let i=copy.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [copy[i],copy[j]]=[copy[j],copy[i]];
-  }
-  return copy;
+function renderType1(q){
+ wrap.innerHTML=`<div class="question-title">${q.total} ones ÷ ${q.divisor} =</div>
+ <div class="exercise-box"><div class="expression">
+ <input class="blank small" id="a1" inputmode="numeric" maxlength="2">
+ <span class="unit-label">${q.u1 === 'ten' ? 'ten' : 'tens'}</span>
+ <input class="blank small" id="a2" inputmode="numeric" maxlength="2">
+ <span class="unit-label">${q.u2 === 'one' ? 'one' : 'ones'}</span>
+ </div></div>`;
+ attachInputs([...wrap.querySelectorAll('.blank')]);
 }
-function buildQuestions(){questions=shuffle(questionPool)}
+
+function attachInputs(inputs){
+ inputs.forEach((el,i)=>el.addEventListener('input',()=>{el.value=el.value.replace(/[^0-9]/g,'').slice(0,el.maxLength);if(el.value&&inputs[i+1])inputs[i+1].focus()}));
+ inputs[0]?.focus();
+}
+
+function makeInputs(vals,cls){return vals.map(v=>`<input class="ld-input ${cls}" data-answer="${v}" inputmode="numeric" maxlength="1">`).join('')}
+
+function renderType2(q){
+ wrap.innerHTML=`<div class="question-title">Complete the division.</div>
+ <div class="long-box"><div class="long-division" id="longDivision">
+ <div class="quotient-row">${makeInputs(q.quotient,'q')}</div>
+ <div class="divisor">${q.divisor}</div><div class="dividend">${String(q.dividend).split('').map(d=>`<span class="dividend-digit">${d}</span>`).join('')}</div>
+ <div class="top-line"></div><div class="curve"></div>
+ <div class="row product-first">${makeInputs(q.product1,'p1')}</div><div class="row-line line1"></div>
+ <div class="row bring-down ${q.bring.length===1?'shift-one':''}">${makeInputs(q.bring,'b')}</div>
+ <div class="row product-second ${q.product2.length===1?'shift-one':''}">${makeInputs(q.product2,'p2')}</div>
+ <div class="row-line line2"></div><div class="row final-rem shift-one">${makeInputs(q.remainder,'r')}</div>
+ </div></div>`;
+ attachInputs([...wrap.querySelectorAll('.ld-input')]);
+}
+
+function renderType3(q){
+ matchState={pairs:q.pairs,selectedLeft:null,selectedRight:null,matched:0};
+ wrap.innerHTML=`<div class="match-wrap">
+ <div class="match-title">Match and Correct</div>
+ <div class="match-subtitle">Pasangkan rooster dengan hatching chick yang memiliki jawaban pembagian yang benar.</div>
+ <div class="match-progress" id="matchProgress">0 / 5 pasangan</div>
+ <div class="match-board" id="matchBoard"><div class="match-lines" id="matchLines"></div>
+ <div class="match-column" id="matchLeft"></div><div class="match-column" id="matchRight"></div></div></div>`;
+ const left=document.getElementById('matchLeft'),right=document.getElementById('matchRight');
+ shuffle(q.pairs).forEach((p,i)=>{const x=document.createElement('div');x.className='match-card';x.dataset.id=p.result;x.dataset.pair=i;
+ x.innerHTML=`<span class="match-icon">🐓</span><span>${p.a} ÷ ${p.b}</span>`;x.onclick=()=>selectMatch(x,'left');left.appendChild(x)});
+ shuffle(q.pairs).forEach((p,i)=>{const x=document.createElement('div');x.className='match-card';x.dataset.id=p.result;
+ x.innerHTML=`<span>${p.result}</span><span class="match-icon">🐣</span>`;x.onclick=()=>selectMatch(x,'right');right.appendChild(x)});
+}
+
 function renderQuestion(){
-  locked=false;
-  const q=questions[current];
-  qNumEl.textContent=current+1;
-  progressFill.style.width=(current/questions.length*100)+'%';
-
-  let content=`
-    <div class="question-title">${q.total} ones ÷ ${q.divisor} =</div>
-    <div class="exercise-box"><div class="expression">
-      <input class="blank small" id="a1" inputmode="numeric" maxlength="2" autocomplete="off">
-      <span class="unit-label" id="unit1"></span>
-      <input class="blank small" id="a2" inputmode="numeric" maxlength="2" autocomplete="off">
-      <span class="unit-label" id="unit2"></span>
-    </div></div>`;
-  questionWrap.innerHTML=content;
-
-  // Use singular only for 1; plural for all other quantities.
-  document.getElementById('unit1').textContent = q.answer1 === '1' ? 'ten' : 'tens';
-  document.getElementById('unit2').textContent = q.answer2 === '1' ? 'one' : 'ones';
-
-  const inputs=[...questionWrap.querySelectorAll('.blank')];
-  inputs.forEach((input,i)=>{
-    input.addEventListener('input',()=>{
-      input.value=input.value.replace(/[^0-9]/g,'').slice(0,input.maxLength);
-      if(input.value && inputs[i+1]) inputs[i+1].focus();
-    });
-  });
-  inputs[0].focus();
-  feedback.textContent='';feedback.className='feedback';
-  checkBtn.disabled=false;skipBtn.disabled=false;
+ setCommon();const q=questions[current];
+ if(q.type===1)renderType1(q);else if(q.type===2)renderType2(q);else renderType3(q);
 }
 
-let audioCtx=null;
-function getCtx(){
-  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  return audioCtx;
-}
-function playTone(freqStart,freqEnd,duration,type,volume){
-  try{
-    const ctx=getCtx();
-    if(ctx.state==='suspended')ctx.resume();
-    const osc=ctx.createOscillator(),gain=ctx.createGain();
-    osc.type=type;
-    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
-    gain.gain.setValueAtTime(volume,ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
-    osc.connect(gain);gain.connect(ctx.destination);
-    osc.start();osc.stop(ctx.currentTime+duration);
-  }catch(e){}
-}
-function playCorrect(){
-  playTone(880,1760,.18,'sine',.22);
-  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
-}
-const wrongSound=new Audio('../../sound/akh.mp3');
-wrongSound.preload='auto';
-function playWrong(){
-  try{
-    wrongSound.currentTime=0;
-    const p=wrongSound.play();
-    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
-  }catch(e){playTone(220,110,.30,'sawtooth',.16)}
+function selectMatch(el,side){
+ if(locked||el.classList.contains('matched'))return;
+ if(side==='left'){if(matchState.selectedLeft)matchState.selectedLeft.classList.remove('selected');matchState.selectedLeft=el}
+ else {if(matchState.selectedRight)matchState.selectedRight.classList.remove('selected');matchState.selectedRight=el}
+ el.classList.add('selected');
+ if(matchState.selectedLeft&&matchState.selectedRight)checkMatch();
 }
 
-const bgMusic=new Audio('../../sound/mariowanderingtheplains.mp3');
-bgMusic.loop=true;
-bgMusic.volume=1.0;
-bgMusic.preload='auto';
-const musicToggle=document.getElementById('musicToggle');
-function updateMusicButton(){
-  const isOn=!bgMusic.paused;
-  musicToggle.textContent='♪';
-  musicToggle.setAttribute('aria-label',isOn?'Matikan musik':'Nyalakan musik');
-  musicToggle.setAttribute('aria-pressed',isOn?'true':'false');
-  musicToggle.classList.toggle('off',!isOn);
+function checkMatch(){
+ const l=matchState.selectedLeft,r=matchState.selectedRight;
+ if(l.dataset.id===r.dataset.id){
+   l.classList.remove('selected');r.classList.remove('selected');l.classList.add('matched');r.classList.add('matched');
+   drawLine(l,r);matchState.matched++;
+   document.getElementById('matchProgress').textContent=`${matchState.matched} / ${matchState.pairs.length} pasangan`;
+   matchState.selectedLeft=null;matchState.selectedRight=null;playCorrect();
+   if(matchState.matched===matchState.pairs.length){locked=true;score++;scoreEl.textContent=score;setTimeout(nextQuestion,900)}
+ }else{
+   l.classList.add('wrong');r.classList.add('wrong');playWrong();
+   setTimeout(()=>{l.classList.remove('selected','wrong');r.classList.remove('selected','wrong');
+   matchState.selectedLeft=null;matchState.selectedRight=null},550);
+ }
 }
-function startBackgroundMusic(){
-  bgMusic.volume=1.0;
-  const p=bgMusic.play();
-  if(p!==undefined)p.then(updateMusicButton).catch(updateMusicButton);
-  else updateMusicButton();
+
+function drawLine(a,b){
+ const board=document.getElementById('matchBoard'),layer=document.getElementById('matchLines');
+ const br=board.getBoundingClientRect(),ar=a.getBoundingClientRect(),rr=b.getBoundingClientRect();
+ const x1=ar.right-br.left,y1=ar.top+ar.height/2-br.top,x2=rr.left-br.left,y2=rr.top+rr.height/2-br.top;
+ const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+ const line=document.createElement('div');line.style.cssText=`position:absolute;left:${x1}px;top:${y1}px;width:${len}px;height:4px;background:#b9d1c1;border-radius:999px;transform-origin:0 50%;transform:rotate(${ang}deg)`;
+ layer.appendChild(line);
 }
-window.addEventListener('load',startBackgroundMusic);
-['click','pointerdown','touchstart','keydown'].forEach(eventName=>{
-  document.addEventListener(eventName,startBackgroundMusic,{once:true,passive:true});
-});
-musicToggle.addEventListener('click',event=>{
-  event.preventDefault();event.stopPropagation();
-  if(bgMusic.paused)bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
-  else{bgMusic.pause();updateMusicButton();}
-});
+
+function expectedType2(q){return [...q.quotient,...q.product1,...q.bring,...q.product2,...q.remainder]}
 
 function checkAnswer(){
-  if(locked)return;
-  const q=questions[current];
-  const a1=document.getElementById('a1');
-  const a2=document.getElementById('a2');
-  if(!a1.value || !a2.value){
-    feedback.textContent='Isi semua kotaknya ya!';
-    feedback.className='feedback wrong';
-    return;
-  }
-  const correct=a1.value===q.answer1 && a2.value===q.answer2;
-  locked=true;
-  [a1,a2].forEach((el,i)=>{
-    el.disabled=true;
-    el.classList.add((i===0?a1.value===q.answer1:a2.value===q.answer2)?'correct':'wrong');
-  });
-
-  if(correct){
-    correctAnswers++;
-    scoreCountEl.textContent=String(correctAnswers);
-    playCorrect();
-    feedback.textContent='✅ Correct! Great job!';
-    feedback.className='feedback correct';
-    problemCard.classList.add('pop');
-  }else{
-    playWrong();
-    feedback.textContent=`❌ Not quite. The answer is ${q.answer1} ${q.unit1} ${q.answer2} ${q.unit2}.`;
-    feedback.className='feedback wrong';
-    problemCard.classList.add('shake');
-  }
-  checkBtn.disabled=true;skipBtn.disabled=true;
-  setTimeout(nextQuestion,1200);
+ if(locked)return;const q=questions[current];
+ if(q.type===3){if(matchState.matched<matchState.pairs.length){feedback.textContent=`Pasangkan semua pasangan dulu (${matchState.matched}/5).`;feedback.className='feedback wrong'}return}
+ let ok=false;
+ if(q.type===1){
+  const a=document.getElementById('a1'),b=document.getElementById('a2');
+  if(!a.value||!b.value){feedback.textContent='Isi semua kotaknya ya!';feedback.className='feedback wrong';return}
+  ok=a.value===q.a1&&b.value===q.a2;[a,b].forEach((x,i)=>{x.disabled=true;x.classList.add((i===0?a.value===q.a1:b.value===q.a2)?'correct':'wrong')});
+ }else{
+  const inputs=[...wrap.querySelectorAll('.ld-input')],exp=expectedType2(q);
+  if(inputs.some(x=>!x.value)){feedback.textContent='Isi semua kotaknya ya!';feedback.className='feedback wrong';return}
+  ok=inputs.every((x,i)=>x.value===exp[i]);inputs.forEach((x,i)=>{x.disabled=true;x.classList.add(x.value===exp[i]?'correct':'wrong')});
+ }
+ locked=true;checkBtn.disabled=true;skipBtn.disabled=true;
+ if(ok){score++;scoreEl.textContent=score;playCorrect();feedback.textContent='✅ Correct! Great job!';feedback.className='feedback correct';card.classList.add('pop')}
+ else{playWrong();feedback.textContent='❌ Not quite. Coba perhatikan kembali jawabannya.';feedback.className='feedback wrong';card.classList.add('shake')}
+ setTimeout(nextQuestion,1200);
 }
 
 function skipQuestion(){
-  if(locked)return;
-  const q=questions[current];
-  locked=true;
-  const a1=document.getElementById('a1'),a2=document.getElementById('a2');
-  a1.disabled=true;
-  a2.disabled=true;
-  a1.value=q.answer1;
-  a2.value=q.answer2;
-  a1.classList.add('correct');
-  a2.classList.add('correct');
-  feedback.textContent=`Answer: ${q.answer1} ${q.unit1} ${q.answer2} ${q.unit2}.`;
-  feedback.className='feedback wrong';
-  checkBtn.disabled=true;skipBtn.disabled=true;
-  setTimeout(nextQuestion,900);
+ if(locked)return;const q=questions[current];locked=true;
+ if(q.type===1){document.getElementById('a1').value=q.a1;document.getElementById('a2').value=q.a2}
+ else if(q.type===2){expectedType2(q).forEach((v,i)=>wrap.querySelectorAll('.ld-input')[i].value=v)}
+ feedback.textContent='Soal dilewati.';feedback.className='feedback wrong';checkBtn.disabled=true;skipBtn.disabled=true;setTimeout(nextQuestion,900);
 }
-function nextQuestion(){
-  problemCard.classList.remove('pop','shake');
-  current++;
-  if(current>=questions.length)showResult();
-  else renderQuestion();
-}
-function showResult(){
-  quizScreen.classList.add('hidden');
-  resultScreen.classList.remove('hidden');
-  progressFill.style.width='100%';
-  const pct=Math.round(correctAnswers/questions.length*100);
-  finalScore.textContent=String(pct);
-  finalRatio.textContent=`${correctAnswers} / ${questions.length}`;
-  finalMsg.textContent=correctAnswers===questions.length?'Perfect! 🌟':'Great job! Keep practicing! 🎈';
-}
+function nextQuestion(){current++;if(current>=questions.length)showResult();else renderQuestion()}
+function showResult(){document.getElementById('quizScreen').classList.add('hidden');document.getElementById('resultScreen').classList.remove('hidden');
+progressFill.style.width='100%';document.getElementById('finalScore').textContent=Math.round(score/questions.length*100);document.getElementById('finalRatio').textContent=`${score} / ${questions.length}`}
 function restart(){
-  current=0;correctAnswers=0;locked=false;
-  scoreCountEl.textContent='0';
-  resultScreen.classList.add('hidden');
-  quizScreen.classList.remove('hidden');
-  buildQuestions();renderQuestion();
+ current=0;score=0;scoreEl.textContent='0';
+ questions=shuffle(questions);
+ document.getElementById('resultScreen').classList.add('hidden');
+ document.getElementById('quizScreen').classList.remove('hidden');
+ renderQuestion()
 }
-checkBtn.addEventListener('click',checkAnswer);
-skipBtn.addEventListener('click',skipQuestion);
-document.getElementById('restartBtn').addEventListener('click',restart);
-document.getElementById('helpBtn').addEventListener('click',()=>{
-  alert('Type 1: Divide the ones and write the answer as ones, tens, and ones.');
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!locked)checkAnswer();
-});
-buildQuestions();renderQuestion();
+
+let audioCtx=null;
+function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+function playTone(a,b,d,t,v){try{const c=getCtx();if(c.state==='suspended')c.resume();const o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.setValueAtTime(a,c.currentTime);o.frequency.exponentialRampToValueAtTime(b,c.currentTime+d);g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+function playCorrect(){playTone(880,1760,.18,'sine',.22);setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90)}
+const wrongSound=new Audio('../../sound/akh.mp3');wrongSound.preload='auto';
+function playWrong(){try{wrongSound.currentTime=0;const p=wrongSound.play();if(p)p.catch(()=>playTone(220,110,.30,'sawtooth',.16))}catch(e){playTone(220,110,.30,'sawtooth',.16)}}
+const bgMusic=new Audio('../../sound/mariowanderingtheplains.mp3');bgMusic.loop=true;bgMusic.volume=1;bgMusic.preload='auto';
+const musicToggle=document.getElementById('musicToggle');
+function updateMusic(){const on=!bgMusic.paused;musicToggle.classList.toggle('off',!on);musicToggle.setAttribute('aria-label',on?'Matikan musik':'Nyalakan musik')}
+function startMusic(){const p=bgMusic.play();if(p)p.then(updateMusic).catch(updateMusic);else updateMusic()}
+window.addEventListener('load',startMusic);
+document.addEventListener('click',startMusic,{once:true});document.addEventListener('touchstart',startMusic,{once:true});
+musicToggle.onclick=e=>{e.preventDefault();e.stopPropagation();if(bgMusic.paused)bgMusic.play().then(updateMusic);else{bgMusic.pause();updateMusic()}};
+document.getElementById('checkBtn').onclick=checkAnswer;document.getElementById('skipBtn').onclick=skipQuestion;
+document.getElementById('restartBtn').onclick=restart;
+document.getElementById('helpBtn').onclick=()=>alert('Practice 3 terdiri dari Type 1, Type 2, dan Type 3. Selesaikan setiap soal sebelum lanjut.');
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!locked)checkAnswer()});
+questions=shuffle(questions);
+renderQuestion();
 </script>
 </body>
 </html>
