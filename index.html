@@ -623,6 +623,31 @@
   background:#202020;border:0
 }
 
+
+/* Thumbnail Maze Tracing */
+.maze-art{display:flex;align-items:center;justify-content:center;min-height:150px}
+.maze-paper{
+  position:relative;width:150px;height:118px;padding:12px;box-sizing:border-box;
+  background:#fff;border:3px solid #202020;border-radius:12px;
+  box-shadow:0 4px 0 rgba(0,0,0,.12);overflow:hidden
+}
+.maze-paper .maze-line{position:absolute;height:5px;background:#202020;border-radius:4px}
+.maze-paper .l1{left:18px;top:22px;width:45px}
+.maze-paper .l2{left:58px;top:22px;width:5px;height:38px}
+.maze-paper .l3{left:58px;top:55px;width:48px}
+.maze-paper .l4{left:101px;top:55px;width:5px;height:36px}
+.maze-paper .l5{left:67px;top:88px;width:38px}
+.maze-paper .l6{left:67px;top:69px;width:5px;height:22px}
+.maze-paper .l7{left:30px;top:69px;width:40px}
+.maze-paper .l8{left:30px;top:69px;width:5px;height:24px}
+.maze-paper .l9{left:30px;top:91px;width:38px}
+.maze-paper .start,.maze-paper .finish{
+  position:absolute;width:16px;height:16px;border-radius:50%;
+  border:3px solid #202020;box-sizing:border-box;background:#f5d36c
+}
+.maze-paper .start{left:12px;top:15px}
+.maze-paper .finish{right:12px;bottom:12px;background:#ef8fa8}
+
 </style>
 </head>
 
@@ -687,6 +712,27 @@
         <div class="main-btn">MAIN →</div>
       </div>
     </a>
+
+    <a class="game-card card-yellow" href="mazetracing.html">
+      <div class="card-inner">
+        <div class="mini-brand">taci<sup>2</sup></div>
+        <h2 class="title">MAZE<br>TRACING</h2>
+        <div class="subtitle">TELUSURI JALANNYA</div>
+        <div class="art maze-art">
+          <div class="maze-paper">
+            <span class="start"></span>
+            <span class="finish"></span>
+            <span class="maze-line l1"></span><span class="maze-line l2"></span>
+            <span class="maze-line l3"></span><span class="maze-line l4"></span>
+            <span class="maze-line l5"></span><span class="maze-line l6"></span>
+            <span class="maze-line l7"></span><span class="maze-line l8"></span>
+            <span class="maze-line l9"></span>
+          </div>
+        </div>
+        <div class="main-btn">MAIN →</div>
+      </div>
+    </a>
+
 
 
     <a class="game-card card-green order-number" href="urutkanbilangan.html">
@@ -869,10 +915,11 @@
 
     <section class="more">
     <div class="more-label">MASIH BANYAK LAGI</div>
-    <h2>14 permainan untuk belajar sambil bermain.</h2>
+    <h2>15 permainan untuk belajar sambil bermain.</h2>
     <div class="more-list">
       <div class="more-item">Bilangan Terbesar</div>
       <div class="more-item">2 Suku Kata Terbuka</div>
+      <div class="more-item">Maze Tracing</div>
       <div class="more-item">Hitung Benda</div>
       <div class="more-item">Hitung Kubus</div>
       <div class="more-item">Lebih Banyak</div>
