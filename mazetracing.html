@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Maze Tracing - Kindergarten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f7f0e4;--surface:#fffdf7;--ink:#242735;--muted:#657a70;
+  --line:#30332f;--green:#b9d1c1;--teal:#438f8b;--coral:#e98a73;
+  --yellow:#f8d36a;--yellow-dark:#d6aa2c;
+  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0;margin:0 auto}
+.board{
+ width:100%;height:100%;min-height:0;overflow:hidden;
+ background:
+ radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+ radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+ padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+ max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+ display:flex;flex-direction:column;
+}
+
+.header{
+ flex:0 0 auto;height:82px;display:grid;
+ grid-template-columns:62px 1fr 62px 62px;align-items:center;
+ gap:8px;margin:0 1px 20px;
+}
+.brand-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.brand{text-align:center;font-weight:900;font-size:42px;line-height:1;letter-spacing:-3px;color:var(--ink)}
+.brand-subtitle{margin-top:4px;font-size:9px;line-height:1;font-weight:900;letter-spacing:5px;color:var(--coral)}
+.brand sup{color:#ef8fa8;font-size:.48em;vertical-align:top;letter-spacing:-1px;position:relative;top:-7px;margin-left:2px}
+.icon-btn,.music-btn,.help-btn{
+ width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;border-radius:20px;
+ box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-weight:900;
+}
+.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink);transition:transform .12s ease,background .12s ease}
+.music-btn:active,.help-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+.music-btn.off{background:#eee4cf}
+
+.help-modal{
+ position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;
+ padding:20px;background:rgba(36,39,53,.42)
+}
+.help-modal.show{display:flex}
+.help-dialog{
+ width:min(92vw,520px);max-height:80vh;overflow:auto;background:var(--surface);
+ border:3px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px
+}
+.help-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.help-title-row h2{margin:0;font-size:1.25rem;font-weight:900}
+.help-close{
+ width:44px;height:44px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;
+ box-shadow:0 3px 0 var(--line);font-size:28px;font-weight:900;line-height:1;cursor:pointer
+}
+.help-content{font-size:.95rem;line-height:1.6}
+.help-content p{margin:0 0 10px}
+
+.mode-pill{
+ flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);
+ border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;
+ box-shadow:0 2px 0 rgba(58,65,61,.05)
+}
+.mode-pill strong{color:var(--teal)}
+.theme{
+ flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;
+ letter-spacing:1px;color:var(--muted);text-transform:uppercase
+}
+.theme strong{color:var(--teal)}
+.theme .chapter-label{color:#4f8277}
+
+#gameScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{
+ flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;
+ margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800
+}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{
+ flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden
+}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+
+/* BOX SOAL */
+.problem-card{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
+ padding:12px 10px;margin:0 1px 7px;
+ box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
+ position:relative;overflow:hidden
+}
+.problem-card::before{
+ content:"";position:absolute;width:65px;height:65px;border-radius:50%;
+ background:rgba(67,143,139,.06);top:-27px;right:-20px
+}
+
+/* AREA GAMBAR MAZE */
+.maze-box{
+ position:relative;
+ width:min(94vw,430px);
+ height:min(63vh,410px);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden;
+ border-radius:16px;
+ background:#fff;
+}
+.maze-image{
+ position:absolute;
+ inset:0;
+ width:100%;
+ height:100%;
+ object-fit:contain;
+ display:block;
+ user-select:none;
+ -webkit-user-drag:none;
+ pointer-events:none;
+}
+#traceCanvas{
+ position:absolute;
+ inset:0;
+ width:100%;
+ height:100%;
+ display:block;
+ touch-action:none;
+ cursor:crosshair;
+}
+
+/* TOOL */
+.tool-row{
+ flex:0 0 auto;
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+ margin:0 1px 7px;
+}
+.tool-btn{
+ min-height:56px;
+ border:3px solid var(--line);
+ border-radius:20px;
+ background:#fffdf7;
+ color:var(--ink);
+ box-shadow:var(--shadow);
+ font-weight:900;
+ font-size:1rem;
+ cursor:pointer;
+ transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+}
+.tool-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+.tool-btn.active{
+ background:var(--green);
+}
+.tool-btn.eraser.active{
+ background:#eee4cf;
+}
+.tool-icon{font-size:1.35rem;margin-right:5px;vertical-align:-2px}
+
+.feedback{
+ flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;
+ font-size:.78rem;font-weight:900
+}
+.feedback.benar{color:var(--teal)}
+.feedback.salah{color:var(--coral)}
+
+.buttons{
+ flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px
+}
+button.action{
+ min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
+ box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer;
+ transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease,background .12s ease
+}
+button.action:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+#clearBtn{background:var(--green)}
+#nextBtn{background:#fffdf7;color:var(--muted)}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+
+.result-screen{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+ text-align:center;background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
+ padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.result-screen .score-title{font-size:clamp(.9rem,3vw,1.2rem);font-weight:900}
+.result-screen .big-score{
+ color:var(--coral);font-size:clamp(5.5rem,22vw,9rem);line-height:.9;
+ font-weight:900;letter-spacing:-5px;margin:4px 0 2px
+}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{
+ width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;
+ background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer
+}
+.hidden{display:none!important}
+
+@media(max-height:620px){
+ .header{height:68px;grid-template-columns:62px 1fr 62px 62px;gap:8px;margin-bottom:12px}
+ .brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
+ .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+ .theme{font-size:.51rem;margin-bottom:2px}
+ .theme strong{font-size:.56rem}
+ .progress-track{margin-bottom:4px}
+ .problem-card{margin-bottom:4px;border-radius:18px}
+ .maze-box{height:min(57vh,320px)}
+ .tool-row{margin-bottom:4px}
+ .tool-btn{min-height:48px;font-size:.78rem;border-radius:18px}
+ button.action{min-height:52px;font-size:.72rem;border-radius:18px}
+ .footer-note{display:none}
+}
+@media(max-height:520px){
+ .mode-pill,.theme{display:none}
+ .maze-box{height:min(59vh,280px)}
+}
+</style>
+</head>
+
+<body>
+<div class="frame">
+<div class="board">
+
+<header class="header">
+ <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+
+ <div class="brand-wrap">
+  <div class="brand">taci<sup>2</sup></div>
+  <div class="brand-subtitle">MENCONGAK GAMES</div>
+ </div>
+
+ <button class="help-btn" type="button" onclick="showHelp()">?</button>
+ <button id="musicToggle" class="music-btn" type="button" aria-label="Matikan musik" aria-pressed="true">♪</button>
+</header>
+
+<div id="helpModal" class="help-modal" aria-hidden="true">
+ <div class="help-dialog" role="dialog" aria-modal="true">
+  <div class="help-title-row">
+   <h2>MAZE TRACING</h2>
+   <button class="help-close" type="button" onclick="closeHelp()">×</button>
+  </div>
+  <div class="help-content">
+   <p>Gunakan <b>✏️ Pensil</b> untuk menggambar jalur dengan jari.</p>
+   <p>Gunakan <b>🧽 Penghapus</b> untuk menghapus garis yang sudah dibuat.</p>
+   <p>Ikuti jalan pada gambar maze sampai selesai.</p>
+  </div>
+ </div>
+</div>
+
+<div class="mode-pill">🌀 <strong>MAZE TRACING</strong> - Kindergarten</div>
+<div class="theme">KINDERGARTEN • <span class="chapter-label">TRACING</span> • <strong>MAZE</strong></div>
+
+<div id="gameScreen">
+
+ <div class="score-row">
+  <span>Gambar <span id="imageNum">1</span> / <span id="imageTotal">5</span></span>
+  <span>Skor <span class="count" id="scoreCount">0</span></span>
+ </div>
+
+ <div class="progress-track">
+  <div class="progress-fill" id="progressFill"></div>
+ </div>
+
+ <!-- BOX SOAL UTAMA -->
+ <div class="problem-card">
+
+  <div class="maze-box" id="mazeBox">
+   <img id="mazeImage" class="maze-image" src="../../graphic/maze/medium/maze_0001.png" alt="Maze tracing">
+   <canvas id="traceCanvas"></canvas>
+  </div>
+
+ </div>
+
+ <div class="tool-row">
+  <button class="tool-btn active" id="pencilBtn" type="button">
+   <span class="tool-icon">✏️</span>Pensil
+  </button>
+  <button class="tool-btn eraser" id="eraserBtn" type="button">
+   <span class="tool-icon">🧽</span>Penghapus
+  </button>
+ </div>
+
+ <div class="feedback" id="feedback"></div>
+
+ <div class="buttons">
+  <button class="action" id="clearBtn">↻ Ulangi</button>
+  <button class="action" id="nextBtn">→ Gambar berikutnya</button>
+ </div>
+
+ <div class="footer-note">copyright © 2026</div>
+</div>
+
+<div id="resultScreen" class="result-screen hidden">
+ <div class="score-title">SEMUA GAMBAR SELESAI!</div>
+ <div class="big-score" id="finalScore">0</div>
+ <p>Hebat! Kamu sudah mencoba semua maze. 🌟</p>
+ <button id="restartBtn">↻ Main Lagi</button>
+</div>
+
+</div>
+</div>
+
+<audio id="bgMusic" src="../../sound/mariowanderingtheplains.mp3" autoplay loop preload="auto"></audio>
+
+<script>
+const mazeImages=[
+ '../../graphic/maze/medium/maze_0001.png',
+ '../../graphic/maze/medium/maze_0002.png',
+ '../../graphic/maze/medium/maze_0003.png',
+ '../../graphic/maze/medium/maze_0004.png',
+ '../../graphic/maze/medium/maze_0005.png'
+];
+
+let currentImage=0;
+let score=0;
+let tool='pencil';
+let drawing=false;
+let lastX=0,lastY=0;
+
+const mazeBox=document.getElementById('mazeBox');
+const mazeImage=document.getElementById('mazeImage');
+const canvas=document.getElementById('traceCanvas');
+const ctx=canvas.getContext('2d');
+
+const pencilBtn=document.getElementById('pencilBtn');
+const eraserBtn=document.getElementById('eraserBtn');
+const clearBtn=document.getElementById('clearBtn');
+const nextBtn=document.getElementById('nextBtn');
+const feedback=document.getElementById('feedback');
+const scoreCount=document.getElementById('scoreCount');
+const imageNum=document.getElementById('imageNum');
+const imageTotal=document.getElementById('imageTotal');
+const progressFill=document.getElementById('progressFill');
+
+imageTotal.textContent=mazeImages.length;
+
+function resizeCanvas(){
+ const r=mazeBox.getBoundingClientRect();
+ const dpr=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=Math.round(r.width*dpr);
+ canvas.height=Math.round(r.height*dpr);
+ canvas.style.width=r.width+'px';
+ canvas.style.height=r.height+'px';
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ ctx.lineCap='round';
+ ctx.lineJoin='round';
+}
+
+function clearTrace(){
+ resizeCanvas();
+ ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
+ feedback.textContent='';
+ feedback.className='feedback';
+}
+
+function setTool(nextTool){
+ tool=nextTool;
+ pencilBtn.classList.toggle('active',tool==='pencil');
+ eraserBtn.classList.toggle('active',tool==='eraser');
+ canvas.style.cursor=tool==='pencil'?'crosshair':'cell';
+}
+
+function point(e){
+ const r=canvas.getBoundingClientRect();
+ return {
+  x:e.clientX-r.left,
+  y:e.clientY-r.top
+ };
+}
+
+function startDraw(e){
+ drawing=true;
+ const p=point(e);
+ lastX=p.x;
+ lastY=p.y;
+ canvas.setPointerCapture?.(e.pointerId);
+
+ ctx.beginPath();
+ ctx.moveTo(lastX,lastY);
+}
+
+function draw(e){
+ if(!drawing)return;
+
+ const p=point(e);
+
+ if(tool==='pencil'){
+  ctx.globalCompositeOperation='source-over';
+  ctx.strokeStyle='#e53935';
+  ctx.lineWidth=7;
+ }else{
+  ctx.globalCompositeOperation='destination-out';
+  ctx.lineWidth=24;
+ }
+
+ ctx.lineTo(p.x,p.y);
+ ctx.stroke();
+
+ lastX=p.x;
+ lastY=p.y;
+}
+
+function stopDraw(){
+ drawing=false;
+ ctx.closePath();
+ ctx.globalCompositeOperation='source-over';
+}
+
+canvas.addEventListener('pointerdown',startDraw);
+canvas.addEventListener('pointermove',draw);
+canvas.addEventListener('pointerup',stopDraw);
+canvas.addEventListener('pointercancel',stopDraw);
+canvas.addEventListener('pointerleave',e=>{
+ if(e.pointerType==='mouse')stopDraw();
+});
+
+pencilBtn.addEventListener('click',()=>setTool('pencil'));
+eraserBtn.addEventListener('click',()=>setTool('eraser'));
+
+clearBtn.addEventListener('click',()=>{
+ clearTrace();
+ feedback.textContent='Silakan gambar lagi pada maze ini. ✏️';
+ feedback.className='feedback';
+});
+
+nextBtn.addEventListener('click',()=>{
+ currentImage++;
+
+ if(currentImage>=mazeImages.length){
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('finalScore').textContent=score;
+  return;
+ }
+
+ mazeImage.src=mazeImages[currentImage];
+ imageNum.textContent=currentImage+1;
+ progressFill.style.width=((currentImage)/mazeImages.length*100)+'%';
+ clearTrace();
+ feedback.textContent='Gambar berikutnya! ✏️';
+ feedback.className='feedback benar';
+});
+
+document.getElementById('restartBtn').addEventListener('click',()=>{
+ currentImage=0;
+ score=0;
+ scoreCount.textContent='0';
+ imageNum.textContent='1';
+ progressFill.style.width='0%';
+ mazeImage.src=mazeImages[0];
+ document.getElementById('resultScreen').classList.add('hidden');
+ document.getElementById('gameScreen').classList.remove('hidden');
+ clearTrace();
+});
+
+mazeImage.addEventListener('load',()=>{
+ resizeCanvas();
+ clearTrace();
+});
+window.addEventListener('resize',resizeCanvas);
+
+function showHelp(){
+ const modal=document.getElementById('helpModal');
+ modal.classList.add('show');
+ modal.setAttribute('aria-hidden','false');
+}
+function closeHelp(){
+ const modal=document.getElementById('helpModal');
+ modal.classList.remove('show');
+ modal.setAttribute('aria-hidden','true');
+}
+document.getElementById('helpModal').addEventListener('click',e=>{
+ if(e.target.id==='helpModal')closeHelp();
+});
+
+let audioCtx=null;
+function getCtx(){
+ if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+ return audioCtx;
+}
+function playTone(a,b,d,type,v){
+ try{
+  const c=getCtx();
+  if(c.state==='suspended')c.resume();
+  const o=c.createOscillator(),g=c.createGain();
+  o.type=type;
+  o.frequency.setValueAtTime(a,c.currentTime);
+  o.frequency.exponentialRampToValueAtTime(b,c.currentTime+d);
+  g.gain.setValueAtTime(v,c.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);
+  o.connect(g);g.connect(c.destination);
+  o.start();o.stop(c.currentTime+d);
+ }catch(e){}
+}
+
+const bgMusic=document.getElementById('bgMusic');
+const musicToggle=document.getElementById('musicToggle');
+
+bgMusic.volume=1;
+bgMusic.muted=false;
+
+function updateMusicButton(){
+ const on=!bgMusic.paused;
+ musicToggle.textContent='♪';
+ musicToggle.setAttribute('aria-label',on?'Matikan musik':'Nyalakan musik');
+ musicToggle.setAttribute('aria-pressed',on?'true':'false');
+ musicToggle.classList.toggle('off',!on);
+}
+
+function startMusic(){
+ bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+}
+
+musicToggle.addEventListener('click',()=>{
+ if(bgMusic.paused)startMusic();
+ else{
+  bgMusic.pause();
+  updateMusicButton();
+ }
+});
+
+window.addEventListener('load',()=>{
+ resizeCanvas();
+ bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+});
+
+document.addEventListener('click',startMusic,{once:true});
+document.addEventListener('touchstart',startMusic,{once:true});
+</script>
+</body>
+</html>
