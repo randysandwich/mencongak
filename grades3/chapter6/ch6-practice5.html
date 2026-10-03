@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Division With Regrouping in Hundreds, Tens, And Ones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f0e4;--surface:#fffdf7;--ink:#242735;--muted:#657a70;
+  --line:#30332f;--pink:#ef8fa8;--green:#b9d1c1;--teal:#438f8b;
+  --coral:#e98a73;--yellow:#f8d36a;--yellow-dark:#d6aa2c;
+  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button,input{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0;margin:0 auto}
+.board{
+ width:100%;height:100%;min-height:0;overflow:hidden;
+ background:
+ radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+ radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+ padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+ max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+ display:flex;flex-direction:column;
+}
+.header{
+ flex:0 0 auto;height:82px;display:grid;
+ grid-template-columns:62px 1fr 62px 62px;align-items:center;gap:8px;margin:0 1px 20px;
+}
+.brand-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.brand{text-align:center;font-weight:900;font-size:42px;line-height:1;letter-spacing:-3px}
+.brand-subtitle{margin-top:4px;font-size:9px;line-height:1;font-weight:900;letter-spacing:5px;color:var(--coral)}
+.brand sup{color:var(--pink);font-size:.48em;vertical-align:top;letter-spacing:-1px;position:relative;top:-7px;margin-left:2px}
+.icon-btn,.music-btn,.help-btn{
+ width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;border-radius:20px;
+ box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-weight:900;
+}
+.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink);transition:transform .12s ease,background .12s ease}
+.music-btn:active,.help-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+.music-btn.off{background:#eee4cf}
+
+.help-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,39,53,.42)}
+.help-modal.show{display:flex}
+.help-dialog{width:min(92vw,520px);max-height:80vh;overflow:auto;background:var(--surface);border:3px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}
+.help-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.help-title-row h2{margin:0;font-size:1.25rem;font-weight:900}
+.help-close{width:44px;height:44px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;box-shadow:0 3px 0 var(--line);font-size:28px;font-weight:900;line-height:1;cursor:pointer}
+.help-close:active{transform:translateY(3px);box-shadow:none}
+.help-content{color:var(--ink);font-size:.95rem;line-height:1.6}
+.help-content p{margin:0 0 10px}
+
+.mode-pill{flex:0 0 auto;width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill strong{color:var(--teal)}
+.theme{flex:0 0 auto;text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--teal);font-size:.68rem}
+.theme .chapter-label{color:#4f8277}
+
+#quizScreen{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.score-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{flex:0 0 auto;height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+
+.problem-card{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:18px 10px;margin:0 1px 7px;
+ box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);position:relative;overflow:hidden
+}
+.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
+.multiplication-wrap{position:relative;z-index:1;width:min(88vw,330px);display:flex;flex-direction:column;align-items:center}
+.multiplication-wrap:has(.match-wrap),.multiplication-wrap:has(.story-wrap){width:100%}
+
+.multiplication-line{width:100%;display:flex;align-items:center;justify-content:flex-end;min-height:clamp(54px,12vw,70px);position:relative}
+.multiplication-number{text-align:right;font-size:clamp(2.2rem,11vw,3.3rem);line-height:1;font-weight:900;letter-spacing:.14em;padding-right:48px}
+.multiplication-sign{position:absolute;right:0;text-align:center;font-size:clamp(2rem,9vw,2.8rem);line-height:1;font-weight:900}
+.multiplication-rule{width:100%;border-top:4px solid var(--ink);margin-top:4px}
+.answer-box{width:100%;display:flex;justify-content:flex-end;padding-top:10px;padding-right:48px}
+.answer-input{
+ width:clamp(210px,63vw,275px);height:clamp(54px,16vw,68px);border:2px solid #293f4d;border-radius:9px;
+ background:#fff;text-align:right;font-size:clamp(1.8rem,8vw,2.5rem);font-weight:900;outline:none;padding:0 10px;
+ letter-spacing:.12em;color:var(--teal)
+}
+.answer-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.answer-input.correct{border-color:var(--green);background:#eef9f1}
+.answer-input.wrong{border-color:var(--coral);background:#fff1ed}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}
+
+.feedback{flex:0 0 auto;min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.benar{color:var(--green)}.feedback.salah{color:var(--coral)}
+.buttons{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{
+ min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
+ box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer;
+ transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease,background .12s ease
+}
+button.action:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+button.action:disabled{opacity:.55;cursor:default}
+#checkBtn{background:var(--green);color:var(--ink)}
+#skipBtn{background:#fffdf7;color:var(--muted)}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+
+.result-screen{
+ flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.result-screen .score-title{color:var(--ink);font-size:clamp(.9rem,3vw,1.2rem);font-weight:900;letter-spacing:.5px;margin:0 0 2px}
+.result-screen .big-score{color:var(--coral);font-size:clamp(5.5rem,22vw,9rem);line-height:.9;font-weight:900;letter-spacing:-5px;margin:4px 0 2px}
+.result-screen .score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark);cursor:pointer}
+.hidden{display:none!important}.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+
+/* Match and Correct — Monkey & Banana */
+.match-wrap{width:min(96vw,420px);display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;margin:0 auto}
+.match-title{font-size:clamp(1.25rem,5.8vw,1.8rem);font-weight:900;color:var(--ink);text-align:center;margin-bottom:2px}
+.match-subtitle{font-size:.68rem;font-weight:800;color:var(--muted);text-align:center;margin-bottom:3px}
+.match-board{position:relative;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:24px;background:var(--surface);border-radius:18px;padding:10px}
+.match-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.match-column{display:flex;flex-direction:column;gap:7px;position:relative;z-index:2}
+.match-card{
+ min-height:54px;border:2px solid #293f4d;border-radius:12px;background:#fff;display:flex;align-items:center;
+ justify-content:center;gap:7px;padding:6px 7px;font-size:clamp(.9rem,4.1vw,1.12rem);font-weight:900;
+ color:var(--ink);cursor:pointer;transition:transform .12s ease,background .12s ease,border-color .12s ease;user-select:none
+}
+.match-card .match-icon{font-size:1.35rem;line-height:1}
+.match-card.selected{border-color:var(--coral);background:#fff1ed;transform:scale(1.02)}
+.match-card.matched{border-color:var(--green);background:#eef9f1;color:#2f706d;cursor:default}
+.match-card.wrong{border-color:var(--coral);background:#fff1ed}
+.match-label{font-size:.55rem;font-weight:900;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px}
+.match-instruction{min-height:20px;color:var(--muted);font-size:.68rem;font-weight:800;text-align:center}
+.match-progress{font-size:.68rem;color:var(--teal);font-weight:900}
+
+/* Real World Problems */
+.story-wrap{width:min(92vw,430px);max-width:430px;display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:1;margin:0 auto}
+.story-title{font-size:clamp(.72rem,2.6vw,.82rem);font-weight:900;color:var(--coral);text-align:center}
+.story-card{width:100%;max-width:430px;background:var(--surface);border-radius:18px;padding:18px 16px;text-align:center}
+.story-question{font-size:clamp(1.25rem,5.2vw,1.45rem);line-height:1.45;font-weight:900;color:var(--ink);margin-bottom:14px}
+.story-answer-row{
+ display:flex;align-items:center;justify-content:center;text-align:center;flex-wrap:wrap;gap:7px;padding-top:12px;
+ border-top:4px solid var(--line);font-size:clamp(1.25rem,5.2vw,1.45rem);font-weight:900;line-height:1.4;color:var(--teal)
+}
+.story-input{width:110px;height:52px;border:2px solid #293f4d;border-radius:9px;background:#fff;text-align:center;font-size:1.45rem;font-weight:900;outline:none;color:var(--teal)}
+.story-input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(67,143,139,.10)}
+.story-input.correct{border-color:var(--green);background:#eef9f1}
+.story-input.wrong{border-color:var(--coral);background:#fff1ed}
+
+@media(max-height:620px){
+ .header{height:68px;grid-template-columns:62px 1fr 62px 62px;gap:8px;margin-bottom:12px}
+ .icon-btn{width:62px;height:62px;border-radius:20px;font-size:27px}
+ .music-btn,.help-btn{width:62px;height:62px;border-radius:20px;font-size:25px}
+ .brand{font-size:38px}.brand-subtitle{font-size:10px;letter-spacing:1.6px}
+ .mode-pill{font-size:.58rem;padding:3px 9px;margin-bottom:3px}
+ .theme{font-size:.51rem;margin-bottom:2px}.theme strong{font-size:.56rem}
+ .progress-track{margin-bottom:4px}.problem-card{margin-bottom:4px;border-radius:18px}
+ .multiplication-line{min-height:48px}.multiplication-number{font-size:2rem;padding-right:42px}.multiplication-sign{font-size:1.8rem}
+ .answer-input{height:48px;width:210px;font-size:1.7rem}
+ .feedback{min-height:19px;font-size:.66rem}
+ button.action{min-height:52px;font-size:.72rem;border-radius:18px;border-width:3px}.footer-note{display:none}
+ .match-wrap{gap:3px}.match-title{font-size:1.2rem}.match-board{gap:12px;padding:7px;border-radius:15px}
+ .match-column{gap:5px}.match-card{min-height:43px;padding:4px;font-size:.76rem;border-radius:10px}
+ .match-card .match-icon{font-size:1.05rem}.match-label{font-size:.48rem}
+ .match-instruction{font-size:.58rem;min-height:15px}
+ .story-wrap{gap:4px}.story-title{font-size:.72rem}.story-card{padding:10px;border-radius:15px}
+ .story-question{font-size:1.05rem;margin-bottom:8px}
+ .story-answer-row{font-size:1.05rem;gap:4px;padding-top:8px;border-top-width:3px}
+ .story-input{width:90px;height:40px;font-size:1.15rem}
+}
+@media(max-height:520px){
+ .mode-pill,.theme{display:none}.problem-card{margin-top:2px}.multiplication-line{min-height:43px}
+ .multiplication-number{font-size:1.8rem;padding-right:38px}.multiplication-sign{font-size:1.6rem}
+ .answer-input{height:45px;width:190px}
+}
+</style>
+<style>
+/* Practice 4 — simple porogapit */
+.porogapit-wrap{
+  width:min(92vw,360px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  position:relative;
+  z-index:1;
+}
+.division-visual{
+  width:260px;
+  min-height:220px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+.division-quotient{
+  margin-left:108px;
+  width:100px;
+  height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:0;
+}
+.division-answer{
+  width:88px;
+  height:48px;
+  border:2px solid #293f4d;
+  border-radius:9px;
+  background:#fff;
+  text-align:center;
+  font-size:1.65rem;
+  font-weight:900;
+  color:var(--teal);
+  outline:none;
+}
+.division-answer:focus{
+  border-color:var(--teal);
+  box-shadow:0 0 0 4px rgba(67,143,139,.10);
+}
+.division-answer.correct{border-color:var(--green);background:#eef9f1}
+.division-answer.wrong{border-color:var(--coral);background:#fff1ed}
+.division-main{
+  display:flex;
+  align-items:flex-start;
+  width:100%;
+  margin-top:0;
+}
+.division-divisor{
+  width:72px;
+  text-align:right;
+  padding-right:8px;
+  padding-top:11px;
+  font-size:2.25rem;
+  font-weight:900;
+  line-height:1;
+}
+.division-bracket{
+  border-left:3px solid var(--line);
+  border-top:3px solid var(--line);
+  border-top-left-radius:24px;
+  width:150px;
+  min-height:92px;
+  padding:10px 0 0 13px;
+}
+.division-dividend{
+  font-size:2.7rem;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.08em;
+  color:var(--coral);
+}
+.regroup-note{
+  width:min(90vw,330px);
+  text-align:center;
+  color:var(--muted);
+  font-size:.7rem;
+  line-height:1.4;
+  font-weight:800;
+}
+</style>
+
+
+<style>
+/* Practice 5 — regrouping in hundreds, tens and ones */
+.division-visual{
+  width:min(92vw,330px);
+  min-height:245px;
+}
+.division-quotient{
+  margin-left:102px;
+  width:145px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.division-answer{
+  width:92px;
+  height:48px;
+}
+.division-rem-label{
+  font-size:.72rem;
+  font-weight:900;
+  color:var(--muted);
+}
+.division-remainder{
+  width:68px;
+  height:48px;
+  border:2px solid #293f4d;
+  border-radius:9px;
+  background:#fff;
+  text-align:center;
+  font-size:1.35rem;
+  font-weight:900;
+  color:var(--teal);
+  outline:none;
+}
+.division-remainder:focus{
+  border-color:var(--teal);
+  box-shadow:0 0 0 4px rgba(67,143,139,.10);
+}
+.division-remainder.correct{border-color:var(--green);background:#eef9f1}
+.division-remainder.wrong{border-color:var(--coral);background:#fff1ed}
+.division-remainder.hidden-input{display:none}
+.regroup-note{
+  width:min(90vw,330px);
+  text-align:center;
+  color:var(--muted);
+  font-size:.7rem;
+  line-height:1.4;
+  font-weight:800;
+}
+.match-card .match-expression{font-size:clamp(.84rem,3.8vw,1.08rem)}
+.story-answer-row{gap:6px}
+.story-input.small{width:78px}
+.story-rem{
+  font-size:.82rem;
+  color:var(--muted);
+  font-weight:900;
+}
+@media(max-height:620px){
+  .division-visual{min-height:215px}
+  .division-quotient{height:55px;margin-left:92px}
+  .division-answer,.division-remainder{height:42px}
+  .division-answer{width:82px}
+  .division-remainder{width:60px;font-size:1.1rem}
+  .division-rem-label{font-size:.62rem}
+}
+</style>
+
+</head>
+</head>
+<body>
+<div class="frame"><div class="board">
+
+<header class="header">
+  <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+  <div class="brand-wrap">
+    <div class="brand">taci<sup>2</sup></div>
+    <div class="brand-subtitle">MENCONGAK GAMES</div>
+  </div>
+  <button class="help-btn" type="button" aria-label="Bantuan" onclick="showHelp()">?</button>
+  <button id="musicToggle" class="music-btn" type="button" aria-label="Matikan musik" aria-pressed="true">♪</button>
+</header>
+
+<div id="helpModal" class="help-modal" aria-hidden="true">
+  <div class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="help-title-row">
+      <h2 id="helpTitle">PRACTICE 5</h2>
+      <button class="help-close" type="button" aria-label="Tutup" onclick="closeHelp()">×</button>
+    </div>
+    <div class="help-content">
+      <p>Division With Regrouping in Hundreds, Tens, And Ones.</p><p>Latihan terdiri dari Porogapit, Match and Correct, dan Real World Problems.</p><p>Gunakan konsep regrouping dari hundreds, tens, dan ones untuk setiap soal.</p>
+    </div>
+  </div>
+</div>
+
+<div class="mode-pill">➗ <strong>PRACTICE 5</strong> - Division With Regrouping in Hundreds, Tens, And Ones</div>
+<div class="theme">GRADES 3 • <span class="chapter-label">CHAPTER 6</span> • <strong>DIVISION</strong></div>
+
+<div id="quizScreen">
+  <div class="score-row">
+    <span>Soal <span id="qNum">1</span> / <span id="qTotal">50</span></span>
+    <span>Skor <span class="count" id="scoreCount">0</span></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="problem-card" id="problemCard">
+    <div class="multiplication-wrap" id="multiplicationWrap"></div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="buttons">
+    <button class="action" id="checkBtn">✓ Cek Jawaban</button>
+    <button class="action" id="skipBtn">→ Lewati</button>
+  </div>
+  <div class="footer-note">copyright © 2026</div>
+</div>
+
+<div id="resultScreen" class="result-screen hidden">
+  <div class="score-title">NILAI KAMU</div>
+  <div class="big-score" id="finalScore">0</div>
+  <div class="score-ratio" id="finalRatio">0 / 50</div>
+  <p id="finalMsg">Kerja bagus!</p>
+  <button id="restartBtn">↻ Main Lagi</button>
+</div>
+
+</div></div>
+
+<script>
+const TOTAL_QUESTIONS=50;
+let questions=[],current=0,score=0,locked=false,matchState=null;
+
+const qNumEl=document.getElementById('qNum');
+const qTotalEl=document.getElementById('qTotal');
+const scoreCountEl=document.getElementById('scoreCount');
+const progressFill=document.getElementById('progressFill');
+const multiplicationWrap=document.getElementById('multiplicationWrap');
+const feedback=document.getElementById('feedback');
+const problemCard=document.getElementById('problemCard');
+const checkBtn=document.getElementById('checkBtn');
+const skipBtn=document.getElementById('skipBtn');
+const quizScreen=document.getElementById('quizScreen');
+const resultScreen=document.getElementById('resultScreen');
+const finalScore=document.getElementById('finalScore');
+const finalMsg=document.getElementById('finalMsg');
+const restartBtn=document.getElementById('restartBtn');
+qTotalEl.textContent=TOTAL_QUESTIONS;
+
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+
+/* =========================================================
+   PRACTICE 5 — Division With Regrouping In Hundreds, Tens, And Ones
+   50 questions:
+   Type 1 — Porogapit: 20
+   Type 2 — Match and Correct: 10 rounds
+   Type 3 — Real World Problems: 20
+   Semua pembagian habis dibagi, tanpa remainder.
+   ========================================================= */
+
+const porogapitPool=[
+  {type:'porogapit',a:346,b:2,result:173},
+  {type:'porogapit',a:489,b:3,result:163},
+  {type:'porogapit',a:528,b:4,result:132},
+  {type:'porogapit',a:705,b:5,result:141},
+  {type:'porogapit',a:798,b:2,result:399},
+  {type:'porogapit',a:849,b:3,result:283},
+  {type:'porogapit',a:696,b:4,result:174},
+  {type:'porogapit',a:695,b:5,result:139},
+  {type:'porogapit',a:754,b:2,result:377},
+  {type:'porogapit',a:372,b:4,result:93},
+  {type:'porogapit',a:638,b:2,result:319},
+  {type:'porogapit',a:927,b:3,result:309},
+  {type:'porogapit',a:584,b:4,result:146},
+  {type:'porogapit',a:875,b:5,result:175},
+  {type:'porogapit',a:816,b:6,result:136},
+  {type:'porogapit',a:624,b:4,result:156},
+  {type:'porogapit',a:685,b:5,result:137},
+  {type:'porogapit',a:870,b:6,result:145},
+  {type:'porogapit',a:756,b:7,result:108},
+  {type:'porogapit',a:903,b:7,result:129},
+];
+
+const matchRounds=[
+  {type:'match',title:'Match and Correct',pairs:[{result:'173',a:346,b:2},{result:'163',a:489,b:3},{result:'132',a:528,b:4},{result:'141',a:705,b:5},{result:'399',a:798,b:2} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'283',a:849,b:3},{result:'174',a:696,b:4},{result:'139',a:695,b:5},{result:'377',a:754,b:2},{result:'93',a:372,b:4} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'319',a:638,b:2},{result:'309',a:927,b:3},{result:'146',a:584,b:4},{result:'175',a:875,b:5},{result:'136',a:816,b:6} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'156',a:624,b:4},{result:'137',a:685,b:5},{result:'145',a:870,b:6},{result:'108',a:756,b:7},{result:'129',a:903,b:7} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'228',a:684,b:3},{result:'234',a:936,b:4},{result:'153',a:765,b:5},{result:'147',a:882,b:6},{result:'136',a:952,b:7} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'186',a:744,b:4},{result:'185',a:925,b:5},{result:'121',a:847,b:7},{result:'132',a:792,b:6},{result:'142',a:852,b:6} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'158',a:790,b:5},{result:'144',a:864,b:6},{result:'127',a:762,b:6},{result:'115',a:805,b:7},{result:'151',a:906,b:6} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'164',a:984,b:6},{result:'143',a:858,b:6},{result:'118',a:826,b:7},{result:'115',a:811,b:7},{result:'153',a:918,b:6} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'172',a:860,b:5},{result:'124',a:868,b:7},{result:'153',a:918,b:6},{result:'108',a:756,b:7},{result:'132',a:924,b:7} ]},
+  {type:'match',title:'Match and Correct',pairs:[{result:'156',a:936,b:6},{result:'189',a:945,b:5},{result:'182',a:728,b:4},{result:'117',a:936,b:8},{result:'108',a:972,b:9} ]}
+];
+
+const storyRounds=[
+  {type:'story',title:'Real World Problems',question:'There are 346 apples. They are shared equally among 2 baskets.',answerText:'Each basket gets',unit:'apples.',result:173},
+  {type:'story',title:'Real World Problems',question:'There are 489 eggs. They are shared equally among 3 trays.',answerText:'Each tray gets',unit:'eggs.',result:163},
+  {type:'story',title:'Real World Problems',question:'There are 528 cookies. They are shared equally among 4 boxes.',answerText:'Each boxe gets',unit:'cookies.',result:132},
+  {type:'story',title:'Real World Problems',question:'There are 705 crayons. They are shared equally among 5 groups.',answerText:'Each group gets',unit:'crayons.',result:141},
+  {type:'story',title:'Real World Problems',question:'There are 798 books. They are shared equally among 2 shelves.',answerText:'Each shelve gets',unit:'books.',result:399},
+  {type:'story',title:'Real World Problems',question:'There are 849 pencils. They are shared equally among 3 boxes.',answerText:'Each boxe gets',unit:'pencils.',result:283},
+  {type:'story',title:'Real World Problems',question:'There are 696 beads. They are shared equally among 4 children.',answerText:'Each childre gets',unit:'beads.',result:174},
+  {type:'story',title:'Real World Problems',question:'There are 695 oranges. They are shared equally among 5 baskets.',answerText:'Each basket gets',unit:'oranges.',result:139},
+  {type:'story',title:'Real World Problems',question:'There are 754 blocks. They are shared equally among 2 groups.',answerText:'Each group gets',unit:'blocks.',result:377},
+  {type:'story',title:'Real World Problems',question:'There are 372 pencils. They are shared equally among 4 boxes.',answerText:'Each boxe gets',unit:'pencils.',result:93},
+  {type:'story',title:'Real World Problems',question:'There are 638 eggs. They are shared equally among 2 trays.',answerText:'Each tray gets',unit:'eggs.',result:319},
+  {type:'story',title:'Real World Problems',question:'There are 927 stickers. They are shared equally among 3 children.',answerText:'Each childre gets',unit:'stickers.',result:309},
+  {type:'story',title:'Real World Problems',question:'There are 584 books. They are shared equally among 4 tables.',answerText:'Each table gets',unit:'books.',result:146},
+  {type:'story',title:'Real World Problems',question:'There are 875 candies. They are shared equally among 5 bags.',answerText:'Each bag gets',unit:'candies.',result:175},
+  {type:'story',title:'Real World Problems',question:'There are 816 cards. They are shared equally among 6 groups.',answerText:'Each group gets',unit:'cards.',result:136},
+  {type:'story',title:'Real World Problems',question:'There are 684 apples. They are shared equally among 3 baskets.',answerText:'Each basket gets',unit:'apples.',result:228},
+  {type:'story',title:'Real World Problems',question:'There are 936 pencils. They are shared equally among 4 boxes.',answerText:'Each boxe gets',unit:'pencils.',result:234},
+  {type:'story',title:'Real World Problems',question:'There are 765 flowers. They are shared equally among 5 vases.',answerText:'Each vase gets',unit:'flowers.',result:153},
+  {type:'story',title:'Real World Problems',question:'There are 882 marbles. They are shared equally among 6 children.',answerText:'Each childre gets',unit:'marbles.',result:147},
+  {type:'story',title:'Real World Problems',question:'There are 952 toy cars. They are shared equally among 7 boxes.',answerText:'Each boxe gets',unit:'toy cars.',result:136}
+];
+
+function generateQuestions(){
+  return shuffle([
+    ...porogapitPool.map(q=>({...q})),
+    ...matchRounds.map(q=>({...q,pairs:shuffle(q.pairs)})),
+    ...storyRounds.map(q=>({...q}))
+  ]);
+}
+
+function renderQuestion(){
+  locked=false;
+  matchState=null;
+  const q=questions[current];
+
+  qNumEl.textContent=current+1;
+  progressFill.style.width=(current/questions.length*100)+'%';
+  multiplicationWrap.innerHTML='';
+  feedback.textContent='';
+  feedback.className='feedback';
+  checkBtn.disabled=false;
+  skipBtn.disabled=false;
+  problemCard.classList.remove('pop','shake');
+
+  if(q.type==='match') renderMatchQuestion(q);
+  else if(q.type==='story') renderStoryQuestion(q);
+  else renderPorogapitQuestion(q);
+}
+
+/* TYPE 1 — POROGAPIT */
+function renderPorogapitQuestion(q){
+  multiplicationWrap.innerHTML=`
+    <div class="porogapit-wrap">
+      <div class="division-visual">
+        <div class="division-quotient">
+          <input id="answerInput" class="division-answer" inputmode="numeric"
+                 maxlength="3" autocomplete="off" aria-label="Quotient">
+        </div>
+        <div class="division-main">
+          <div class="division-divisor">${q.b}</div>
+          <div class="division-bracket">
+            <div class="division-dividend">${q.a}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  const input=document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('input',()=>{
+    input.value=input.value.replace(/[^0-9]/g,'').slice(0,3);
+  });
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();checkAnswer();}
+  });
+}
+
+/* TYPE 2 — MATCH AND CORRECT */
+function renderMatchQuestion(q){
+  matchState={pairs:q.pairs,selectedLeft:null,selectedRight:null,matched:0};
+
+  multiplicationWrap.innerHTML=`
+    <div class="match-wrap">
+      <div class="match-title">Match and Correct</div>
+      <div class="match-subtitle">Pasangkan pembagian dengan jawaban yang benar.</div>
+      <div class="match-progress" id="matchProgress">0 / ${q.pairs.length} pasangan</div>
+      <div class="match-board" id="matchBoard">
+        <svg class="match-lines" id="matchLines"></svg>
+        <div class="match-column" id="matchLeft"></div>
+        <div class="match-column" id="matchRight"></div>
+      </div>
+    </div>`;
+
+  const leftCol=document.getElementById('matchLeft');
+  const rightCol=document.getElementById('matchRight');
+
+  shuffle(q.pairs).forEach(pair=>{
+    const card=document.createElement('div');
+    card.className='match-card';
+    card.dataset.id=String(pair.result);
+    card.innerHTML=`<span class="match-icon">🐓</span><span class="match-expression">${pair.a} ÷ ${pair.b}</span>`;
+    card.onclick=()=>selectMatchCard(card,'left');
+    leftCol.appendChild(card);
+  });
+
+  shuffle(q.pairs).forEach(pair=>{
+    const card=document.createElement('div');
+    card.className='match-card';
+    card.dataset.id=String(pair.result);
+    card.innerHTML=`<span>${pair.result}</span><span class="match-icon">🐣</span>`;
+    card.onclick=()=>selectMatchCard(card,'right');
+    rightCol.appendChild(card);
+  });
+}
+
+function selectMatchCard(card,side){
+  if(!matchState||locked||card.classList.contains('matched'))return;
+  if(side==='left'){
+    if(matchState.selectedLeft)matchState.selectedLeft.classList.remove('selected');
+    matchState.selectedLeft=card;
+  }else{
+    if(matchState.selectedRight)matchState.selectedRight.classList.remove('selected');
+    matchState.selectedRight=card;
+  }
+  card.classList.add('selected');
+  if(matchState.selectedLeft&&matchState.selectedRight)checkMatchPair();
+}
+
+function checkMatchPair(){
+  const left=matchState.selectedLeft;
+  const right=matchState.selectedRight;
+
+  if(left.dataset.id===right.dataset.id){
+    left.classList.remove('selected');
+    right.classList.remove('selected');
+    left.classList.add('matched');
+    right.classList.add('matched');
+    drawMatchLine(left,right);
+    matchState.matched++;
+    document.getElementById('matchProgress').textContent=
+      `${matchState.matched} / ${matchState.pairs.length} pasangan`;
+    matchState.selectedLeft=null;
+    matchState.selectedRight=null;
+    playCorrect();
+
+    if(matchState.matched===matchState.pairs.length){
+      locked=true;
+      score++;
+      scoreCountEl.textContent=score;
+      feedback.textContent='🎉 Semua pasangan benar!';
+      feedback.className='feedback benar';
+      setTimeout(nextQuestion,900);
+    }
+  }else{
+    left.classList.add('wrong');
+    right.classList.add('wrong');
+    feedback.textContent='❌ Belum cocok. Coba lagi!';
+    feedback.className='feedback salah';
+    playWrong();
+    setTimeout(()=>{
+      left.classList.remove('selected','wrong');
+      right.classList.remove('selected','wrong');
+      matchState.selectedLeft=null;
+      matchState.selectedRight=null;
+      feedback.textContent='';
+      feedback.className='feedback';
+    },650);
+  }
+}
+
+function drawMatchLine(fromEl,toEl){
+  const svg=document.getElementById('matchLines');
+  const board=document.getElementById('matchBoard');
+  const br=board.getBoundingClientRect();
+  const fr=fromEl.getBoundingClientRect();
+  const tr=toEl.getBoundingClientRect();
+
+  const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1',fr.right-br.left);
+  line.setAttribute('y1',fr.top+fr.height/2-br.top);
+  line.setAttribute('x2',tr.left-br.left);
+  line.setAttribute('y2',tr.top+tr.height/2-br.top);
+  line.setAttribute('stroke','#b9d1c1');
+  line.setAttribute('stroke-width','4');
+  line.setAttribute('stroke-linecap','round');
+  svg.appendChild(line);
+}
+
+/* TYPE 3 — REAL WORLD PROBLEMS */
+function renderStoryQuestion(q){
+  multiplicationWrap.innerHTML=`
+    <div class="story-wrap">
+      <div class="story-title">${q.title}</div>
+      <div class="story-card">
+        <div class="story-question">${q.question}</div>
+        <div class="story-answer-row">
+          <span>${q.answerText}</span>
+          <input type="number" id="answerInput" class="story-input"
+                 inputmode="numeric" autocomplete="off" aria-label="Jawaban">
+          <span>${q.unit}</span>
+        </div>
+      </div>
+    </div>`;
+
+  const input=document.getElementById('answerInput');
+  input.focus();
+  input.addEventListener('input',()=>{
+    input.value=input.value.replace(/[^0-9]/g,'').slice(0,3);
+  });
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();checkAnswer();}
+  });
+}
+
+function checkAnswer(){
+  if(locked)return;
+  const q=questions[current];
+
+  if(q.type==='match'){
+    feedback.textContent=
+      `Pasangkan semua pasangan dulu (${matchState?.matched||0}/${matchState?.pairs.length||0}).`;
+    feedback.className='feedback salah';
+    return;
+  }
+
+  const input=document.getElementById('answerInput');
+  if(!input||input.value.trim()===''){
+    feedback.textContent='Isi dulu jawabannya ya!';
+    feedback.className='feedback salah';
+    input?.focus();
+    return;
+  }
+
+  const userAnswer=Number(input.value);
+  locked=true;
+  input.disabled=true;
+
+  if(userAnswer===q.result){
+    score++;
+    scoreCountEl.textContent=score;
+    input.classList.add('correct');
+    feedback.textContent='✅ Benar! Hebat sekali!';
+    feedback.className='feedback benar';
+    problemCard.classList.add('pop');
+    playCorrect();
+  }else{
+    input.classList.add('wrong');
+    feedback.textContent=`❌ Belum tepat. Jawabannya ${q.result}`;
+    feedback.className='feedback salah';
+    problemCard.classList.add('shake');
+    playWrong();
+  }
+
+  checkBtn.disabled=true;
+  skipBtn.disabled=true;
+
+  setTimeout(()=>{
+    problemCard.classList.remove('pop','shake');
+    nextQuestion();
+  },1200);
+}
+
+function skipQuestion(){
+  if(locked)return;
+  locked=true;
+  feedback.textContent='Soal dilewati.';
+  feedback.className='feedback salah';
+  checkBtn.disabled=true;
+  skipBtn.disabled=true;
+  setTimeout(nextQuestion,900);
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length)showResult();
+  else renderQuestion();
+}
+
+function showResult(){
+  quizScreen.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  progressFill.style.width='100%';
+
+  const pct=score/questions.length;
+  finalScore.textContent=Math.round(pct*100);
+  document.getElementById('finalRatio').textContent=`${score} / ${questions.length}`;
+
+  if(pct===1)finalMsg.textContent='Sempurna! Kamu jagoan division! 🌟';
+  else if(pct>=.8)finalMsg.textContent='Hebat sekali! Hampir sempurna! 🎈';
+  else if(pct>=.5)finalMsg.textContent='Bagus, terus berlatih ya! 💪';
+  else finalMsg.textContent='Ayo coba lagi, pasti bisa lebih baik! 📚';
+}
+
+function restart(){
+  questions=generateQuestions();
+  current=0;
+  score=0;
+  scoreCountEl.textContent='0';
+  resultScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  renderQuestion();
+}
+
+function showHelp(){
+  const modal=document.getElementById('helpModal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+}
+function closeHelp(){
+  const modal=document.getElementById('helpModal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+}
+
+document.getElementById('helpModal').addEventListener('click',e=>{
+  if(e.target.id==='helpModal')closeHelp();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeHelp();
+});
+
+checkBtn.addEventListener('click',checkAnswer);
+skipBtn.addEventListener('click',skipQuestion);
+restartBtn.addEventListener('click',restart);
+
+/* Sound */
+let audioCtx=null;
+function getCtx(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freqStart,freqEnd,duration,type,volume){
+  try{
+    const ctx=getCtx();
+    if(ctx.state==='suspended')ctx.resume();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=type;
+    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.start();osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+function playCorrect(){
+  playTone(880,1760,.18,'sine',.22);
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+}
+const wrongSound=new Audio('../../sound/akh.mp3');
+wrongSound.preload='auto';
+function playWrong(){
+  try{
+    wrongSound.currentTime=0;
+    const p=wrongSound.play();
+    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+  }catch(e){playTone(220,110,.30,'sawtooth',.16)}
+}
+
+questions=generateQuestions();
+renderQuestion();
+</script>
+
+<audio id="bgMusic" src="../../sound/mariowanderingtheplains.mp3" autoplay loop preload="auto"></audio>
+<script>
+const bgMusic=document.getElementById('bgMusic');
+const musicToggle=document.getElementById('musicToggle');
+bgMusic.volume=1.0;
+bgMusic.muted=false;
+bgMusic.play().catch(()=>{});
+
+function updateMusicButton(){
+  const isOn=!bgMusic.paused;
+  musicToggle.textContent='♪';
+  musicToggle.setAttribute('aria-label',isOn?'Matikan musik':'Nyalakan musik');
+  musicToggle.setAttribute('aria-pressed',isOn?'true':'false');
+  musicToggle.classList.toggle('off',!isOn);
+}
+function startBackgroundMusic(){
+  bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+}
+musicToggle.addEventListener('click',event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  if(bgMusic.paused)bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+  else{bgMusic.pause();updateMusicButton();}
+});
+window.addEventListener('load',()=>{bgMusic.play().then(updateMusicButton).catch(updateMusicButton)});
+document.addEventListener('click',startBackgroundMusic,{once:true});
+document.addEventListener('touchstart',startBackgroundMusic,{once:true});
+document.addEventListener('keydown',startBackgroundMusic,{once:true});
+bgMusic.addEventListener('play',updateMusicButton);
+bgMusic.addEventListener('pause',updateMusicButton);
+</script>
+</body>
+</html>
