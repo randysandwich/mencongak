@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Baca Dua Suku Kata</title>
+<style>
+:root{
+  --bg:#f7f0e4; --surface:#fffdf7; --ink:#242735; --muted:#657a70; --line:#30332f;
+  --pink:#ef8fa8; --teal:#438f8b; --teal-dark:#2f706d; --yellow:#f8d36a;
+  --yellow-dark:#d6aa2c; --green:#b9d1c1; --coral:#e98a73;
+  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);display:flex;justify-content:center;overflow:hidden}
+button{font:inherit}
+.frame{width:100%;max-width:520px;height:100dvh;min-height:0}
+.board{
+  width:100%;height:100%;overflow:hidden;background:
+  radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+  radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+  padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+  max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+  display:flex;flex-direction:column;
+}
+
+/* MASTER HEADER */
+.topbar{height:82px;display:grid;grid-template-columns:62px 1fr 62px 62px;align-items:center;gap:8px;margin:0 1px 20px}
+.icon-btn,.music-btn,.help-btn{
+  width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;border-radius:20px;
+  box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-weight:900
+}
+.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
+.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink)}
+.music-btn.off{background:#eee4cf}
+.brand-wrap{text-align:center;line-height:1.02;min-width:0}
+.brand{font-size:42px;font-weight:900;letter-spacing:-3px}
+.brand-subtitle{margin-top:4px;font-size:9px;font-weight:900;letter-spacing:5px;color:var(--coral)}
+.brand sup{color:var(--pink);font-size:.48em;vertical-align:top;position:relative;top:-7px}
+
+.help-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,39,53,.42)}
+.help-modal.show{display:flex}
+.help-dialog{width:min(92vw,520px);max-height:80vh;overflow:auto;background:var(--surface);border:3px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}
+.help-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.help-title-row h2{margin:0;font-size:1.25rem;font-weight:900}
+.help-close{width:44px;height:44px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;box-shadow:0 3px 0 var(--line);font-size:28px;font-weight:900}
+.help-content{font-size:.95rem;line-height:1.6}.help-content p{margin:0 0 10px}
+
+.mode-pill{width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
+.mode-pill strong{color:var(--teal)}
+.theme{text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.theme strong{color:var(--ink);font-size:.68rem}.theme-reading{color:var(--teal)}
+
+/* QUIZ */
+#quizScreen{flex:1;min-height:0;display:flex;flex-direction:column}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
+.score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
+.progress-track{height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
+
+.problem-card{
+  flex:1;min-height:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
+  padding:18px 10px;margin:0 1px 7px;
+  box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
+  position:relative;overflow:hidden;
+}
+.problem-card::before{
+  content:"";position:absolute;width:65px;height:65px;border-radius:50%;
+  background:rgba(67,143,139,.06);top:-27px;right:-20px
+}
+.syllable-row{
+  position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;align-items:center;justify-content:center;gap:34px;width:100%;
+}
+.syllable-box{
+  width:145px;height:114px;border:2px solid var(--line);border-radius:13px;
+  background:#fff9df;display:flex;align-items:center;justify-content:center;
+  font-size:clamp(3.5rem,15vw,4.7rem);font-weight:900;line-height:1;
+  letter-spacing:-2px;
+}
+.syllable-box .first-letter{color:var(--coral)}
+.hyphen{font-size:2.6rem;font-weight:900;color:#8d9994;line-height:1}
+.reading-label{
+  position:relative;z-index:1;
+  color:#a3adb0;font-size:.72rem;font-weight:900;letter-spacing:.7px;text-align:center;
+  text-transform:uppercase;margin:4px 5px 0;min-height:18px;
+}
+.instruction{
+  position:absolute;z-index:1;left:0;right:0;bottom:18px;
+  text-align:center;color:#89928f;font-size:.78rem;font-weight:900;
+  margin:0 5px;min-height:18px;
+}
+.buttons{display:grid;grid-template-columns:1fr;gap:8px;margin:0 1px}
+button.action{
+  min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
+  box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer
+}
+#nextBtn{background:var(--teal);color:#fff;border-color:var(--line)}
+button.action:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+.footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
+
+.result-screen{
+  flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;
+  box-shadow:0 4px 0 rgba(58,65,61,.07)
+}
+.score-title{font-weight:900;color:var(--muted)}
+.big-score{color:var(--teal);font-size:3rem;font-weight:900;margin:6px 0 2px}
+.result-screen .score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}
+.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+#restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark)}
+.hidden{display:none!important}
+.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.018)}100%{transform:scale(1)}}
+
+@media(max-height:620px){
+  .topbar{grid-template-columns:34px 1fr 34px 34px;height:50px;margin-bottom:8px}
+  .icon-btn,.music-btn,.help-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+  .brand{font-size:24px;letter-spacing:-2px}.brand-subtitle{font-size:6px;letter-spacing:3px}
+  .mode-pill{font-size:.58rem;padding:3px 9px}.theme{font-size:.51rem}.theme strong{font-size:.56rem}
+  .progress-track{margin-bottom:4px}
+  .problem-card{margin-bottom:4px;border-radius:18px;padding:10px}
+  .syllable-row{gap:18px}.syllable-box{width:125px;height:82px;font-size:3.2rem}
+  .hyphen{font-size:2rem}.instruction{font-size:.66rem;bottom:10px}
+  button.action{min-height:45px;font-size:.78rem;border-radius:12px}.footer-note{display:none}
+}
+@media(max-width:380px){
+  .syllable-row{gap:12px}.syllable-box{width:116px;height:78px;font-size:2.9rem}
+}
+@media(max-height:520px){
+  .mode-pill,.theme{display:none}.problem-card{margin-top:2px}
+  .syllable-box{height:70px;font-size:2.6rem}.reading-label{margin-top:4px}
+}
+</style>
+</head>
+<body>
+<div class="frame"><div class="board">
+
+<header class="topbar">
+  <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+  <div class="brand-wrap"><div class="brand">taci<sup>2</sup></div><div class="brand-subtitle">MENCONGAK GAMES</div></div>
+  <button class="help-btn" type="button" aria-label="Bantuan" onclick="showHelp()">?</button>
+  <button id="musicToggle" class="music-btn" type="button" aria-label="Matikan musik" aria-pressed="true">♪</button>
+</header>
+
+<div id="helpModal" class="help-modal" aria-hidden="true">
+  <div class="help-dialog">
+    <div class="help-title-row">
+      <h2>BACA DUA SUKU KATA</h2>
+      <button class="help-close" onclick="closeHelp()">×</button>
+    </div>
+    <div class="help-content">
+      <p>Baca kedua suku kata dengan suara keras.</p>
+      <p>Contoh: <b>Ba - ju</b> dibaca <b>Baju</b>.</p>
+      <p>Tekan <b>Lanjut</b> untuk membaca kata berikutnya.</p>
+    </div>
+  </div>
+</div>
+
+<div class="mode-pill">📖 PRACTICE - <strong>Baca Dua Suku Kata</strong></div>
+<div class="theme"><strong>KINDERGARTEN • <span class="theme-reading">MEMBACA</span></strong></div>
+
+<div id="quizScreen">
+  <div class="score-row">
+    <span>Soal <span id="qNum">1</span> / <span id="qTotal">191</span></span>
+    <span>Progress <span class="count" id="progressPct">1%</span></span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="problem-card" id="problemCard">
+    <div class="syllable-row" id="syllableRow"></div>
+    <div class="instruction">Baca dua suku kata dengan suara keras 😊</div>
+  </div>
+
+  <div class="buttons">
+    <button class="action" id="nextBtn">→ Lanjut</button>
+  </div>
+  <div class="footer-note">copyright © 2026</div>
+</div>
+
+<div id="resultScreen" class="result-screen hidden">
+  <div class="score-title">SELESAI! 🎉</div>
+  <div class="big-score">191</div>
+  <div class="score-ratio">191 / 191</div>
+  <p>Hebat! Kamu sudah selesai membaca semua kata.</p>
+  <button id="restartBtn">↻ Mulai Lagi</button>
+</div>
+
+</div></div>
+
+<audio id="bgMusic" src="sound/mariowanderingtheplains.mp3" autoplay loop preload="auto"></audio>
+
+<script>
+const questions = [{"no":1,"word":"Baju","parts":["Ba","ju"],"split":"Ba-ju"},{"no":2,"word":"Batu","parts":["Ba","tu"],"split":"Ba-tu"},{"no":3,"word":"Baca","parts":["Ba","ca"],"split":"Ba-ca"},{"no":4,"word":"Bagi","parts":["Ba","gi"],"split":"Ba-gi"},{"no":5,"word":"Baya","parts":["Ba","ya"],"split":"Ba-ya"},{"no":6,"word":"Beli","parts":["Be","li"],"split":"Be-li"},{"no":7,"word":"Beda","parts":["Be","da"],"split":"Be-da"},{"no":8,"word":"Beca","parts":["Be","ca"],"split":"Be-ca"},{"no":9,"word":"Biru","parts":["Bi","ru"],"split":"Bi-ru"},{"no":10,"word":"Bisa","parts":["Bi","sa"],"split":"Bi-sa"},{"no":11,"word":"Bisi","parts":["Bi","si"],"split":"Bi-si"},{"no":12,"word":"Bola","parts":["Bo","la"],"split":"Bo-la"},{"no":13,"word":"Boso","parts":["Bo","so"],"split":"Bo-so"},{"no":14,"word":"Buku","parts":["Bu","ku"],"split":"Bu-ku"},{"no":15,"word":"Buka","parts":["Bu","ka"],"split":"Bu-ka"},{"no":16,"word":"Busa","parts":["Bu","sa"],"split":"Bu-sa"},{"no":17,"word":"Budi","parts":["Bu","di"],"split":"Bu-di"},{"no":18,"word":"Bumi","parts":["Bu","mi"],"split":"Bu-mi"},{"no":19,"word":"Cari","parts":["Ca","ri"],"split":"Ca-ri"},{"no":20,"word":"Cuci","parts":["Cu","ci"],"split":"Cu-ci"},{"no":21,"word":"Cucu","parts":["Cu","cu"],"split":"Cu-cu"},{"no":22,"word":"Cabe","parts":["Ca","be"],"split":"Ca-be"},{"no":23,"word":"Dasi","parts":["Da","si"],"split":"Da-si"},{"no":24,"word":"Dadu","parts":["Da","du"],"split":"Da-du"},{"no":25,"word":"Dagu","parts":["Da","gu"],"split":"Da-gu"},{"no":26,"word":"Dada","parts":["Da","da"],"split":"Da-da"},{"no":27,"word":"Desa","parts":["De","sa"],"split":"De-sa"},{"no":28,"word":"Doa","parts":["Do","a"],"split":"Do-a"},{"no":29,"word":"Duka","parts":["Du","ka"],"split":"Du-ka"},{"no":30,"word":"Dua","parts":["Du","a"],"split":"Du-a"},{"no":31,"word":"Dari","parts":["Da","ri"],"split":"Da-ri"},{"no":32,"word":"Foto","parts":["Fo","to"],"split":"Fo-to"},{"no":33,"word":"Gigi","parts":["Gi","gi"],"split":"Gi-gi"},{"no":34,"word":"Gula","parts":["Gu","la"],"split":"Gu-la"},{"no":35,"word":"Guna","parts":["Gu","na"],"split":"Gu-na"},{"no":36,"word":"Guci","parts":["Gu","ci"],"split":"Gu-ci"},{"no":37,"word":"Gaya","parts":["Ga","ya"],"split":"Ga-ya"},{"no":38,"word":"Geli","parts":["Ge","li"],"split":"Ge-li"},{"no":39,"word":"Hari","parts":["Ha","ri"],"split":"Ha-ri"},{"no":40,"word":"Hati","parts":["Ha","ti"],"split":"Ha-ti"},{"no":41,"word":"Hisa","parts":["Hi","sa"],"split":"Hi-sa"},{"no":42,"word":"Huja","parts":["Hu","ja"],"split":"Hu-ja"},{"no":43,"word":"Jari","parts":["Ja","ri"],"split":"Ja-ri"},{"no":44,"word":"Jamu","parts":["Ja","mu"],"split":"Ja-mu"},{"no":45,"word":"Jaga","parts":["Ja","ga"],"split":"Ja-ga"},{"no":46,"word":"Jaji","parts":["Ja","ji"],"split":"Ja-ji"},{"no":47,"word":"Jiwa","parts":["Ji","wa"],"split":"Ji-wa"},{"no":48,"word":"Juga","parts":["Ju","ga"],"split":"Ju-ga"},{"no":49,"word":"Juta","parts":["Ju","ta"],"split":"Ju-ta"},{"no":50,"word":"Jua","parts":["Ju","a"],"split":"Ju-a"},{"no":51,"word":"Kaki","parts":["Ka","ki"],"split":"Ka-ki"},{"no":52,"word":"Kada","parts":["Ka","da"],"split":"Ka-da"},{"no":53,"word":"Kayu","parts":["Ka","yu"],"split":"Ka-yu"},{"no":54,"word":"Kaca","parts":["Ka","ca"],"split":"Ka-ca"},{"no":55,"word":"Kata","parts":["Ka","ta"],"split":"Ka-ta"},{"no":56,"word":"Kera","parts":["Ke","ra"],"split":"Ke-ra"},{"no":57,"word":"Kena","parts":["Ke","na"],"split":"Ke-na"},{"no":58,"word":"Kita","parts":["Ki","ta"],"split":"Ki-ta"},{"no":59,"word":"Kiri","parts":["Ki","ri"],"split":"Ki-ri"},{"no":60,"word":"Kopi","parts":["Ko","pi"],"split":"Ko-pi"},{"no":61,"word":"Kota","parts":["Ko","ta"],"split":"Ko-ta"},{"no":62,"word":"Kuda","parts":["Ku","da"],"split":"Ku-da"},{"no":63,"word":"Kuku","parts":["Ku","ku"],"split":"Ku-ku"},{"no":64,"word":"Kubu","parts":["Ku","bu"],"split":"Ku-bu"},{"no":65,"word":"Lari","parts":["La","ri"],"split":"La-ri"},{"no":66,"word":"Lalu","parts":["La","lu"],"split":"La-lu"},{"no":67,"word":"Labu","parts":["La","bu"],"split":"La-bu"},{"no":68,"word":"Lapa","parts":["La","pa"],"split":"La-pa"},{"no":69,"word":"Lima","parts":["Li","ma"],"split":"Li-ma"},{"no":70,"word":"Lisa","parts":["Li","sa"],"split":"Li-sa"},{"no":71,"word":"Lita","parts":["Li","ta"],"split":"Li-ta"},{"no":72,"word":"Lupa","parts":["Lu","pa"],"split":"Lu-pa"},{"no":73,"word":"Luca","parts":["Lu","ca"],"split":"Lu-ca"},{"no":74,"word":"Leci","parts":["Le","ci"],"split":"Le-ci"},{"no":75,"word":"Mata","parts":["Ma","ta"],"split":"Ma-ta"},{"no":76,"word":"Meja","parts":["Me","ja"],"split":"Me-ja"},{"no":77,"word":"Madu","parts":["Ma","du"],"split":"Ma-du"},{"no":78,"word":"Masa","parts":["Ma","sa"],"split":"Ma-sa"},{"no":79,"word":"Muka","parts":["Mu","ka"],"split":"Mu-ka"},{"no":80,"word":"Muda","parts":["Mu","da"],"split":"Mu-da"},{"no":81,"word":"Mini","parts":["Mi","ni"],"split":"Mi-ni"},{"no":82,"word":"Mina","parts":["Mi","na"],"split":"Mi-na"},{"no":83,"word":"Mona","parts":["Mo","na"],"split":"Mo-na"},{"no":84,"word":"Nasi","parts":["Na","si"],"split":"Na-si"},{"no":85,"word":"Naga","parts":["Na","ga"],"split":"Na-ga"},{"no":86,"word":"Nusa","parts":["Nu","sa"],"split":"Nu-sa"},{"no":87,"word":"Nota","parts":["No","ta"],"split":"No-ta"},{"no":88,"word":"Pipi","parts":["Pi","pi"],"split":"Pi-pi"},{"no":89,"word":"Peta","parts":["Pe","ta"],"split":"Pe-ta"},{"no":90,"word":"Pagi","parts":["Pa","gi"],"split":"Pa-gi"},{"no":91,"word":"Palu","parts":["Pa","lu"],"split":"Pa-lu"},{"no":92,"word":"Pita","parts":["Pi","ta"],"split":"Pi-ta"},{"no":93,"word":"Puji","parts":["Pu","ji"],"split":"Pu-ji"},{"no":94,"word":"Pupu","parts":["Pu","pu"],"split":"Pu-pu"},{"no":95,"word":"Papa","parts":["Pa","pa"],"split":"Pa-pa"},{"no":96,"word":"Roda","parts":["Ro","da"],"split":"Ro-da"},{"no":97,"word":"Roti","parts":["Ro","ti"],"split":"Ro-ti"},{"no":98,"word":"Rasa","parts":["Ra","sa"],"split":"Ra-sa"},{"no":99,"word":"Rasi","parts":["Ra","si"],"split":"Ra-si"},{"no":100,"word":"Rapi","parts":["Ra","pi"],"split":"Ra-pi"},{"no":101,"word":"Raga","parts":["Ra","ga"],"split":"Ra-ga"},{"no":102,"word":"Rabu","parts":["Ra","bu"],"split":"Ra-bu"},{"no":103,"word":"Rusa","parts":["Ru","sa"],"split":"Ru-sa"},{"no":104,"word":"Rupa","parts":["Ru","pa"],"split":"Ru-pa"},{"no":105,"word":"Rugi","parts":["Ru","gi"],"split":"Ru-gi"},{"no":106,"word":"Sapu","parts":["Sa","pu"],"split":"Sa-pu"},{"no":107,"word":"Sapi","parts":["Sa","pi"],"split":"Sa-pi"},{"no":108,"word":"Suka","parts":["Su","ka"],"split":"Su-ka"},{"no":109,"word":"Satu","parts":["Sa","tu"],"split":"Sa-tu"},{"no":110,"word":"Siku","parts":["Si","ku"],"split":"Si-ku"},{"no":111,"word":"Susu","parts":["Su","su"],"split":"Su-su"},{"no":112,"word":"Saya","parts":["Sa","ya"],"split":"Sa-ya"},{"no":113,"word":"Sega","parts":["Se","ga"],"split":"Se-ga"},{"no":114,"word":"Sere","parts":["Se","re"],"split":"Se-re"},{"no":115,"word":"Suci","parts":["Su","ci"],"split":"Su-ci"},{"no":116,"word":"Suhu","parts":["Su","hu"],"split":"Su-hu"},{"no":117,"word":"Soro","parts":["So","ro"],"split":"So-ro"},{"no":118,"word":"Tali","parts":["Ta","li"],"split":"Ta-li"},{"no":119,"word":"Topi","parts":["To","pi"],"split":"To-pi"},{"no":120,"word":"Toko","parts":["To","ko"],"split":"To-ko"},{"no":121,"word":"Tahu","parts":["Ta","hu"],"split":"Ta-hu"},{"no":122,"word":"Tua","parts":["Tu","a"],"split":"Tu-a"},{"no":123,"word":"Tiga","parts":["Ti","ga"],"split":"Ti-ga"},{"no":124,"word":"Tepi","parts":["Te","pi"],"split":"Te-pi"},{"no":125,"word":"Titi","parts":["Ti","ti"],"split":"Ti-ti"},{"no":126,"word":"Tiba","parts":["Ti","ba"],"split":"Ti-ba"},{"no":127,"word":"Tani","parts":["Ta","ni"],"split":"Ta-ni"},{"no":128,"word":"Tuju","parts":["Tu","ju"],"split":"Tu-ju"},{"no":129,"word":"Tema","parts":["Te","ma"],"split":"Te-ma"},{"no":130,"word":"Tawa","parts":["Ta","wa"],"split":"Ta-wa"},{"no":131,"word":"Visi","parts":["Vi","si"],"split":"Vi-si"},{"no":132,"word":"Via","parts":["Vi","a"],"split":"Vi-a"},{"no":133,"word":"Waya","parts":["Wa","ya"],"split":"Wa-ya"},{"no":134,"word":"Yuyu","parts":["Yu","yu"],"split":"Yu-yu"},{"no":135,"word":"Zira","parts":["Zi","ra"],"split":"Zi-ra"},{"no":136,"word":"Zero","parts":["Ze","ro"],"split":"Ze-ro"},{"no":137,"word":"Bayo","parts":["Ba","yo"],"split":"Ba-yo"},{"no":138,"word":"Bibi","parts":["Bi","bi"],"split":"Bi-bi"},{"no":139,"word":"Boni","parts":["Bo","ni"],"split":"Bo-ni"},{"no":140,"word":"Buli","parts":["Bu","li"],"split":"Bu-li"},{"no":141,"word":"Cazi","parts":["Ca","zi"],"split":"Ca-zi"},{"no":142,"word":"Dani","parts":["Da","ni"],"split":"Da-ni"},{"no":143,"word":"Doni","parts":["Do","ni"],"split":"Do-ni"},{"no":144,"word":"Gani","parts":["Ga","ni"],"split":"Ga-ni"},{"no":145,"word":"Gege","parts":["Ge","ge"],"split":"Ge-ge"},{"no":146,"word":"Guru","parts":["Gu","ru"],"split":"Gu-ru"},{"no":147,"word":"Hawa","parts":["Ha","wa"],"split":"Ha-wa"},{"no":148,"word":"Jawa","parts":["Ja","wa"],"split":"Ja-wa"},{"no":149,"word":"Jojo","parts":["Jo","jo"],"split":"Jo-jo"},{"no":150,"word":"Kasi","parts":["Ka","si"],"split":"Ka-si"},{"no":151,"word":"Kaya","parts":["Ka","ya"],"split":"Ka-ya"},{"no":152,"word":"Kiko","parts":["Ki","ko"],"split":"Ki-ko"},{"no":153,"word":"Kori","parts":["Ko","ri"],"split":"Ko-ri"},{"no":154,"word":"Kura","parts":["Ku","ra"],"split":"Ku-ra"},{"no":155,"word":"Laku","parts":["La","ku"],"split":"La-ku"},{"no":156,"word":"Lidi","parts":["Li","di"],"split":"Li-di"},{"no":157,"word":"Liza","parts":["Li","za"],"split":"Li-za"},{"no":158,"word":"Lulu","parts":["Lu","lu"],"split":"Lu-lu"},{"no":159,"word":"Mafe","parts":["Ma","fe"],"split":"Ma-fe"},{"no":160,"word":"Mani","parts":["Ma","ni"],"split":"Ma-ni"},{"no":161,"word":"Misi","parts":["Mi","si"],"split":"Mi-si"},{"no":162,"word":"Musi","parts":["Mu","si"],"split":"Mu-si"},{"no":163,"word":"Nana","parts":["Na","na"],"split":"Na-na"},{"no":164,"word":"Nina","parts":["Ni","na"],"split":"Ni-na"},{"no":165,"word":"Noni","parts":["No","ni"],"split":"No-ni"},{"no":166,"word":"Pala","parts":["Pa","la"],"split":"Pa-la"},{"no":167,"word":"Pera","parts":["Pe","ra"],"split":"Pe-ra"},{"no":168,"word":"Pino","parts":["Pi","no"],"split":"Pi-no"},{"no":169,"word":"Popo","parts":["Po","po"],"split":"Po-po"},{"no":170,"word":"Puri","parts":["Pu","ri"],"split":"Pu-ri"},{"no":171,"word":"Raja","parts":["Ra","ja"],"split":"Ra-ja"},{"no":172,"word":"Rani","parts":["Ra","ni"],"split":"Ra-ni"},{"no":173,"word":"Resi","parts":["Re","si"],"split":"Re-si"},{"no":174,"word":"Riri","parts":["Ri","ri"],"split":"Ri-ri"},{"no":175,"word":"Rudi","parts":["Ru","di"],"split":"Ru-di"},{"no":176,"word":"Sara","parts":["Sa","ra"],"split":"Sa-ra"},{"no":177,"word":"Sesa","parts":["Se","sa"],"split":"Se-sa"},{"no":178,"word":"Siti","parts":["Si","ti"],"split":"Si-ti"},{"no":179,"word":"Sofa","parts":["So","fa"],"split":"So-fa"},{"no":180,"word":"Suri","parts":["Su","ri"],"split":"Su-ri"},{"no":181,"word":"Tada","parts":["Ta","da"],"split":"Ta-da"},{"no":182,"word":"Tara","parts":["Ta","ra"],"split":"Ta-ra"},{"no":183,"word":"Teti","parts":["Te","ti"],"split":"Te-ti"},{"no":184,"word":"Toni","parts":["To","ni"],"split":"To-ni"},{"no":185,"word":"Tuba","parts":["Tu","ba"],"split":"Tu-ba"},{"no":186,"word":"Vina","parts":["Vi","na"],"split":"Vi-na"},{"no":187,"word":"Wali","parts":["Wa","li"],"split":"Wa-li"},{"no":188,"word":"Yeni","parts":["Ye","ni"],"split":"Ye-ni"},{"no":189,"word":"Yoyo","parts":["Yo","yo"],"split":"Yo-yo"},{"no":190,"word":"Yuni","parts":["Yu","ni"],"split":"Yu-ni"},{"no":191,"word":"Zulu","parts":["Zu","lu"],"split":"Zu-lu"}];
+const TOTAL = questions.length;
+let current = 0;
+
+const qNum = document.getElementById('qNum');
+const qTotal = document.getElementById('qTotal');
+const progressPct = document.getElementById('progressPct');
+const progressFill = document.getElementById('progressFill');
+const row = document.getElementById('syllableRow');
+const card = document.getElementById('problemCard');
+const quiz = document.getElementById('quizScreen');
+const result = document.getElementById('resultScreen');
+const nextBtn = document.getElementById('nextBtn');
+
+qTotal.textContent = TOTAL;
+
+function render(){
+  const q = questions[current];
+  qNum.textContent = current + 1;
+
+  const pct = Math.round(((current + 1) / TOTAL) * 100);
+  progressPct.textContent = pct + '%';
+  progressFill.style.width = pct + '%';
+
+  row.innerHTML = '';
+  q.parts.forEach((part, index) => {
+    const box = document.createElement('div');
+    box.className = 'syllable-box';
+
+    const first = document.createElement('span');
+    first.className = 'first-letter';
+    first.textContent = part.charAt(0).toUpperCase();
+
+    const rest = document.createElement('span');
+    rest.textContent = part.slice(1).toLowerCase();
+
+    box.appendChild(first);
+    box.appendChild(rest);
+    row.appendChild(box);
+
+    if(index < q.parts.length - 1){
+      const hyphen = document.createElement('div');
+      hyphen.className = 'hyphen';
+      hyphen.textContent = '-';
+      row.appendChild(hyphen);
+    }
+  });
+
+  card.classList.remove('pop');
+  void card.offsetWidth;
+  card.classList.add('pop');
+
+  nextBtn.textContent = current === TOTAL - 1 ? '✓ Selesai' : '→ Lanjut';
+}
+
+function next(){
+  if(current < TOTAL - 1){
+    current++;
+    render();
+  }else{
+    quiz.classList.add('hidden');
+    result.classList.remove('hidden');
+    progressFill.style.width = '100%';
+    progressPct.textContent = '100%';
+  }
+}
+
+nextBtn.addEventListener('click', next);
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  current = 0;
+  result.classList.add('hidden');
+  quiz.classList.remove('hidden');
+  render();
+});
+
+/* Music */
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+
+function updateMusicButton(){
+  const on = !bgMusic.paused;
+  musicToggle.classList.toggle('off', !on);
+  musicToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+}
+musicToggle.addEventListener('click', e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  if(bgMusic.paused){
+    bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+  }else{
+    bgMusic.pause();
+    updateMusicButton();
+  }
+});
+window.addEventListener('load', ()=>{
+  bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+});
+document.addEventListener('click', ()=>{
+  bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
+},{once:true});
+bgMusic.addEventListener('play', updateMusicButton);
+bgMusic.addEventListener('pause', updateMusicButton);
+
+/* Help */
+function showHelp(){
+  const modal = document.getElementById('helpModal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+}
+function closeHelp(){
+  const modal = document.getElementById('helpModal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+}
+document.getElementById('helpModal').addEventListener('click', e=>{
+  if(e.target.id === 'helpModal') closeHelp();
+});
+
+render();
+</script>
+</body>
+</html>
