@@ -300,7 +300,7 @@ button.action:disabled{opacity:.55;cursor:default}
 
 <div id="quizScreen">
   <div class="score-row">
-    <span>Soal <span id="qNum">1</span> / <span id="qTotal">9</span></span>
+    <span>Soal <span id="qNum">1</span> / <span id="qTotal">50</span></span>
     <span>Skor <span class="count" id="scoreCount">0</span></span>
   </div>
   <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -320,7 +320,7 @@ button.action:disabled{opacity:.55;cursor:default}
 <div id="resultScreen" class="result-screen hidden">
   <div class="score-title">NILAI KAMU</div>
   <div class="big-score" id="finalScore">0</div>
-  <div class="score-ratio" id="finalRatio">0 / 9</div>
+  <div class="score-ratio" id="finalRatio">0 / 50</div>
   <p id="finalMsg">Kerja bagus!</p>
   <button id="restartBtn">↻ Main Lagi</button>
 </div>
@@ -328,7 +328,7 @@ button.action:disabled{opacity:.55;cursor:default}
 </div></div>
 
 <script>
-const TOTAL_QUESTIONS=9;
+const TOTAL_QUESTIONS=50;
 let questions=[],current=0,score=0,locked=false,matchState=null;
 
 const qNumEl=document.getElementById('qNum');
@@ -365,7 +365,24 @@ function shuffle(arr){
 const porogapitPool=[
   {type:'porogapit',a:68,b:4,result:17},
   {type:'porogapit',a:78,b:3,result:26},
-  {type:'porogapit',a:92,b:4,result:23}
+  {type:'porogapit',a:92,b:4,result:23},
+  {type:'porogapit',a:84,b:4,result:21},
+  {type:'porogapit',a:96,b:6,result:16},
+  {type:'porogapit',a:72,b:4,result:18},
+  {type:'porogapit',a:96,b:4,result:24},
+  {type:'porogapit',a:75,b:5,result:15},
+  {type:'porogapit',a:84,b:6,result:14},
+  {type:'porogapit',a:78,b:6,result:13},
+  {type:'porogapit',a:84,b:7,result:12},
+  {type:'porogapit',a:76,b:4,result:19},
+  {type:'porogapit',a:88,b:4,result:22},
+  {type:'porogapit',a:72,b:3,result:24},
+  {type:'porogapit',a:96,b:3,result:32},
+  {type:'porogapit',a:69,b:3,result:23},
+  {type:'porogapit',a:86,b:2,result:43},
+  {type:'porogapit',a:94,b:2,result:47},
+  {type:'porogapit',a:98,b:7,result:14},
+  {type:'porogapit',a:91,b:7,result:13}
 ];
 
 /* TYPE 2 — MATCH AND CORRECT
@@ -403,6 +420,83 @@ const matchRounds=[
       {result:24,a:72,b:3},
       {result:32,a:96,b:3}
     ]
+  },
+  {
+    type:'match',
+    title:'Match and Correct',
+    pairs:[
+      {result:23,a:69,b:3},
+      {result:43,a:86,b:2},
+      {result:47,a:94,b:2},
+      {result:14,a:98,b:7},
+      {result:13,a:91,b:7}
+    ]
+  },
+  {
+    type:'match',
+    title:'Match and Correct',
+    pairs:[
+      {result:14,a:56,b:4},
+      {result:21,a:63,b:3},
+      {result:12,a:96,b:8},
+      {result:17,a:85,b:5},
+      {result:37,a:74,b:2}
+    ]
+  },
+  {
+    type:'match',
+    title:'Match and Correct',
+    pairs:[
+      {result:19,a:57,b:3},
+      {result:16,a:64,b:4},
+      {result:27,a:81,b:3},
+      {result:31,a:93,b:3},
+      {result:41,a:82,b:2}
+    ]
+  },
+  {
+    type:'match',
+    title:'Match and Correct',
+    pairs:[
+      {result:18,a:54,b:3},
+      {result:13,a:91,b:7},
+      {result:19,a:95,b:5},
+      {result:73,a:73,b:1},
+      {result:29,a:87,b:3}
+    ]
+  },
+  {
+    type:'match',
+    title:'Match and Correct',
+    pairs:[
+      {result:11,a:66,b:6},
+      {result:11,a:88,b:8},
+      {result:11,a:77,b:7},
+      {result:11,a:99,b:9},
+      {result:12,a:84,b:7}
+    ]
+  },
+  {
+    type:'match',
+    title:'Match and Correct',
+    pairs:[
+      {result:13,a:52,b:4},
+      {result:34,a:68,b:2},
+      {result:39,a:78,b:2},
+      {result:15,a:90,b:6},
+      {result:46,a:92,b:2}
+    ]
+  },
+  {
+    type:'match',
+    title:'Match and Correct',
+    pairs:[
+      {result:12,a:48,b:4},
+      {result:13,a:65,b:5},
+      {result:38,a:76,b:2},
+      {result:12,a:96,b:8},
+      {result:83,a:83,b:1}
+    ]
   }
 ];
 
@@ -410,18 +504,103 @@ const matchRounds=[
 const storyRounds=[
   {
     type:'story',title:'Real World Problems',
-    question:'There are 68 apples. They are put equally into 4 baskets. How many apples are in each basket?',
+    question:'There are 68 apples. They are put equally into 4 baskets.',
     answerText:'There are',unit:'apples in each basket.',result:17
   },
   {
     type:'story',title:'Real World Problems',
-    question:'A teacher has 78 pencils. She puts them equally into 3 boxes. How many pencils are in each box?',
+    question:'A teacher has 78 pencils. She puts them equally into 3 boxes.',
     answerText:'There are',unit:'pencils in each box.',result:26
   },
   {
     type:'story',title:'Real World Problems',
-    question:'A farmer has 92 eggs. He puts them equally into 4 trays. How many eggs are in each tray?',
+    question:'A farmer has 92 eggs. He puts them equally into 4 trays.',
     answerText:'There are',unit:'eggs in each tray.',result:23
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'There are 84 stickers. They are shared equally among 4 children.',
+    answerText:'Each child gets',unit:'stickers.',result:21
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A shop has 96 candies. They are packed equally into 6 bags.',
+    answerText:'There are',unit:'candies in each bag.',result:16
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A baker has 72 cookies. She puts them equally into 4 boxes.',
+    answerText:'There are',unit:'cookies in each box.',result:18
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A class has 96 crayons. They are shared equally among 4 groups.',
+    answerText:'Each group gets',unit:'crayons.',result:24
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A farmer collects 75 eggs and puts them equally into 5 baskets.',
+    answerText:'There are',unit:'eggs in each basket.',result:15
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'There are 84 books. They are placed equally on 6 shelves.',
+    answerText:'There are',unit:'books on each shelf.',result:14
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A teacher has 78 beads. She puts them equally into 6 cups.',
+    answerText:'There are',unit:'beads in each cup.',result:13
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'There are 84 oranges. They are packed equally into 7 boxes.',
+    answerText:'There are',unit:'oranges in each box.',result:12
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A library has 76 books. They are placed equally on 4 tables.',
+    answerText:'There are',unit:'books on each table.',result:19
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A farmer has 88 eggs. He puts them equally into 4 trays.',
+    answerText:'There are',unit:'eggs in each tray.',result:22
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'There are 72 balloons. They are shared equally among 3 children.',
+    answerText:'Each child gets',unit:'balloons.',result:24
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A shop has 96 pencils. They are packed equally into 3 boxes.',
+    answerText:'There are',unit:'pencils in each box.',result:32
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A class has 69 cards. They are shared equally among 3 groups.',
+    answerText:'Each group gets',unit:'cards.',result:23
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'There are 86 toy cars. They are packed equally into 2 boxes.',
+    answerText:'There are',unit:'toy cars in each box.',result:43
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A farmer has 94 apples. He puts them equally into 2 baskets.',
+    answerText:'There are',unit:'apples in each basket.',result:47
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'There are 98 flowers. They are placed equally into 7 vases.',
+    answerText:'There are',unit:'flowers in each vase.',result:14
+  },
+  {
+    type:'story',title:'Real World Problems',
+    question:'A teacher has 91 stickers. She shares them equally among 7 children.',
+    answerText:'Each child gets',unit:'stickers.',result:13
   }
 ];
 
