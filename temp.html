@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Baca Dua Suku Kata</title>
+<title>What Shape Is It?</title>
 <style>
 :root{
-  --bg:#f7f0e4; --surface:#fffdf7; --ink:#242735; --muted:#657a70; --line:#30332f;
-  --pink:#ef8fa8; --teal:#438f8b; --teal-dark:#2f706d; --yellow:#f8d36a;
-  --yellow-dark:#d6aa2c; --green:#b9d1c1; --coral:#e98a73;
-  --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --bg:#f7f0e4; --surface:#fffdf7; --ink:#242735; --muted:#657a70; --line:#30332f; --pink:#ef8fa8;
+  --teal:#438f8b; --teal-dark:#2f706d; --yellow:#f8d36a; --yellow-dark:#d6aa2c; --green:#b9d1c1; --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
+  --coral:#e98a73; --green:#b9d1c1; --line:#30332f; --shadow:0 5px 0 #30332f,0 9px 18px rgba(47,48,43,.10);
   --font:'Nunito','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -18,302 +17,1002 @@ body{font-family:var(--font);color:var(--ink);display:flex;justify-content:cente
 button{font:inherit}
 .frame{width:100%;max-width:520px;height:100dvh;min-height:0}
 .board{
-  width:100%;height:100%;overflow:hidden;background:
-  radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
-  radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
-  padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
-  max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
-  display:flex;flex-direction:column;
+ width:100%;height:100%;overflow:hidden;background:
+ radial-gradient(circle at 10% 5%,rgba(67,143,139,.07),transparent 24%),
+ radial-gradient(circle at 95% 12%,rgba(242,201,76,.09),transparent 25%),var(--bg);
+ padding:max(5px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right))
+ max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));
+ display:flex;flex-direction:column;
 }
-
-/* MASTER HEADER */
 .topbar{height:82px;display:grid;grid-template-columns:62px 1fr 62px 62px;align-items:center;gap:8px;margin:0 1px 20px}
-.icon-btn,.music-btn,.help-btn{
-  width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;border-radius:20px;
-  box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-weight:900
-}
-.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}
-.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink)}
-.music-btn.off{background:#eee4cf}
-.brand-wrap{text-align:center;line-height:1.02;min-width:0}
-.brand{font-size:42px;font-weight:900;letter-spacing:-3px}
-.brand-subtitle{margin-top:4px;font-size:9px;font-weight:900;letter-spacing:5px;color:var(--coral)}
-.brand sup{color:var(--pink);font-size:.48em;vertical-align:top;position:relative;top:-7px}
-
-.help-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,39,53,.42)}
-.help-modal.show{display:flex}
-.help-dialog{width:min(92vw,520px);max-height:80vh;overflow:auto;background:var(--surface);border:3px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}
-.help-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-.help-title-row h2{margin:0;font-size:1.25rem;font-weight:900}
-.help-close{width:44px;height:44px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;box-shadow:0 3px 0 var(--line);font-size:28px;font-weight:900}
-.help-content{font-size:.95rem;line-height:1.6}.help-content p{margin:0 0 10px}
-
+.icon-btn,.music-btn,.help-btn{width:62px;height:62px;border:3px solid var(--line);background:#fffdf7;border-radius:20px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-weight:900}.icon-btn{font-size:27px;cursor:pointer;text-decoration:none;color:var(--ink)}.music-btn,.help-btn{font-size:25px;cursor:pointer;color:var(--ink)}.music-btn.off{background:#eee4cf}
+.brand-wrap{text-align:center;line-height:1.02;min-width:0}.brand{font-size:42px;font-weight:900;letter-spacing:-3px}.brand-subtitle{margin-top:4px;font-size:9px;font-weight:900;letter-spacing:5px;color:var(--coral)}
+.help-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,39,53,.42)}.help-modal.show{display:flex}.help-dialog{width:min(92vw,520px);max-height:80vh;overflow:auto;background:var(--surface);border:3px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}.help-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.help-title-row h2{margin:0;font-size:1.25rem;font-weight:900}.help-close{width:44px;height:44px;border:2px solid var(--line);border-radius:14px;background:#fffdf7;box-shadow:0 3px 0 var(--line);font-size:28px;font-weight:900}.help-content{font-size:.95rem;line-height:1.6}.help-content p{margin:0 0 10px}.brand sup{color:var(--pink);font-size:.48em;vertical-align:top;position:relative;top:-7px}
 .mode-pill{width:max-content;margin:2px auto 5px;padding:5px 12px;background:var(--surface);border-radius:999px;color:var(--muted);font-size:.68rem;font-weight:800;box-shadow:0 2px 0 rgba(58,65,61,.05)}
 .mode-pill strong{color:var(--teal)}
 .theme{text-align:center;margin:1px 0 3px;font-size:.61rem;font-weight:900;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
-.theme strong{color:var(--ink);font-size:.68rem}.theme-reading{color:var(--teal)}
-
-/* QUIZ */
+.theme strong{color:var(--teal);font-size:.68rem}
 #quizScreen{flex:1;min-height:0;display:flex;flex-direction:column}
 .score-row{display:flex;justify-content:space-between;align-items:center;margin:0 7px 3px;color:var(--muted);font-size:.67rem;font-weight:800}
 .score-row .count{color:var(--teal);font-size:.85rem;font-weight:900}
 .progress-track{height:5px;margin:0 7px 7px;background:#e3e4dc;border-radius:999px;overflow:hidden}
 .progress-fill{height:100%;width:0;background:var(--teal);border-radius:999px;transition:width .35s ease}
-
 .problem-card{
-  flex:1;min-height:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
-  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
-  padding:18px 10px;margin:0 1px 7px;
-  box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
-  position:relative;overflow:hidden;
+ flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
+ flex-direction:column;background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;
+ padding:18px 10px;margin:0 1px 7px;box-shadow:0 4px 0 rgba(58,65,61,.07),0 8px 20px rgba(58,65,61,.05);
+ position:relative;overflow:hidden;
 }
-.problem-card::before{
-  content:"";position:absolute;width:65px;height:65px;border-radius:50%;
-  background:rgba(67,143,139,.06);top:-27px;right:-20px
-}
-.syllable-row{
-  position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);
-  display:flex;align-items:center;justify-content:center;gap:34px;width:100%;
-}
-.syllable-box{
-  width:145px;height:114px;border:2px solid var(--line);border-radius:13px;
-  background:#fff9df;display:flex;align-items:center;justify-content:center;
-  font-size:clamp(3.5rem,15vw,4.7rem);font-weight:900;line-height:1;
-  letter-spacing:-2px;
-}
-.syllable-box .first-letter{color:var(--coral)}
-.hyphen{font-size:2.6rem;font-weight:900;color:#8d9994;line-height:1}
-.reading-label{
-  position:relative;z-index:1;
-  color:#a3adb0;font-size:.72rem;font-weight:900;letter-spacing:.7px;text-align:center;
-  text-transform:uppercase;margin:4px 5px 0;min-height:18px;
-}
-.instruction{
-  position:absolute;z-index:1;left:0;right:0;bottom:18px;
-  text-align:center;color:#89928f;font-size:.78rem;font-weight:900;
-  margin:0 5px;min-height:18px;
-}
-.buttons{display:grid;grid-template-columns:1fr;gap:8px;margin:0 1px}
-button.action{
-  min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);
-  box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer
-}
-#nextBtn{background:var(--teal);color:#fff;border-color:var(--line)}
-button.action:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+.problem-card::before{content:"";position:absolute;width:65px;height:65px;border-radius:50%;background:rgba(67,143,139,.06);top:-27px;right:-20px}
+.instruction{position:relative;z-index:1;width:100%;font-size:clamp(1rem,4.5vw,1.3rem);font-weight:900;color:var(--coral);margin:0 0 12px;text-align:center}
+.image-frame{position:relative;z-index:1;width:min(100%,310px);height:min(38vh,310px);min-height:150px;background:#fff;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 12px;overflow:hidden}
+.image-frame img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:10px}
+.choices{position:relative;z-index:1;display:flex;justify-content:center;gap:10px;width:100%;max-width:500px;margin:0 auto}
+.choice{flex:1;min-width:0;min-height:50px;padding:0px 0px;border-radius:7px;background:var(--teal);color:#fff;font-size:clamp(.68rem,3.3vw,.95rem);font-weight:900;cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .15s ease}
+.choice:active{transform:translateY(2px)}
+.choice:disabled{cursor:default;opacity:1}
+.choice.correct{border-color:var(--green);background:#eaf7ef;color:#38664b}
+.choice.wrong{border-color:var(--coral);background:#fff0eb;color:#b84d35}
+.feedback{min-height:25px;text-align:center;margin:0 5px 3px;font-size:.78rem;font-weight:900}
+.feedback.benar{color:var(--green)} .feedback.salah{color:var(--coral)}
+@media(max-height:620px){.image-frame{height:min(32vh,210px);min-height:115px}.instruction{margin-bottom:7px;font-size:.95rem}.choice{min-height:40px;font-size:.68rem}}
+@media(max-width:360px){.choices{gap:6px}.choice{padding:7px 3px;font-size:.65rem}}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 1px}
+button.action{min-height:62px;border:3px solid var(--line);border-radius:20px;background:#fffdf7;color:var(--ink);box-shadow:var(--shadow);font-weight:900;font-size:1rem;cursor:pointer}
+#checkBtn{background:var(--teal);color:#fff}
+#skipBtn{background:#fffdf7;color:var(--muted)}
+button.action:disabled{opacity:.55}
 .footer-note{text-align:center;color:#a1a59f;font-size:.55rem;font-weight:700;margin-top:4px}
-
-.result-screen{
-  flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
-  background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;
-  box-shadow:0 4px 0 rgba(58,65,61,.07)
-}
-.score-title{font-weight:900;color:var(--muted)}
+.result-screen{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:var(--surface);border:2px solid #e2e1d8;border-radius:22px;padding:20px;box-shadow:0 4px 0 rgba(58,65,61,.07)}
 .big-score{color:var(--teal);font-size:3rem;font-weight:900;margin:6px 0 2px}
-.result-screen .score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}
-.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
+.result-screen .score-ratio{color:var(--teal);font-size:2rem;font-weight:900;margin:0 0 12px}.result-screen p{color:var(--muted);margin:4px 0 18px;font-weight:700;font-size:.85rem}
 #restartBtn{width:100%;min-height:46px;border:0;border-radius:15px;font-weight:900;background:var(--yellow);color:#5c4b18;box-shadow:0 4px 0 var(--yellow-dark)}
 .hidden{display:none!important}
-.pop{animation:pop .35s}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.018)}100%{transform:scale(1)}}
-
+.shake{animation:shake .35s}.pop{animation:pop .35s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
 @media(max-height:620px){
-  .topbar{grid-template-columns:34px 1fr 34px 34px;height:50px;margin-bottom:8px}
-  .icon-btn,.music-btn,.help-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
-  .brand{font-size:24px;letter-spacing:-2px}.brand-subtitle{font-size:6px;letter-spacing:3px}
-  .mode-pill{font-size:.58rem;padding:3px 9px}.theme{font-size:.51rem}.theme strong{font-size:.56rem}
-  .progress-track{margin-bottom:4px}
-  .problem-card{margin-bottom:4px;border-radius:18px;padding:10px}
-  .syllable-row{gap:18px}.syllable-box{width:125px;height:82px;font-size:3.2rem}
-  .hyphen{font-size:2rem}.instruction{font-size:.66rem;bottom:10px}
-  button.action{min-height:45px;font-size:.78rem;border-radius:12px}.footer-note{display:none}
+ .topbar{grid-template-columns:34px 1fr 34px}.icon-btn{width:34px;height:34px;border-radius:11px;font-size:1rem}
+ .brand h1{font-size:1rem}.brand .mini{font-size:.43rem}.mode-pill{font-size:.58rem;padding:3px 9px}
+ .theme{font-size:.51rem}.theme strong{font-size:.56rem}.progress-track{margin-bottom:4px}
+ .problem-card{margin-bottom:4px;border-radius:18px}.instruction{margin-bottom:12px;font-size:.95rem}
+ .number-row{gap:7px}.number-choice{height:58px}.feedback{min-height:19px;font-size:.66rem}
+ button.action{min-height:38px;font-size:.72rem;border-radius:12px}.footer-note{display:none}
 }
-@media(max-width:380px){
-  .syllable-row{gap:12px}.syllable-box{width:116px;height:78px;font-size:2.9rem}
-}
-@media(max-height:520px){
-  .mode-pill,.theme{display:none}.problem-card{margin-top:2px}
-  .syllable-box{height:70px;font-size:2.6rem}.reading-label{margin-top:4px}
-}
+@media(max-height:520px){.mode-pill,.theme{display:none}.problem-card{margin-top:2px}.number-choice{height:52px;font-size:1.8rem}}
 </style>
 </head>
 <body>
 <div class="frame"><div class="board">
+  <header class="topbar">
+    <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
+    <div class="brand-wrap"><div class="brand">taci<sup>2</sup></div><div class="brand-subtitle">MENCONGAK GAMES</div></div>
+    <button class="help-btn" type="button" aria-label="Bantuan" onclick="showHelp()">?</button>
+    <button id="musicToggle" class="music-btn" type="button" aria-label="Matikan musik" aria-pressed="true">♪</button>
+  </header>
+  <div id="helpModal" class="help-modal" aria-hidden="true">
+    <div class="help-dialog"><div class="help-title-row"><h2>WHAT SHAPE IS IT?</h2><button class="help-close" onclick="closeHelp()">×</button></div>
+    <div class="help-content"><p>Look at the real-world picture and think about its flat shape.</p><p>Choose the matching answer from the three options.</p></div></div>
+  </div>
+  <div class="mode-pill">🔷 PRACTICE - Flat Shape in Real World</div>
+  <div class="theme">KINDERGARTEN • <strong>MENGENAL BENTUK</strong></div>
 
-<header class="topbar">
-  <a class="icon-btn" href="#" aria-label="Kembali" onclick="history.back();return false;">←</a>
-  <div class="brand-wrap"><div class="brand">taci<sup>2</sup></div><div class="brand-subtitle">MENCONGAK GAMES</div></div>
-  <button class="help-btn" type="button" aria-label="Bantuan" onclick="showHelp()">?</button>
-  <button id="musicToggle" class="music-btn" type="button" aria-label="Matikan musik" aria-pressed="true">♪</button>
-</header>
-
-<div id="helpModal" class="help-modal" aria-hidden="true">
-  <div class="help-dialog">
-    <div class="help-title-row">
-      <h2>BACA DUA SUKU KATA</h2>
-      <button class="help-close" onclick="closeHelp()">×</button>
+  <div id="quizScreen">
+    <div class="score-row"><span>Soal <span id="qNum">1</span> / <span id="qTotal">69</span></span><span>Skor <span class="count" id="scoreCount">0</span></span></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="problem-card" id="problemCard">
+      <div class="instruction">Seperti apa bentuk benda tersebut?</div>
+      <div class="image-frame"><img id="shapeImage" alt="Real world object" /></div>
+      <div class="choices" id="choices"></div>
     </div>
-    <div class="help-content">
-      <p>Baca kedua suku kata dengan suara keras.</p>
-      <p>Contoh: <b>Ba - ju</b> dibaca <b>Baju</b>.</p>
-      <p>Tekan <b>Lanjut</b> untuk membaca kata berikutnya.</p>
-    </div>
-  </div>
-</div>
-
-<div class="mode-pill">📖 PRACTICE - <strong>Baca Dua Suku Kata</strong></div>
-<div class="theme"><strong>KINDERGARTEN • <span class="theme-reading">MEMBACA</span></strong></div>
-
-<div id="quizScreen">
-  <div class="score-row">
-    <span>Soal <span id="qNum">1</span> / <span id="qTotal">191</span></span>
-    <span>Progress <span class="count" id="progressPct">1%</span></span>
-  </div>
-  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-
-  <div class="problem-card" id="problemCard">
-    <div class="syllable-row" id="syllableRow"></div>
-    <div class="instruction">Baca dua suku kata dengan suara keras 😊</div>
+    <div class="feedback" id="feedback"></div>
+    <div class="footer-note">Choose the shape that matches the picture</div>
   </div>
 
-  <div class="buttons">
-    <button class="action" id="nextBtn">→ Lanjut</button>
+  <div id="resultScreen" class="result-screen hidden">
+    <div class="score-title">YOUR SCORE</div><div class="big-score" id="finalScore">0</div><div class="score-ratio" id="finalRatio">0 / 69</div>
+    <p id="finalMsg">Great job!</p><button id="restartBtn">↻ Play Again</button>
   </div>
-  <div class="footer-note">copyright © 2026</div>
-</div>
-
-<div id="resultScreen" class="result-screen hidden">
-  <div class="score-title">SELESAI! 🎉</div>
-  <div class="big-score">191</div>
-  <div class="score-ratio">191 / 191</div>
-  <p>Hebat! Kamu sudah selesai membaca semua kata.</p>
-  <button id="restartBtn">↻ Mulai Lagi</button>
-</div>
-
 </div></div>
 
-<audio id="bgMusic" src="sound/mariowanderingtheplains.mp3" autoplay loop preload="auto"></audio>
-
 <script>
-const questions = [{"no":1,"word":"Baju","parts":["Ba","ju"],"split":"Ba-ju"},{"no":2,"word":"Batu","parts":["Ba","tu"],"split":"Ba-tu"},{"no":3,"word":"Baca","parts":["Ba","ca"],"split":"Ba-ca"},{"no":4,"word":"Bagi","parts":["Ba","gi"],"split":"Ba-gi"},{"no":5,"word":"Baya","parts":["Ba","ya"],"split":"Ba-ya"},{"no":6,"word":"Beli","parts":["Be","li"],"split":"Be-li"},{"no":7,"word":"Beda","parts":["Be","da"],"split":"Be-da"},{"no":8,"word":"Beca","parts":["Be","ca"],"split":"Be-ca"},{"no":9,"word":"Biru","parts":["Bi","ru"],"split":"Bi-ru"},{"no":10,"word":"Bisa","parts":["Bi","sa"],"split":"Bi-sa"},{"no":11,"word":"Bisi","parts":["Bi","si"],"split":"Bi-si"},{"no":12,"word":"Bola","parts":["Bo","la"],"split":"Bo-la"},{"no":13,"word":"Boso","parts":["Bo","so"],"split":"Bo-so"},{"no":14,"word":"Buku","parts":["Bu","ku"],"split":"Bu-ku"},{"no":15,"word":"Buka","parts":["Bu","ka"],"split":"Bu-ka"},{"no":16,"word":"Busa","parts":["Bu","sa"],"split":"Bu-sa"},{"no":17,"word":"Budi","parts":["Bu","di"],"split":"Bu-di"},{"no":18,"word":"Bumi","parts":["Bu","mi"],"split":"Bu-mi"},{"no":19,"word":"Cari","parts":["Ca","ri"],"split":"Ca-ri"},{"no":20,"word":"Cuci","parts":["Cu","ci"],"split":"Cu-ci"},{"no":21,"word":"Cucu","parts":["Cu","cu"],"split":"Cu-cu"},{"no":22,"word":"Cabe","parts":["Ca","be"],"split":"Ca-be"},{"no":23,"word":"Dasi","parts":["Da","si"],"split":"Da-si"},{"no":24,"word":"Dadu","parts":["Da","du"],"split":"Da-du"},{"no":25,"word":"Dagu","parts":["Da","gu"],"split":"Da-gu"},{"no":26,"word":"Dada","parts":["Da","da"],"split":"Da-da"},{"no":27,"word":"Desa","parts":["De","sa"],"split":"De-sa"},{"no":28,"word":"Doa","parts":["Do","a"],"split":"Do-a"},{"no":29,"word":"Duka","parts":["Du","ka"],"split":"Du-ka"},{"no":30,"word":"Dua","parts":["Du","a"],"split":"Du-a"},{"no":31,"word":"Dari","parts":["Da","ri"],"split":"Da-ri"},{"no":32,"word":"Foto","parts":["Fo","to"],"split":"Fo-to"},{"no":33,"word":"Gigi","parts":["Gi","gi"],"split":"Gi-gi"},{"no":34,"word":"Gula","parts":["Gu","la"],"split":"Gu-la"},{"no":35,"word":"Guna","parts":["Gu","na"],"split":"Gu-na"},{"no":36,"word":"Guci","parts":["Gu","ci"],"split":"Gu-ci"},{"no":37,"word":"Gaya","parts":["Ga","ya"],"split":"Ga-ya"},{"no":38,"word":"Geli","parts":["Ge","li"],"split":"Ge-li"},{"no":39,"word":"Hari","parts":["Ha","ri"],"split":"Ha-ri"},{"no":40,"word":"Hati","parts":["Ha","ti"],"split":"Ha-ti"},{"no":41,"word":"Hisa","parts":["Hi","sa"],"split":"Hi-sa"},{"no":42,"word":"Huja","parts":["Hu","ja"],"split":"Hu-ja"},{"no":43,"word":"Jari","parts":["Ja","ri"],"split":"Ja-ri"},{"no":44,"word":"Jamu","parts":["Ja","mu"],"split":"Ja-mu"},{"no":45,"word":"Jaga","parts":["Ja","ga"],"split":"Ja-ga"},{"no":46,"word":"Jaji","parts":["Ja","ji"],"split":"Ja-ji"},{"no":47,"word":"Jiwa","parts":["Ji","wa"],"split":"Ji-wa"},{"no":48,"word":"Juga","parts":["Ju","ga"],"split":"Ju-ga"},{"no":49,"word":"Juta","parts":["Ju","ta"],"split":"Ju-ta"},{"no":50,"word":"Jua","parts":["Ju","a"],"split":"Ju-a"},{"no":51,"word":"Kaki","parts":["Ka","ki"],"split":"Ka-ki"},{"no":52,"word":"Kada","parts":["Ka","da"],"split":"Ka-da"},{"no":53,"word":"Kayu","parts":["Ka","yu"],"split":"Ka-yu"},{"no":54,"word":"Kaca","parts":["Ka","ca"],"split":"Ka-ca"},{"no":55,"word":"Kata","parts":["Ka","ta"],"split":"Ka-ta"},{"no":56,"word":"Kera","parts":["Ke","ra"],"split":"Ke-ra"},{"no":57,"word":"Kena","parts":["Ke","na"],"split":"Ke-na"},{"no":58,"word":"Kita","parts":["Ki","ta"],"split":"Ki-ta"},{"no":59,"word":"Kiri","parts":["Ki","ri"],"split":"Ki-ri"},{"no":60,"word":"Kopi","parts":["Ko","pi"],"split":"Ko-pi"},{"no":61,"word":"Kota","parts":["Ko","ta"],"split":"Ko-ta"},{"no":62,"word":"Kuda","parts":["Ku","da"],"split":"Ku-da"},{"no":63,"word":"Kuku","parts":["Ku","ku"],"split":"Ku-ku"},{"no":64,"word":"Kubu","parts":["Ku","bu"],"split":"Ku-bu"},{"no":65,"word":"Lari","parts":["La","ri"],"split":"La-ri"},{"no":66,"word":"Lalu","parts":["La","lu"],"split":"La-lu"},{"no":67,"word":"Labu","parts":["La","bu"],"split":"La-bu"},{"no":68,"word":"Lapa","parts":["La","pa"],"split":"La-pa"},{"no":69,"word":"Lima","parts":["Li","ma"],"split":"Li-ma"},{"no":70,"word":"Lisa","parts":["Li","sa"],"split":"Li-sa"},{"no":71,"word":"Lita","parts":["Li","ta"],"split":"Li-ta"},{"no":72,"word":"Lupa","parts":["Lu","pa"],"split":"Lu-pa"},{"no":73,"word":"Luca","parts":["Lu","ca"],"split":"Lu-ca"},{"no":74,"word":"Leci","parts":["Le","ci"],"split":"Le-ci"},{"no":75,"word":"Mata","parts":["Ma","ta"],"split":"Ma-ta"},{"no":76,"word":"Meja","parts":["Me","ja"],"split":"Me-ja"},{"no":77,"word":"Madu","parts":["Ma","du"],"split":"Ma-du"},{"no":78,"word":"Masa","parts":["Ma","sa"],"split":"Ma-sa"},{"no":79,"word":"Muka","parts":["Mu","ka"],"split":"Mu-ka"},{"no":80,"word":"Muda","parts":["Mu","da"],"split":"Mu-da"},{"no":81,"word":"Mini","parts":["Mi","ni"],"split":"Mi-ni"},{"no":82,"word":"Mina","parts":["Mi","na"],"split":"Mi-na"},{"no":83,"word":"Mona","parts":["Mo","na"],"split":"Mo-na"},{"no":84,"word":"Nasi","parts":["Na","si"],"split":"Na-si"},{"no":85,"word":"Naga","parts":["Na","ga"],"split":"Na-ga"},{"no":86,"word":"Nusa","parts":["Nu","sa"],"split":"Nu-sa"},{"no":87,"word":"Nota","parts":["No","ta"],"split":"No-ta"},{"no":88,"word":"Pipi","parts":["Pi","pi"],"split":"Pi-pi"},{"no":89,"word":"Peta","parts":["Pe","ta"],"split":"Pe-ta"},{"no":90,"word":"Pagi","parts":["Pa","gi"],"split":"Pa-gi"},{"no":91,"word":"Palu","parts":["Pa","lu"],"split":"Pa-lu"},{"no":92,"word":"Pita","parts":["Pi","ta"],"split":"Pi-ta"},{"no":93,"word":"Puji","parts":["Pu","ji"],"split":"Pu-ji"},{"no":94,"word":"Pupu","parts":["Pu","pu"],"split":"Pu-pu"},{"no":95,"word":"Papa","parts":["Pa","pa"],"split":"Pa-pa"},{"no":96,"word":"Roda","parts":["Ro","da"],"split":"Ro-da"},{"no":97,"word":"Roti","parts":["Ro","ti"],"split":"Ro-ti"},{"no":98,"word":"Rasa","parts":["Ra","sa"],"split":"Ra-sa"},{"no":99,"word":"Rasi","parts":["Ra","si"],"split":"Ra-si"},{"no":100,"word":"Rapi","parts":["Ra","pi"],"split":"Ra-pi"},{"no":101,"word":"Raga","parts":["Ra","ga"],"split":"Ra-ga"},{"no":102,"word":"Rabu","parts":["Ra","bu"],"split":"Ra-bu"},{"no":103,"word":"Rusa","parts":["Ru","sa"],"split":"Ru-sa"},{"no":104,"word":"Rupa","parts":["Ru","pa"],"split":"Ru-pa"},{"no":105,"word":"Rugi","parts":["Ru","gi"],"split":"Ru-gi"},{"no":106,"word":"Sapu","parts":["Sa","pu"],"split":"Sa-pu"},{"no":107,"word":"Sapi","parts":["Sa","pi"],"split":"Sa-pi"},{"no":108,"word":"Suka","parts":["Su","ka"],"split":"Su-ka"},{"no":109,"word":"Satu","parts":["Sa","tu"],"split":"Sa-tu"},{"no":110,"word":"Siku","parts":["Si","ku"],"split":"Si-ku"},{"no":111,"word":"Susu","parts":["Su","su"],"split":"Su-su"},{"no":112,"word":"Saya","parts":["Sa","ya"],"split":"Sa-ya"},{"no":113,"word":"Sega","parts":["Se","ga"],"split":"Se-ga"},{"no":114,"word":"Sere","parts":["Se","re"],"split":"Se-re"},{"no":115,"word":"Suci","parts":["Su","ci"],"split":"Su-ci"},{"no":116,"word":"Suhu","parts":["Su","hu"],"split":"Su-hu"},{"no":117,"word":"Soro","parts":["So","ro"],"split":"So-ro"},{"no":118,"word":"Tali","parts":["Ta","li"],"split":"Ta-li"},{"no":119,"word":"Topi","parts":["To","pi"],"split":"To-pi"},{"no":120,"word":"Toko","parts":["To","ko"],"split":"To-ko"},{"no":121,"word":"Tahu","parts":["Ta","hu"],"split":"Ta-hu"},{"no":122,"word":"Tua","parts":["Tu","a"],"split":"Tu-a"},{"no":123,"word":"Tiga","parts":["Ti","ga"],"split":"Ti-ga"},{"no":124,"word":"Tepi","parts":["Te","pi"],"split":"Te-pi"},{"no":125,"word":"Titi","parts":["Ti","ti"],"split":"Ti-ti"},{"no":126,"word":"Tiba","parts":["Ti","ba"],"split":"Ti-ba"},{"no":127,"word":"Tani","parts":["Ta","ni"],"split":"Ta-ni"},{"no":128,"word":"Tuju","parts":["Tu","ju"],"split":"Tu-ju"},{"no":129,"word":"Tema","parts":["Te","ma"],"split":"Te-ma"},{"no":130,"word":"Tawa","parts":["Ta","wa"],"split":"Ta-wa"},{"no":131,"word":"Visi","parts":["Vi","si"],"split":"Vi-si"},{"no":132,"word":"Via","parts":["Vi","a"],"split":"Vi-a"},{"no":133,"word":"Waya","parts":["Wa","ya"],"split":"Wa-ya"},{"no":134,"word":"Yuyu","parts":["Yu","yu"],"split":"Yu-yu"},{"no":135,"word":"Zira","parts":["Zi","ra"],"split":"Zi-ra"},{"no":136,"word":"Zero","parts":["Ze","ro"],"split":"Ze-ro"},{"no":137,"word":"Bayo","parts":["Ba","yo"],"split":"Ba-yo"},{"no":138,"word":"Bibi","parts":["Bi","bi"],"split":"Bi-bi"},{"no":139,"word":"Boni","parts":["Bo","ni"],"split":"Bo-ni"},{"no":140,"word":"Buli","parts":["Bu","li"],"split":"Bu-li"},{"no":141,"word":"Cazi","parts":["Ca","zi"],"split":"Ca-zi"},{"no":142,"word":"Dani","parts":["Da","ni"],"split":"Da-ni"},{"no":143,"word":"Doni","parts":["Do","ni"],"split":"Do-ni"},{"no":144,"word":"Gani","parts":["Ga","ni"],"split":"Ga-ni"},{"no":145,"word":"Gege","parts":["Ge","ge"],"split":"Ge-ge"},{"no":146,"word":"Guru","parts":["Gu","ru"],"split":"Gu-ru"},{"no":147,"word":"Hawa","parts":["Ha","wa"],"split":"Ha-wa"},{"no":148,"word":"Jawa","parts":["Ja","wa"],"split":"Ja-wa"},{"no":149,"word":"Jojo","parts":["Jo","jo"],"split":"Jo-jo"},{"no":150,"word":"Kasi","parts":["Ka","si"],"split":"Ka-si"},{"no":151,"word":"Kaya","parts":["Ka","ya"],"split":"Ka-ya"},{"no":152,"word":"Kiko","parts":["Ki","ko"],"split":"Ki-ko"},{"no":153,"word":"Kori","parts":["Ko","ri"],"split":"Ko-ri"},{"no":154,"word":"Kura","parts":["Ku","ra"],"split":"Ku-ra"},{"no":155,"word":"Laku","parts":["La","ku"],"split":"La-ku"},{"no":156,"word":"Lidi","parts":["Li","di"],"split":"Li-di"},{"no":157,"word":"Liza","parts":["Li","za"],"split":"Li-za"},{"no":158,"word":"Lulu","parts":["Lu","lu"],"split":"Lu-lu"},{"no":159,"word":"Mafe","parts":["Ma","fe"],"split":"Ma-fe"},{"no":160,"word":"Mani","parts":["Ma","ni"],"split":"Ma-ni"},{"no":161,"word":"Misi","parts":["Mi","si"],"split":"Mi-si"},{"no":162,"word":"Musi","parts":["Mu","si"],"split":"Mu-si"},{"no":163,"word":"Nana","parts":["Na","na"],"split":"Na-na"},{"no":164,"word":"Nina","parts":["Ni","na"],"split":"Ni-na"},{"no":165,"word":"Noni","parts":["No","ni"],"split":"No-ni"},{"no":166,"word":"Pala","parts":["Pa","la"],"split":"Pa-la"},{"no":167,"word":"Pera","parts":["Pe","ra"],"split":"Pe-ra"},{"no":168,"word":"Pino","parts":["Pi","no"],"split":"Pi-no"},{"no":169,"word":"Popo","parts":["Po","po"],"split":"Po-po"},{"no":170,"word":"Puri","parts":["Pu","ri"],"split":"Pu-ri"},{"no":171,"word":"Raja","parts":["Ra","ja"],"split":"Ra-ja"},{"no":172,"word":"Rani","parts":["Ra","ni"],"split":"Ra-ni"},{"no":173,"word":"Resi","parts":["Re","si"],"split":"Re-si"},{"no":174,"word":"Riri","parts":["Ri","ri"],"split":"Ri-ri"},{"no":175,"word":"Rudi","parts":["Ru","di"],"split":"Ru-di"},{"no":176,"word":"Sara","parts":["Sa","ra"],"split":"Sa-ra"},{"no":177,"word":"Sesa","parts":["Se","sa"],"split":"Se-sa"},{"no":178,"word":"Siti","parts":["Si","ti"],"split":"Si-ti"},{"no":179,"word":"Sofa","parts":["So","fa"],"split":"So-fa"},{"no":180,"word":"Suri","parts":["Su","ri"],"split":"Su-ri"},{"no":181,"word":"Tada","parts":["Ta","da"],"split":"Ta-da"},{"no":182,"word":"Tara","parts":["Ta","ra"],"split":"Ta-ra"},{"no":183,"word":"Teti","parts":["Te","ti"],"split":"Te-ti"},{"no":184,"word":"Toni","parts":["To","ni"],"split":"To-ni"},{"no":185,"word":"Tuba","parts":["Tu","ba"],"split":"Tu-ba"},{"no":186,"word":"Vina","parts":["Vi","na"],"split":"Vi-na"},{"no":187,"word":"Wali","parts":["Wa","li"],"split":"Wa-li"},{"no":188,"word":"Yeni","parts":["Ye","ni"],"split":"Ye-ni"},{"no":189,"word":"Yoyo","parts":["Yo","yo"],"split":"Yo-yo"},{"no":190,"word":"Yuni","parts":["Yu","ni"],"split":"Yu-ni"},{"no":191,"word":"Zulu","parts":["Zu","lu"],"split":"Zu-lu"}];
-const TOTAL = questions.length;
-let current = 0;
+const TOTAL_QUESTIONS = 69;
 
-const qNum = document.getElementById('qNum');
-const qTotal = document.getElementById('qTotal');
-const progressPct = document.getElementById('progressPct');
-const progressFill = document.getElementById('progressFill');
-const row = document.getElementById('syllableRow');
-const card = document.getElementById('problemCard');
-const quiz = document.getElementById('quizScreen');
-const result = document.getElementById('resultScreen');
-const nextBtn = document.getElementById('nextBtn');
 
-qTotal.textContent = TOTAL;
 
-function render(){
-  const q = questions[current];
-  qNum.textContent = current + 1;
+const SHAPES = ["Persegi", "Persegi Panjang", "Segitiga", "Jajar Genjang", "Trapesium", "Belah Ketupat", "Lingkaran", "Segilima", "Segienam", "Layang-layang"];
 
-  const pct = Math.round(((current + 1) / TOTAL) * 100);
-  progressPct.textContent = pct + '%';
-  progressFill.style.width = pct + '%';
+const IMAGE_DATA = [
 
-  row.innerHTML = '';
-  q.parts.forEach((part, index) => {
-    const box = document.createElement('div');
-    box.className = 'syllable-box';
+  {
 
-    const first = document.createElement('span');
-    first.className = 'first-letter';
-    first.textContent = part.charAt(0).toUpperCase();
+    "url": "https://www.ixl.com/~media/1/5bXfBU1rN0LrHtaVNFm58---rO8gTvR5mKJOlmDnQvDS-I0BekHsMH0Hsfz_woj7dEFb_iI2zy9EDNLC2SlghGQrL_DrLaCublNgM79k4-dQMAFO0yxCPvX_H80FgqpFtXUl_vvrbn1Db9f43SIYOUUjgRl39rjNAJ9yW9Jkzh8.jpg",
 
-    const rest = document.createElement('span');
-    rest.textContent = part.slice(1).toLowerCase();
+    "answer": "Lingkaran"
 
-    box.appendChild(first);
-    box.appendChild(rest);
-    row.appendChild(box);
+  },
 
-    if(index < q.parts.length - 1){
-      const hyphen = document.createElement('div');
-      hyphen.className = 'hyphen';
-      hyphen.textContent = '-';
-      row.appendChild(hyphen);
-    }
-  });
+  {
 
-  card.classList.remove('pop');
-  void card.offsetWidth;
-  card.classList.add('pop');
+    "url": "https://www.ixl.com/~media/1/S_Eo9XdVGhOkI9KIZvK-RO5Tlb-OWc5qNgY6tDdA18sDQySaDPVelwjHqgRJEAvTyqV-0cyEehqyQxyXC66Xrp8HwGptvj3qyhgTP20cqNVoiX31rUmAVmX4e0vH1B22T-lnVcAa3RRHNEHjBDyXEeewO3xiwCANGfXNtsBOzQs.jpg",
 
-  nextBtn.textContent = current === TOTAL - 1 ? '✓ Selesai' : '→ Lanjut';
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/cORgb5Sy8WBVqlJfdtSs2zHjY24wmTb42VeieQnjATOlKbTooM6Fy9hXTl49WWaBzzogJ36cMi8OqEWPou4_66OVFZ4G6AKoBQpStB4Sa-H-7n9EGHE2LJIVq9d_WnYU_XJ1OJuQZjGkeN3eu7cvL34c2GNKczOeL6752vzWEns.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/ljsV2GiruHOyhha9FZICkcx8FK50iZNizZ02f670bjZrKrRmGQNVe4kOL929c54zYavT8TK6KA_y7ygnG8GnjGk_RgURtXPpqA3HzJxAcSAW17mI41uY25DUbMNzaaGFZKfJdhT2ippOW3mA_pSDIutZnDmtq8T4b8aCb0u2ojs.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/KcutuxEe1K6wKM711V_0nbYoyMEmOp6-HWUwx4WvuDcSlWVOPD05osWDG_Bd802G6oie33BbkEeT5lzMtF_4qTczTvSCWfBPDpTlvAFHFE_qSxbinYY9Quv2XTEksMv-8CvkUF83E_7KlUgRax76s4MDj1S1ykNMMs83dRa_exg.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/wJvdIM914Ar25PIxoYt70iscK87nVxIKcQi5S2TqOi10fJJWFcvriA38nAEaLHJHOTz8g71NFzefAlJa9HPmmniiRLjMBW3WyI4XcLjnqA5bfKaWJ5XrrKVQ_m42m1ywzvcHrSMA7vSOdL-MTzw14R1QsB7lAhRvBp_HEpWO-YA.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/8vKpEbw177GdQiFOkjqYjucLVSKSIjl93j5UpJEeyGJfltHwLzb6YZpitDoAIzYEnu7CRopWZssv8A1WA0fVrE1tS-L2TTRtXcr_wcBtIFwOOCxke7QeU5EJfOzacp6JurSrXDlES13CKEJbYNkh12sI3bg82UrdBE2Rj7jd16o.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/eamsOf1WIeoedNS3OafRw3guvNosBUChkOXyMQ9k5fY-58thBktzUw7qUkAv9pMhsKgs6TPun-PxVSr8Q9xrMXwgfxPi-QGt_gP1-lfy0Q8sO4a1vQErP_4i3ZiW2v4TkQS2qsOh6M9egHnDv8jKNcrWRdqp5GcdyPywTNqaJeg.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/4v9ovyRYnrLesWbWb5tpx5xFb-7XCGOLDHEtXnmET3Di9Mw1_RnLVnIMusfL7vq5OWShqA7NdV3rmARikULCi1U9w23wAG3RwMSBbYcC03J0dE3QeVLvgBPCpgF6WZW2tm9fb9L5Zyggc5RrcuadzJW4PnLbylItzairkjFk1-4.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/-Um_smDF7achU1b76FwmWevSqO7vZPrPvD45RMOmmFgNJMtkX1luH9--F_ZoBSCd7SIGavFg0X_YLLMb18xtLxHkqcENcBWQtLgp5r51xTYqpfp5hLaVa_GsX1odxqh2y3kkt6usz2jKANnJ9rsiqyf_8GMQoiUVvEmImpwQMqU.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/0uKFGBLtCNWMKoITc3_FWcoi9HDHMp6EPJVqA-mA1e8ZK5edgrQeaXogGDvyMEbL5KNTR8HDHGqimt-roA2JsOFND41F9Vsqo7lA5x6w9vZEBTFGPV0pvLwx-u2Rh3GWk1HSvA_jsYCWO6D8cypoB4acl6qsnH2m-BemVUmvDq4.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/IUGUvIS1cxuczgH5K76hJdbeJcXPNkiVWhiUniUYvQydfrzWpPx5sugFxgRyqrO5V_IgQnzNIMaxHWq1VSzGtrPnVsnyNSAsdNVgEhBjS5iHCRzlVhsCOomiJxAkzh2YzrbSX1zguaLB-OKu1WUnyL1QVZPgyWyPetHvLS8jeMo.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/FbzXTqwYmE-gJJYDmMntjnIGtmsa67R1kdTyenlwytEqGi70mOk54dW2bysonP7aE7VHfVlZOOP7wnoZovziUKiYuqqLdeOuZs2RuQ1loUfoM7wHhT-ugw2c-Q7lu9m0LGVkb6HXR4AxuZKIihL4k9lk6qJBuR_IgfkCWxxKvUY.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/_xmzfDkNdHE7RQMTcY810aq9FtsqH3hlpg-uOmD48SR-qfSP70C5GmnAi3MFjQlkz7WjGR60Yinu3Gn-7nKax2UFE_al8xucPFeWI-jHCf89tc3Up1k9grVh10gWogbNgYtmEi8DTRC7jLlG-6wrr0X0_gCeVX5ZWEC-l5ahdus.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/EG_bQ-k_kTN0p3DJf1LTGxnztNYWhktGOmOFZhvDFzVHMsO6NnX-Ollx2-n7kBTzMaB-KAHmNpncK4HNTInDy_MRPugWP3DtR--fWURr6bfgkOMXsNhwQWaelBxkgUAwLBXUnKi8_hyJyL_KLaQH3vRZxqYf_VwvXpWBQS-hmXo.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/4NXlelTPtKpTfZIZCshghipyR93cOaEPvIXR-xLtieNk2wVEhNQAVYUEraCuqiBhAT17KmTRlHnKoc2zKyzEBt5GzCf1vd82T6O2WaUy0I3IegePPggxIkrdi17BA-CSQQRrq9rWdMoitgtMGrNTF2p1mPWbpBZgVrTI8Z59m84.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/dqSWaoaF5-_rbQcBMZZCYPyHPjtaTl15pcWBE2EgzE1AvjHhgp99s34YWSxkXH-vfJN063aiYXM7TvbzfCEEF7JOkBu4HxPZ4GkxpTlWaz7q0McBviKHp6n7FD5PDHimsQFdE8SlwIroJi48ROOi5wcG3AKor5orYf90NH05RFI.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/5HYv1NO4NF-F0BZ-InBo9dFI5__MfB_7SHTPprPSKqJz0NMddJaxpdZfyxovNJY5efJjWhP6Zc8l3ln57N4iM_U9plbWCxLKsxJA8TCShcC3pNPK9p_PlMvywV6E2SnbuRblOboQNst5ChSkhcdteaD7NAwLTURh8tO5mUsTJU4.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/ige-Nt2TG1D8NXDdc8Ynz5qc4b9ND4Tg71Mqz2O23kNExWAfGIroFG1SRJ4-KZ4NfgVAV5mT3ZuuBRVkn81Vc_7NZr_WKtFHt7DvDAUfliqXJyqKC7lsvoNTZ5hix_cEBuSNODePOEhyLrhgrxwTmObWTupTqE7h1dr7EuMOwvg.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/XAUX0P1JwaaUt2AVlEJxNTf3fSe2axCor8RnjaNBHrLTdVABDVfB_RBnsyu849d3HhbW4--qlNtvrP3DyEVQtUwL7Q_18YWQf--7wJ3ZKrFQKTDVVrpp0Kal5duBUBfwWeW6JF9L2ny69CaJgqhE0P_qFQj_M-_v_xD7w0_kRAg.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/n5qfW9SkAL8J1JxeP3JWlPOKrzT8qhB6taN7Kb_JP15wrzAITXR0L2AUJSrc92pIDCANrYZzcU7U1-uPjPbcXrZOyCpgbfW4dxDMctMTnGUOdkZQLipwpbW8U1fPSVocl796C9KHGiBlSJQ5S6lPnGY3cjtLh1-CuwH8T8PwFLE.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/gnk7oKNMAfO4cGF-4JOiNyp15SZqOLufvgMoVSZVzZvqGYjd8_Z-jiAGdYGxa52Of9lZyiaPhEH2NsxTtkmuv4WDxfpQPP216iIeZ72GB-wPzE1aDu0xa1vH_V64BXVSAd7O9Ct_RuokWKzIOLn5W96kf2gBwg7EpmJpSe39MiA.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/Y0-7XFxB7BA7jiGxGhpnu5yp3kthDKqhR8Z8Zwq9v0Mc7tP4ESM-s1vaS4-lznhOB6DxF_ZcNNfZaV9M-orloMRWIog6GLxDae_vO99h2kqjbGDy6-j0EW3gjYL0WFDg1JNlTLjkDTRA67eCypmES9XAtdppBAMQ0CgICCAv4YQ.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/sBqumVaj8v5tLPpvwXX2wrxzjdaK8A78Yaemkv8dOw0grCKNHd-SYmAkRzAt6uier389KKdznRenIjsQgJdbiSJ30GA_0_d6meonY6Rmo6js-rrL9EEHRfCtGLLWwQ4gqBOJQELmTcoFE5IQ_CqkxfsVunZxRCsA0P37O_Y5bt4.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/EYpGHww2BHVNeoCF22blqsSTFBEE-HKIoCkQ8iY81CuSQF9Xt7CQg9IiDF7qrxOlQtqkw9RYp9rd0VkGEh04oADSiietM9auWOWVZ3wk1ukx17YtpZnulYDdRaDBzaqGeFO14wYDQUzPSEs220wmPZPpMfAHZRsLUsq8yS98GLI.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/IYDMdDRZrxwmrgm1yvg3h2MmxIiU3omDziyVkVqRLzTOkypXO5lyZOBXVfwGxTJDH0rEv89GImxkfg7nqDnndiRyB1hiaI_CRIDy31TbsMkwb2Bi-zNqJqZUkroXlCj1SIGmlsNTfEp5i83BAXspsVhsQ7P7FW28DbYhI9GSWUQ.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/mkD-hYffvMiMxveZeC6x6VpdRWm4rNdeSLstJAVRCFiQ6P0gncQ5VkhNz-jZpbyJGdQF69TVNQvjst3SEmFthrXjXb8UPCmgjs5_0OGPfDiPCT7UGPApEgEfAnGmdFNENFjdw6FLRKX0ExmC8AWXwtKjm-P1tZeX46ULcDsUlkM.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/oGoPjPrvgd6on-W0gFe6PjHtQKNlmDlzBtNHQ_Q01owCjk-RdNrCmnmeXH8wmXTAv8hgBtFSjlXwnt6frEVV8iVwMgccbmt8Z6XbVbnETFDjjq1aEi2ckSmDXZeOj0pR2ydGQFxSz1JBChVjV0FEkHbp9OK1Mmnlkcha_CjnVd4.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/NZYWUKjTt0BCQdwdkdYDGIlHIzq_q9Dt4ioXl_Ke8pnRPy0BjyMmMjBNfid6r4ySI1hKPvs_g-4u90BxduD9grgYwQicjOmMyNkGmsahhpzFWGXmBXcFA-WoaT3RTm_XWnRDoeSxbbQFwLLop18-mL21D3uMId6lfYfG9OK3rEs.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/VKLAJdDwG-V4BM5lcQbp5DU0_cOG6bcsli169GSINDW5q-06uiFL-5j2eIM2OcJerMS1MFBpAR6OZ65NGh6pYY5HwES-y1Xqziu2s33weU87fQqbOQigJLQUWT41zNrpsRv0b_kEQ9UuAQr7ZlYivqyP_IJ4yH6aKkFyLd3i7o8.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/C9VKxJZw08k3F70o1StZjjC-R6VciChN-yCEElxFyrNoMU78H_FoQa0snuk7wkR-gvj_lpnmVlaMhefAcUWfffqqEk0Tp-UgetDrdC44nwhcuDMZUjsCbEvEeJlDKI8VtVEQM_81o6-uLt6dIH6ymvFum9Lt7Z4sYn47ST1lRPE.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/XPxSXV906eYTzLNwkMaAWOYFsb1zEldzRlw8wn9wsbtBrpUz5L_Zajdloc-cbUmLhjgD3ghyO4HLRiHBdSe2Rt4I2RE5qoViAZDDFHN2h_DtnUzEjE_pHZg5tEvnKIILDPIM42pUN--sFxtIJ9VZrkfV08CA7Mr0UViC2Ye5rUU.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/3yUq9DZvE2oL6AsaQzuAkgBtZvCtBFQgJ_dbt4Kk1JcY89_OaMa41z-_CXGQOkf_yzJKJO3kLKwbh6oKnDXjTNoaeXQ1n-sQ1cTWZQ-AVYKMPycDU0qTatx7d1UdeRNLGflV7YLVxgy2fNfOtF2DSGk2RfbsnV_x6Z8gaQT2g28.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/B7eHXPr2gsn64OohbNIfoPbfgKLeN_kB80at3W8MdKPWOUNYGlWJo3Uu5vOZbI33Kto1jfm_Z0LyKss7ruQ6zJttcDiIJFmUUN0yOwnBISqBoSpicOXXHTkqW9hngxnXpg3O-hDPP4khfQbfQIHZjBZfgH9nNFMTnY3UjbRLnzs.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/0/e0O89pti5j9kJzNtgvzSz_x8MzCwuX_YWnekPWVZsgtnut-SSuNMSv12zMY8Z9vTnifHhe4IMH9JclCgLL7teUmdWgjRLQijxZda-I2uxdV7wV2lT_jS0hJFLI9aytVNfCOB7RcFDCTA5iY9CUYH7ecpRbIFTWm2FRWa52jbRdMIQ7Szlk6-MeVT2i_fPOY1.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/L8f3KIbwFE2iBHcH6X9ht5-Nzbo1n4Foc5E2DU1caDmUYgMDYvzvUlFx6p_SsLFZe63bsmSwoD0XaCP2lk-Pd7QpiZ6cN5G5sTDzeQvHh9o88FgjAhjpEgtfp3gwS7OM6wDILZLfM306xUCmxWHB5ixs3y8K1huwpqhkYyJMQ4s.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/0/woXMcWCK8Yk2kfVS1Cpe_n21-FIUsgDfKFTU11jaVz5mgu093hbC0eQJ6uWDLF4etQ65vZv_Rp6yMLb2TjlAbMCDQzWZqIEUbqfAOcZfNqPKs5Kn-6DSIDH8qLVfPz3gisLZ5jVh7XUbmmVJ5WHp6c7NTvggl-0cOpDtkXj4lbRI-n2ttazVFXDC1Ex4T1qm.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/6tWtDqbN75PK7nqtVBqss9BYqVbmgIIxdkR5ktVawJi6_fD-2Ge0oq2GgwGgPEP6YCJ4bvxuyhuCejlVYGLCaxwOaf5Rg8LHSmqVbgELeToPP7S-cOHaOpHr-vJM2urczE1SC-oOZ3638OQLO8xryDPnyePvUfzNiAoFjJdia30.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/OQbSHwad4OgTga4UnnPvHk4iSsOnlv3YfxbRJuxpFhYgNlaDvW3GC2fd4HcUZHONqOtLWS4HgLQaO6cz1AA3w5wCDr7Insbypt-siS8oD3NasfFWErfnMx0NvfdyEkjEbyUBEX16ws8KS0X8gYE4f6vBUviDJkxfNMCKaLT6NUo.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/7Coqx3Q3Z5Gp00WIe1obKfv9KBhB-uZVIkJuuzpdlRYRUNa6_0bc9RJdN5lkhY_3REhULKsO53Zx9TkAu4Hyj_vmAV34vbGx2y5xkYAls3MT0TQiytymhLWCR8Oe8wYJtKLtd9ucuv-Uo83_A8DG3OWpq6tCQtvzipalYdXeUNc.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/RRgPBIXtkCTBjkBNJTcBp0nljmlO3vqIHKl1uFMGV6UezFmJeExYHrfnFsvxRyUEBl32O9HguOGzyj_4Yip5fQK1I7KDNpt8f_OxEcaqnQ4ZSh2f9nuqop8_9uMsZPZdlZajL21xGE2vIzTC5pnWNL_JZyCsCYVmrI8WS1Unksg.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/pWvyrL2axuyj-eJim6sm--nhwur9wonsel1XqNDML9Sxa2jJVUeHXDMSxM_jdotbNzRrsIiK6O2cuLnJITjEkVsdtRAyFxrtb0AwjXHO0EbxA48U2o4P9jrogg3hYbOWajJzMGq587OtSTrMmZg4z-hlmIWHoPCjs0Oj8gBwHxs.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/f2A4PZSX1rUsNqRWkRcyh_liEArCrlaqvh1TT1ZElCqjzDqb6A7AGh5kHZm48GR_itfqBA651GsMtqpSyOrgNzR1o-qMRLCDEiOHPxqQd-fP3F2JcDjmHEXSCDZ2GW5U8ViAdWm1lPhV1DkT9vbdmjQQY4Y4Kjp84xl0koKDcSg.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/RpJXRknJvxO_vIgHA_9NH0IsLBiERGXoXcYGXWeiwoTWEGv4CUgalC8ujDT_CCE1JN5Vwt_k-3LItlRNeEYVSZhoHHrs8tvFxatStHT_R9P5_J2xpgQ2QYtZoxuLDxXy-Ib3pj1IPxlBxKEWRiqzUiiEUPi86Y4Kx6J8uo2asps.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/7a63b5_kiMhmhefPXd2mbV5u9G0EcbuiA2zU6-Rf8z3Gae4TJOca-NpZn8S3x3CfQM5SwnV6ZutGlhgsWTXpgHqJK7VycicxC44iQ_pke6CGcZ7jIy7IN56cMkbytvAFdaUqQAh7HZX5aVN3IjSqvgFwBUKN6BqSBMt_-l0Y420.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/Jb3I73yX8OlDn0xqAwA6XVSA23zfeRMBN6FwlFF4a-AO-sedK2GyY_MNDkuogU4QumjrB3U3czVFXi8P6veIUsdeSmX7Fy7nXGD6tT8FS9I3q959k1PedOCrUK0hlUTK2vGfeURrwQKaJHc7NxFP71p-kIfN3-aR5RQXCysvDPU.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/YJpHDzUnObO1LA5sNbvp_YJurUkJJQc7qWZ1u_5i6cKk5I3BYs0jSuk1ZtW7ZJUQR_wYe7u31zA4T31FezQdPb2uVgsUbUwFUFqydRM_uhM7b2XCpY_DyVvA1XvhxnNA_3zB6NVYXeIZ1C-yDtrctsb5wHw2ZOKdVGY45OZqTLI.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/wXVFGq3GCrELRYgOBpjTIl-7NW2HWBrgEeqSgEpe75hF6ub3xpRjcB0Ut94wPyL0E2BchSliURZMx4HfQQMEDEFVqgbq9kCVXKGQtWWu70M6-m4EjT5hY3fPxJqA17kaBRxcvIM75ajNqR4nWaAa9Z6syEDvyN3s_JLiuiiyrcc.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/a47UDo9mmu67jExuXEV2Ttac1oXw4A_D_OiPvF10LD84uAPU90lL2yG3QLbWCY5d5Iby7HYSvPLnDSmb4vUTt-ejSE4mZDsvsrd1iv9-54YiIRCWBERFvUCJMkdd9gM-zU5AzBJfsdwW2XQkT7j1EuDUNstqyV3d5UhVW_DOoQs.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/0PF2sDwmqS6tc-NI21fbuT7QUqbZ1vu2r3F70v2fIezVt9as5Y60IEXwLdriceoSJUIkKTXTqg1gR0R1o5Ngq4HsyIn5eib5g1qnYePX8VDLYUBs1rAOhSPSFVfk1uhwq5iJCM8hIOD6w_Pnqiz6cSDX7LYmeniM4lJcaSQAP-c.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/PeQfFc_pxtqfkXhfnN2f6FrTVdJ6Z0q0_8w450Hwv7U7ICKQvZ1ChijDa1nvS9BOaZv5yMZuhXrxQ9OsVs0CGee_vvTq-Td99rbZFKgUMwubmge0hjTb5T_pruQ6puj8ir81tzItdXKvYd7OKrl-hFteJvNISpPxjClU9n8CXck.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/0/oJtqNZWqx4CbfSHYieqOd1axQJJ1u0agMCMC5rwBYfVrdmeUh8RnT0eLfG9I86yCQ3Gy5ANRWf2WZ_1QaitN1MyLaz18XV85d0WQ7Fdxvw3XhaND0U5VoleNg5uGsEBgHkQzz0YKAr3NDZVRyKe6cPZwU1w0N4Lnsad-0NMiIX524zVQokt_XEU2MzMzqoe9.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/EeKtM51ATBJeaTT7nah3O8jOJSkP8uOTeZ4Qo7PveUL7_XFm30IjlsmAsBg--lZKTlgrYf0tTS2aTqFihrCprw8iVUevL0jVIfyo68b-t-PF0H5I3kCFJauLhpWR7Id__TJY9GhoW7tcFxsBE8z49rD1LRPrwBGnKVn6wvP8_x0.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/zJcitUlWfoO33ZLuFQCXsj1-RBVD9xsoc9YtZn0_8qQ6Vzc3iZPFQ2ilGUOXaZMvRrKNxojJEfKTZTzEM354dN9fF5P8N9EfDl-gZY8lZmsTxZ4ss-JtCWO1vhJQf-vZPWLCYfS-LqteBFaBa3dhU04IaULpjIMt7oZrNn7TN7Y.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/YAdHDSaqml0n94gAWsieQp94alL2ATwi0d4RvzWlkJ4vZs-8oTAI8kSgWx4XN03mjOlFGttVdr5Ego6NCjQqTD4EV77rmNNLK1RSViEFofUDLZwknUVYTwhT2qcbfQDO23nhQ3Pxt6RSMAXCa8hVsbVh30PyImVAwOpB9o7G6Jc.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/jDTKiv9uAGfPMPbY9BK9cAY17DS7Ea4K15H_PnTfUCFrI-rYBfR-KptSmhQuSznHOHOd92bgyNxf1b5gjZxMABXhUQKyzyQsjrehsYbIZvn6VrbZ9BHLB1IDQj-oX4yohZQ88ogihu-MRLKOVGM1sY2vbx2dItd6kNRxoDtzKqY.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/dK5-KYHOu_O8aEz2owza2742BpijDK2DZe7i8-x8AdTTk7s6pz0J8vrxERewY7w_c9SM7P-eXUoWQvgvLwXprA7piYyB1NkYNqkFz814sIhxSLNAkK4vg66O-h5P8g9VybnXa3Fm5HBJPSOjFf8gMYcIpmsqEXHxf5ZG6x-ciFM.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/2cua7dHU4ez8EzoLJNf5GaODeH4u9SFpwYutUL8Zkg4yJnivHDdmTrOwycGaUkyt3q2WRbB64hYTtVY1O165F1HK3mhfCo0t4htSaeLlM14SJfweGp6G40_J95S1PyOdya_HUnaYd6ew1gD0gKzbMosutbJTjtDjYNJkAf9FB_4.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/0/sq8a5E092hVFSlv2m-A3PIVsSHj3PbvRthE7HV0NGqGxvyJ8NejcJBm1aahJJVPHoThRLIE6jD-7Z3P2ltusgXShql3pBcPoyjUOPwAHX72T-Ve3enDg9-_7BkYZfCUBsApESO5AaUY582fcdXD_tjIu36HvmI_jNI7p4LAzK-nwNrhkAPp518zk4xrNRzoT.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/UIMzaJFWbTLU8ME9S6iJkgSsl_ucO4kMcK05-ooLUpR-HbRGhM_PtyerEyUzn39jUPJXkybd4pxlfdnOgU5pRHzXVJYILNTwd5qwYEkderejC6WCEOV26fpuzsWHW9Ce01Woa62THImexeeQsek-w8C48InWrIYgMXcVFHfwXvw.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/DcF1zGXRQfmcZQIz3AABULylc5ptk42KgyH1MKOJ1bKWs-elHrdunv-xuZwgOh30-3Pp-VtCL6t8vgL0ptiFw5DJAXAV0ZidMmKs_Dp3t1n0vbkERsxKfJZMSWvQbDbspmIbvV-Csn-tMa6zipt63_Mg2_mMaf51EHdnLDJnc1g.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/tE8ArKfZpFifhfz_9rXvm4qChums9VxH9ETZ2KGavsVpiyM4f9TK9lJaRvVvDyxlewGSiOys-_CgGmM1ATks5QLOV1AaoqwX52Hj8zze7-xcr-WpcplDoZBcieIA8O4gEj96DShZkQYPv6X0F0CywuuRWhn9RSNFZqYESQW7Png.jpg",
+
+    "answer": "Persegi Panjang"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/DScQ_Bk3RknlKmUy_HuN79-keLHH0R3Z1YLWOIuBf-kplcX7tAto6XHp52btb-IWKHnbarPR8Mz4K-Bn4wol-uuO5A9xdl94YRU79c4tyTtKbSjcR_PCHDY-f5UpY1B0lxel8JYUNu830djfc9PmiGH9TGt8cP-Es7R2sKy53UA.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/0/4w_rCfz-UXklHxMDM2CDmshgdGeYQirPquGI7jdb_4B9IhiCekDyYyqMMzyZipPvxufdrVGpstCsGByImcJFlDKi-agKQHrIIpv3g8FcrAEErH0ZCk_MLF1RoG17WEzfqMUKsHNGMqxuqiAWIWv8O2M-UPoGvXKnWCvQpZGM9Z41cVnsfVIvkiv0WYJyOyiU.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/UQeje4WqVvCTP_3Vlkpa8yR1JUlzr3ypdpJw_MIVU8ZSIP-MwwMwL8k7YObxd0rFOLa18KeEuIQhbUtr12HmJ-XuVwBcSIbZvBkEhRqBv1fuNIeVcw2E_01dtRvcDZisAxEVhhVRZzlEH6bjWRBZuosMJOWjL7Is1Db2Rhj9DP4.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/s19NIVDYvEb7atV91UYW4UZjKEY1GYoQEyhRXZNQUGqK__bZhWGLMTZgumgP13i2z-sWxpQr5QyYfio-wiAnvGIbE3KIAXxtZAAVA2Rb31vX11vXbPdydaoXj1sEvSp-7z-uKKs_LHGQugJJq9F6E3bxPlx0eX-W16aLzmdesxc.jpg",
+
+    "answer": "Segitiga"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/1jDUDDbpd6NAlYeapQfYxHYF-FZTqrbzChy1YtrqXR6OSWS-VvgapbNDT9tP7G-AItizoa8brAaWsmWQN1K_gsfP62T-yFrd_w7gIDRatgNwBgmVBLGBesjYzJm-l4ugedzjTfnH6ObTNdE4gP23guWSsooJ-Au616P0JlyxOFU.jpg",
+
+    "answer": "Persegi"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/77QBYFZAx4YFZ5945_6Pw_o8ufocHkJy264r5TUaRK_7pkbvQtrce-C6NFvmseHReJRjmCD7nCnSx6I8n9SLIiDeF9uzAKMRh-lan-w-0j0Vow9WOLe_W0iH3-S4tcPg2vPMCDULqdQFvnYmlcAslIbPIQUtTz1pALzk8cUmM7s.jpg",
+
+    "answer": "Lingkaran"
+
+  },
+
+  {
+
+    "url": "https://www.ixl.com/~media/1/Yed_2r2zWq6VWq1qUAobMGgpWxDwt5sVmu4ZsCEnKrACFudatdkMiqdetOQ15PNzF4_aznm_SMiwLF6Wv-L3Ba4hVGDXVvkCs9YrJKLGGnwXl3O4eP-QAqQMWQEN6FzHUS8NwdLBtT4ylHCTUT9HZDssJIm3cRf3cY2hRICTPn4.jpg",
+
+    "answer": "Persegi Panjang"
+
+  }
+
+];
+
+
+
+let questions = [], current = 0, score = 0, locked = false;
+
+
+
+const qNumEl=document.getElementById('qNum');
+
+const qTotalEl=document.getElementById('qTotal');
+
+const scoreCountEl=document.getElementById('scoreCount');
+
+const progressFill=document.getElementById('progressFill');
+
+const shapeImage=document.getElementById('shapeImage');
+
+const choicesEl=document.getElementById('choices');
+
+const feedback=document.getElementById('feedback');
+
+const problemCard=document.getElementById('problemCard');
+
+const quizScreen=document.getElementById('quizScreen');
+
+const resultScreen=document.getElementById('resultScreen');
+
+const finalScore=document.getElementById('finalScore');
+
+const finalMsg=document.getElementById('finalMsg');
+
+const restartBtn=document.getElementById('restartBtn');
+
+
+
+qTotalEl.textContent=TOTAL_QUESTIONS;
+
+
+
+function shuffle(arr){
+
+  const a=arr.slice();
+
+  for(let i=a.length-1;i>0;i--){
+
+    const j=Math.floor(Math.random()*(i+1));
+
+    [a[i],a[j]]=[a[j],a[i]];
+
+  }
+
+  return a;
+
 }
 
-function next(){
-  if(current < TOTAL - 1){
-    current++;
-    render();
-  }else{
-    quiz.classList.add('hidden');
-    result.classList.remove('hidden');
-    progressFill.style.width = '100%';
-    progressPct.textContent = '100%';
-  }
+
+
+function makeChoices(answer){
+
+  const others=shuffle(SHAPES.filter(s=>s!==answer)).slice(0,2);
+
+  return shuffle([answer,...others]);
+
 }
 
-nextBtn.addEventListener('click', next);
 
-document.getElementById('restartBtn').addEventListener('click', ()=>{
-  current = 0;
-  result.classList.add('hidden');
-  quiz.classList.remove('hidden');
-  render();
-});
 
-/* Music */
-const bgMusic = document.getElementById('bgMusic');
-const musicToggle = document.getElementById('musicToggle');
+function generateQuestions(total){
 
-function updateMusicButton(){
-  const on = !bgMusic.paused;
-  musicToggle.classList.toggle('off', !on);
-  musicToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  const result=[];
+
+  for(let i=0;i<total;i++){
+
+    const item=IMAGE_DATA[i%IMAGE_DATA.length];
+
+    result.push({image:item.url,answer:item.answer,choices:makeChoices(item.answer)});
+
+  }
+
+  return shuffle(result);
+
 }
-musicToggle.addEventListener('click', e=>{
-  e.preventDefault();
-  e.stopPropagation();
-  if(bgMusic.paused){
-    bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
-  }else{
-    bgMusic.pause();
-    updateMusicButton();
-  }
-});
-window.addEventListener('load', ()=>{
-  bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
-});
-document.addEventListener('click', ()=>{
-  bgMusic.play().then(updateMusicButton).catch(updateMusicButton);
-},{once:true});
-bgMusic.addEventListener('play', updateMusicButton);
-bgMusic.addEventListener('pause', updateMusicButton);
 
-/* Help */
+
+
+function renderQuestion(){
+
+  locked=false;
+
+  const q=questions[current];
+
+  qNumEl.textContent=current+1;
+
+  progressFill.style.width=((current)/questions.length*100)+'%';
+
+  shapeImage.src=q.image;
+
+  shapeImage.alt='Real world object representing '+q.answer;
+
+  choicesEl.innerHTML='';
+
+  q.choices.forEach(choice=>{
+
+    const btn=document.createElement('button');
+
+    btn.className='choice';
+
+    btn.type='button';
+
+    btn.textContent=choice;
+
+    btn.addEventListener('click',()=>checkAnswer(choice,btn));
+
+    choicesEl.appendChild(btn);
+
+  });
+
+  feedback.textContent='';
+
+  feedback.className='feedback';
+
+}
+
+
+
+function checkAnswer(answer,button){
+
+  if(locked)return;
+
+  locked=true;
+
+  const q=questions[current];
+
+  const allButtons=[...document.querySelectorAll('.choice')];
+
+  allButtons.forEach(b=>b.disabled=true);
+
+
+
+  if(answer===q.answer){
+
+    score++;
+
+    scoreCountEl.textContent=score;
+
+    button.classList.add('correct');
+
+    feedback.textContent='✅ Correct! Great job!';
+
+    feedback.className='feedback benar';
+
+    problemCard.classList.add('pop');
+
+    playCorrect();
+
+  }else{
+
+    button.classList.add('wrong');
+
+    const correctBtn=allButtons.find(b=>b.textContent===q.answer);
+
+    if(correctBtn)correctBtn.classList.add('correct');
+
+    feedback.textContent='❌ Not quite. The answer is '+q.answer+'.';
+
+    feedback.className='feedback salah';
+
+    problemCard.classList.add('shake');
+
+    playWrong();
+
+  }
+
+
+
+  setTimeout(()=>{
+
+    problemCard.classList.remove('pop','shake');
+
+    nextQuestion();
+
+  },1200);
+
+}
+
+
+
+function nextQuestion(){
+
+  current++;
+
+  if(current>=questions.length)showResult();
+
+  else renderQuestion();
+
+}
+
+
+
+function showResult(){
+
+  quizScreen.classList.add('hidden');
+
+  resultScreen.classList.remove('hidden');
+
+  progressFill.style.width='100%';
+
+  finalScore.textContent=Math.round(score/questions.length*100)+'%';
+  document.getElementById('finalRatio').textContent=score+' / '+questions.length;
+
+  const pct=score/questions.length;
+
+  if(pct===1)finalMsg.textContent='Perfect! You know your flat shapes! 🌟';
+
+  else if(pct>=.8)finalMsg.textContent='Excellent! Keep it up! 🎈';
+
+  else if(pct>=.5)finalMsg.textContent='Good work! Keep practicing! 💪';
+
+  else finalMsg.textContent='Let’s try again. You can do it! 📚';
+
+}
+
+
+
+function restart(){
+
+  questions=generateQuestions(TOTAL_QUESTIONS);
+
+  current=0;score=0;scoreCountEl.textContent='0';
+
+  resultScreen.classList.add('hidden');
+
+  quizScreen.classList.remove('hidden');
+
+  renderQuestion();
+
+}
+
+
+
 function showHelp(){
-  const modal = document.getElementById('helpModal');
-  modal.classList.add('show');
-  modal.setAttribute('aria-hidden','false');
-}
-function closeHelp(){
-  const modal = document.getElementById('helpModal');
-  modal.classList.remove('show');
-  modal.setAttribute('aria-hidden','true');
-}
-document.getElementById('helpModal').addEventListener('click', e=>{
-  if(e.target.id === 'helpModal') closeHelp();
-});
 
-render();
+  alert('How to play:\\\n\\\n1. Look at the real-world picture.\\\n2. Think about its flat shape.\\\n3. Choose one of the 3 answers.');
+
+}
+
+
+
+let audioCtx=null;
+
+function getCtx(){
+
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+
+  return audioCtx;
+
+}
+
+function playTone(freqStart,freqEnd,duration,type,volume){
+
+  try{
+
+    const ctx=getCtx();
+
+    if(ctx.state==='suspended')ctx.resume();
+
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+
+    osc.type=type;
+
+    osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+
+    osc.frequency.exponentialRampToValueAtTime(freqEnd,ctx.currentTime+duration);
+
+    gain.gain.setValueAtTime(volume,ctx.currentTime);
+
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+
+    osc.connect(gain);gain.connect(ctx.destination);
+
+    osc.start();osc.stop(ctx.currentTime+duration);
+
+  }catch(e){}
+
+}
+
+function playCorrect(){
+
+  playTone(880,1760,.18,'sine',.22);
+
+  setTimeout(()=>playTone(1318,1318,.20,'sine',.18),90);
+
+}
+
+const wrongSound=new Audio('sound/akh.mp3');
+
+wrongSound.preload='auto';
+
+function playWrong(){
+
+  try{
+
+    wrongSound.currentTime=0;
+
+    const p=wrongSound.play();
+
+    if(p!==undefined)p.catch(()=>playTone(220,110,.30,'sawtooth',.16));
+
+  }catch(e){playTone(220,110,.30,'sawtooth',.16);}
+
+}
+
+
+
+restartBtn.addEventListener('click',restart);
+
+questions=generateQuestions(TOTAL_QUESTIONS);
+
+renderQuestion();
+
+
+</script>
+<audio id="bgMusic" src="sound/mariowanderingtheplains.mp3" autoplay loop preload="auto"></audio>
+<script>
+const bgMusic=document.getElementById('bgMusic'),musicToggle=document.getElementById('musicToggle');
+function updateMusicButton(){const on=!bgMusic.paused;musicToggle.classList.toggle('off',!on);musicToggle.setAttribute('aria-pressed',on?'true':'false');}
+musicToggle.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(bgMusic.paused)bgMusic.play().then(updateMusicButton).catch(updateMusicButton);else{bgMusic.pause();updateMusicButton();}});
+window.addEventListener('load',()=>bgMusic.play().then(updateMusicButton).catch(updateMusicButton));
+document.addEventListener('click',()=>bgMusic.play().then(updateMusicButton).catch(updateMusicButton),{once:true});
+bgMusic.addEventListener('play',updateMusicButton);bgMusic.addEventListener('pause',updateMusicButton);
+function showHelp(){document.getElementById('helpModal').classList.add('show')}
+function closeHelp(){document.getElementById('helpModal').classList.remove('show')}
+document.getElementById('helpModal').addEventListener('click',e=>{if(e.target.id==='helpModal')closeHelp()});
 </script>
 </body>
 </html>
+
+
+
